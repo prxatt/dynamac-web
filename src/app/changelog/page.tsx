@@ -22,9 +22,7 @@ export default async function ChangelogPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:py-24">
-      <h1 className="page-title text-[length:var(--text-heading)] tracking-[-0.04em]">
-        Changelog
-      </h1>
+      <h1 className="page-title page-title-lg">Changelog</h1>
       <p className="mt-4 text-[var(--fg-muted)]">
         Every {brand.name} release, pulled from{" "}
         <Link

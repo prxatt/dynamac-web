@@ -22,7 +22,7 @@ body {
   overflow-x: clip;
   background: var(--bg);
   color: var(--fg);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-inter, ui-sans-serif, system-ui, sans-serif);
   font-size: var(--text-body-sm);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -74,25 +74,33 @@ body {
   margin-top: 0.5rem;
 }
 
-.text-link {
-  border-bottom: 1px solid var(--color-stone-gray);
-  color: var(--color-ink-black);
-  text-decoration: none;
-}
+@layer components {
+  .text-link {
+    border-bottom: 1px solid var(--color-stone-gray);
+    color: var(--color-ink-black);
+    text-decoration: none;
+  }
 
-.text-link:hover {
-  border-bottom-color: var(--color-ink-black);
-}
+  .text-link:hover {
+    border-bottom-color: var(--color-ink-black);
+  }
 
-.page-card {
-  border-radius: var(--radius-cards);
-  background: var(--color-pure-white);
-  padding: var(--card-padding);
-}
+  .page-card {
+    border-radius: var(--radius-cards);
+    background: var(--color-pure-white);
+    padding: var(--card-padding);
+  }
 
-.page-title {
-  font-size: var(--text-heading-sm);
-  font-weight: 500;
-  line-height: 1.2;
-  color: var(--color-ink-black);
+  .page-title {
+    font-size: var(--text-heading-sm);
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--color-ink-black);
+  }
+
+  .page-title-lg {
+    font-size: var(--text-heading);
+    line-height: 1.15;
+    letter-spacing: -0.04em;
+  }
 }
