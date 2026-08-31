@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" fill="none">
+  <rect width="960" height="540" fill="#0a0a0a"/>
+  <rect x="40" y="40" width="880" height="460" rx="10" stroke="#262626" stroke-width="1"/>
+  <rect x="330" y="72" width="300" height="44" rx="22" fill="#141414" stroke="#262626"/>
+  <rect x="430" y="116" width="100" height="28" rx="14" fill="#141414" stroke="#c41e3a" stroke-width="2"/>
+  <circle cx="470" cy="158" r="36" fill="#1a1a1a" stroke="#c41e3a"/>
+  <rect x="520" y="142" width="120" height="10" rx="2" fill="#333"/>
+  <rect x="520" y="160" width="80" height="8" rx="2" fill="#262626"/>
+  <rect x="400" y="210" width="160" height="6" rx="3" fill="#333"/>
+  <circle cx="430" cy="213" r="10" fill="#262626"/>
+  <circle cx="530" cy="213" r="10" fill="#262626"/>
+  <rect x="340" y="250" width="280" height="120" rx="8" fill="#141414" stroke="#262626"/>
+  <rect x="360" y="270" width="8" height="8" rx="4" fill="#c41e3a"/>
+  <rect x="376" y="268" width="100" height="10" rx="2" fill="#444"/>
+  <rect x="376" y="286" width="140" height="8" rx="2" fill="#333"/>
+  <rect x="360" y="310" width="8" height="8" rx="4" fill="#8cc7b8"/>
+  <rect x="376" y="308" width="90" height="10" rx="2" fill="#444"/>
+  <rect x="376" y="326" width="120" height="8" rx="2" fill="#333"/>
+  <text x="480" y="420" text-anchor="middle" fill="#666" font-family="system-ui,sans-serif" font-size="13" letter-spacing="0.12em">NOW PLAYING &#183; AGENTS</text>
+</svg>
