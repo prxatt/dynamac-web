@@ -1,4 +1,5 @@
 import { brand } from "@/lib/brand";
+import { AgentLiveCard } from "@/components/demo/AgentLiveCard";
 import { TabDemo } from "@/components/demo/TabDemo";
 
 const tabs = [
@@ -47,6 +48,11 @@ export function TabsSection() {
                 <p className="mt-3 text-sm leading-relaxed text-[var(--fg-dim)]">
                   {tab.detail}
                 </p>
+                {tab.id === "now-playing" ? (
+                  <div className="mt-8">
+                    <AgentLiveCard />
+                  </div>
+                ) : null}
               </div>
 
               <TabDemo

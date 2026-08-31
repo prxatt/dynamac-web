@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans } from "next/font/google";
 import Script from "next/script";
+import { DialKitDevRoot } from "@/components/dev/DialKitDevRoot";
 import { Footer } from "@/components/layout/Footer";
 import { Nav } from "@/components/layout/Nav";
 import { SkipLink } from "@/components/layout/SkipLink";
@@ -81,6 +82,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             strategy="afterInteractive"
           />
         ) : null}
+        <DialKitDevRoot />
       </body>
     </html>
   );
