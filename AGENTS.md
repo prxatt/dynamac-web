@@ -20,7 +20,8 @@ Marketing site for dynamac.com. Product name: **DynaMac** (display); domain stay
 ## Homepage UI
 
 - **Tab widgets:** `src/components/demo/AgentLiveCard.tsx`, `IntentLiveCard.tsx`, `ShelfLiveCard.tsx` — shared shell in `TabWidgetCard.tsx`
-- **Motion:** `SectionReveal`, `ScrollCharacter`, paper-cut SVGs in `src/components/illustrations/characters/`
+- **Illustrations:** `public/illustrations/*.png` — GPT-generated characters; prompts in `docs/ILLUSTRATION_PROMPTS.md`
+- **Motion:** `ScrollIllustration` parallax on tab sections; tab widgets unchanged (`AgentLiveCard`, `IntentLiveCard`, `ShelfLiveCard`)
 - **Springs:** shared defaults in `src/lib/tab-widget-motion.ts`; DialKit panel only in `npm run dev`
 - **No screenshot posters** on the homepage — live React cards only
 

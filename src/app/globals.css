@@ -20,7 +20,14 @@ html {
 
 body {
   overflow-x: clip;
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image: linear-gradient(
+      color-mix(in srgb, var(--color-cream-paper) 92%, transparent),
+      color-mix(in srgb, var(--color-cream-paper) 92%, transparent)
+    ),
+    url("/textures/cream-paper.jpg");
+  background-size: 512px 512px;
+  background-repeat: repeat;
   color: var(--fg);
   font-family: var(--font-inter, ui-sans-serif, system-ui, sans-serif);
   font-size: var(--text-body-sm);
