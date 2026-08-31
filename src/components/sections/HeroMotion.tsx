@@ -1,18 +1,12 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { AppIcon } from "@/components/ui/AppIcon";
 import { MusicCharacter } from "@/components/illustrations/characters/MusicCharacter";
 import { ScrollCharacter } from "@/components/illustrations/ScrollCharacter";
-import { SectionReveal } from "@/components/motion/SectionReveal";
-
-export function HeroCopy({ children }: { children: ReactNode }) {
-  return <SectionReveal>{children}</SectionReveal>;
-}
 
 export function HeroVisual() {
   return (
-    <SectionReveal className="flex justify-center lg:justify-end">
+    <div className="flex justify-center lg:justify-end">
       <div className="w-full max-w-[300px]">
         <div
           className="mx-auto mb-4 h-8 w-[96px] rounded-b-[20px] border border-t-0 border-[var(--color-fresh-grass)] bg-[var(--color-pure-white)]"
@@ -27,7 +21,7 @@ export function HeroVisual() {
           <span className="h-0 w-0 border-x-[6px] border-b-[10px] border-x-transparent border-b-[var(--color-sunshine-pop)]" />
         </div>
       </div>
-    </SectionReveal>
+    </div>
   );
 }
 
