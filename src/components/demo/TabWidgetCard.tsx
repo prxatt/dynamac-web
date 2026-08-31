@@ -3,6 +3,7 @@
 import { useDialKit } from "dialkit";
 import { motion, type Transition } from "motion/react";
 import { useState, type ReactNode } from "react";
+import { useReducedMotion } from "@/components/motion/useReducedMotion";
 import { tabWidgetDialKitDefaults, tabWidgetSpring } from "@/lib/tab-widget-motion";
 
 type TabWidgetCardProps = {
@@ -19,11 +20,12 @@ export function TabWidgetCard({
   className = "",
 }: TabWidgetCardProps) {
   const [hovered, setHovered] = useState(false);
+  const reducedMotion = useReducedMotion();
 
   const p = useDialKit(dialKitName, tabWidgetDialKitDefaults);
 
-  const scale = hovered ? (p.hoverScale as number) : 1;
-  const borderWidth = hovered ? (p.borderWidth as number) : 1;
+  const scale = hovered && !reducedMotion ? (p.hoverScale as number) : 1;
+  const borderWidth = hovered && !reducedMotion ? (p.borderWidth as number) : 1;
   const borderColor = hovered ? hoverBorderColor : "var(--color-hairline-mist)";
 
   return (
@@ -32,7 +34,7 @@ export function TabWidgetCard({
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       animate={{ scale, borderWidth, borderColor }}
-      transition={(p.spring as Transition) ?? tabWidgetSpring}
+      transition={reducedMotion ? { duration: 0 } : ((p.spring as Transition) ?? tabWidgetSpring)}
       style={{ borderStyle: "solid" }}
     >
       {children}
