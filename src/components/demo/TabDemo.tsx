@@ -35,17 +35,17 @@ export function TabDemo({ label, demoSrc, posterSrc, accent }: TabDemoProps) {
   }
 
   return (
-    <figure className="overflow-hidden rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-panel)]">
+    <figure
+      className="overflow-hidden rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-panel)]"
+      aria-label={`${label} preview`}
+    >
       <Image
         src={posterSrc}
-        alt={`${label} preview`}
+        alt=""
         width={960}
         height={540}
         className="h-auto w-full"
       />
-      <figcaption className="border-t border-[var(--border)] px-4 py-2 text-center text-[10px] tracking-wide text-[var(--fg-dim)] uppercase">
-        Replace with <code className="text-[var(--fg-muted)]">{demoSrc.replace("/", "")}</code> when ready
-      </figcaption>
       <span
         className="sr-only"
         style={{ backgroundColor: accent }}

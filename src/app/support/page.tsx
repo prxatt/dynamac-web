@@ -13,7 +13,7 @@ export default function SupportPage() {
         Support
       </h1>
       <p className="mt-4 text-[var(--fg-muted)]">
-        Questions about {brand.name}, Pro, or permissions? Send a message or
+        Questions about {brand.name}, licensing, or permissions? Send a message or
         email us directly.
       </p>
 

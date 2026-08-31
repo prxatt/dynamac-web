@@ -16,5 +16,5 @@
   <rect x="360" y="310" width="8" height="8" rx="4" fill="#8cc7b8"/>
   <rect x="376" y="308" width="90" height="10" rx="2" fill="#444"/>
   <rect x="376" y="326" width="120" height="8" rx="2" fill="#333"/>
-  <text x="480" y="420" text-anchor="middle" fill="#666" font-family="system-ui,sans-serif" font-size="13" letter-spacing="0.12em">NOW PLAYING · AGENTS</text>
+  <text x="480" y="420" text-anchor="middle" fill="#666" font-family="system-ui,sans-serif" font-size="13" letter-spacing="0.12em">NOW PLAYING &#183; AGENTS</text>
 </svg>

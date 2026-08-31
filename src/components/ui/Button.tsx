@@ -17,6 +17,11 @@ type ButtonProps = ComponentPropsWithoutRef<"button"> & {
   external?: boolean;
 };
 
+function shouldUseNativeAnchor(href: string, external?: boolean): boolean {
+  if (external) return true;
+  return href.startsWith("/api/") || href.startsWith("http");
+}
+
 export function Button({
   variant = "primary",
   href,
@@ -28,13 +33,16 @@ export function Button({
   const classes = `inline-flex items-center justify-center gap-2 rounded-[var(--radius)] px-5 py-2.5 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus)] disabled:cursor-not-allowed disabled:opacity-50 ${variantClasses[variant]} ${className}`;
 
   if (href) {
-    if (external) {
+    if (shouldUseNativeAnchor(href, external)) {
+      const opensNewTab = external && href.startsWith("http");
+
       return (
         <a
           href={href}
           className={classes}
-          target="_blank"
-          rel="noopener noreferrer"
+          {...(opensNewTab
+            ? { target: "_blank", rel: "noopener noreferrer" }
+            : {})}
         >
           {children}
         </a>
