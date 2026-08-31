@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { AppIcon } from "@/components/ui/AppIcon";
@@ -9,21 +8,13 @@ import { brand, navLinks } from "@/lib/brand";
 
 export function Nav() {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
-  const isHome = pathname === "/";
 
   return (
-    <header
-      className={
-        isHome
-          ? "sticky top-0 z-50 border-b border-[color-mix(in_srgb,var(--border)_55%,transparent)] bg-[color-mix(in_srgb,var(--bg)_78%,transparent)] backdrop-blur-md"
-          : "sticky top-0 z-50 border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--bg)_92%,transparent)] backdrop-blur-md"
-      }
-    >
+    <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--bg)_92%,transparent)] backdrop-blur-md">
       <div className="mx-auto flex h-[var(--nav-height)] max-w-[var(--max-width)] items-center justify-between px-5">
         <Link href="/" className="flex items-center gap-2.5">
           <AppIcon size={22} priority />
-          <span className="text-sm font-semibold tracking-tight">{brand.name}</span>
+          <span className="text-sm font-semibold">{brand.name}</span>
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex" aria-label="Main">
@@ -31,7 +22,7 @@ export function Nav() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-[11px] font-semibold tracking-[0.08em] text-[var(--fg-muted)] uppercase hover:text-[var(--fg)]"
+              className="text-sm text-[var(--fg-muted)] hover:text-[var(--fg)]"
             >
               {link.label}
             </Link>
