@@ -1,6 +1,7 @@
 import { brand } from "@/lib/brand";
 import { AgentLiveCard } from "@/components/demo/AgentLiveCard";
-import { TabDemo } from "@/components/demo/TabDemo";
+import { IntentLiveCard } from "@/components/demo/IntentLiveCard";
+import { ShelfLiveCard } from "@/components/demo/ShelfLiveCard";
 
 const tabs = [
   { ...brand.tabs.nowPlaying, accent: "var(--color-coral-pop)", mark: "square" as const },
@@ -23,6 +24,13 @@ function TabMark({ mark, color }: { mark: "square" | "circle" | "triangle"; colo
   return <span className="h-3 w-3 shrink-0" style={{ backgroundColor: color }} />;
 }
 
+function TabWidget({ id }: { id: string }) {
+  if (id === "now-playing") return <AgentLiveCard />;
+  if (id === "intent") return <IntentLiveCard />;
+  if (id === "shelf") return <ShelfLiveCard />;
+  return null;
+}
+
 export function TabsSection() {
   return (
     <section id="tabs" className="px-5 pb-[var(--section-gap)]">
@@ -35,13 +43,8 @@ export function TabsSection() {
         </h2>
 
         <div className="mt-[var(--spacing-60)] space-y-[var(--section-gap)]">
-          {tabs.map((tab, index) => (
-            <article
-              key={tab.id}
-              className={`grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16 ${
-                index % 2 === 1 ? "lg:[&>div:first-child]:order-2" : ""
-              }`}
-            >
+          {tabs.map((tab) => (
+            <article key={tab.id} className="max-w-2xl">
               <div className="rounded-[var(--radius-cards)] bg-[var(--color-pure-white)] p-[var(--card-padding)] lg:p-8">
                 <div className="flex items-center gap-3">
                   <TabMark mark={tab.mark} color={tab.accent} />
@@ -58,19 +61,10 @@ export function TabsSection() {
                 <p className="mt-3 text-[length:var(--text-body-sm)] leading-relaxed text-[var(--color-stone-gray)]">
                   {tab.detail}
                 </p>
-                {tab.id === "now-playing" ? (
-                  <div className="mt-8">
-                    <AgentLiveCard />
-                  </div>
-                ) : null}
+                <div className="mt-8">
+                  <TabWidget id={tab.id} />
+                </div>
               </div>
-
-              <TabDemo
-                label={tab.label}
-                demoSrc={tab.demo}
-                posterSrc={tab.poster}
-                accent={tab.accent}
-              />
             </article>
           ))}
         </div>

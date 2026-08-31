@@ -38,24 +38,18 @@ export const brand = {
       copy: "Album art, transport, and volume in the notch.",
       detail:
         "See what Cursor, Claude, and Codex are on. Tap Open to jump there.",
-      demo: "/demos/now-playing.webp",
-      poster: "/demos/posters/now-playing.svg",
     },
     intent: {
       id: "intent",
       label: "Intent",
       copy: "Calendar, to-dos, and a focus timer.",
       detail: "Today, week, and month in one strip.",
-      demo: "/demos/intent.webp",
-      poster: "/demos/posters/intent.svg",
     },
     shelf: {
       id: "shelf",
       label: "Shelf",
       copy: "Drop files. Hold them in the notch. Share via AirDrop.",
       detail: "Files stay in the HUD until you send them.",
-      demo: "/demos/shelf.webp",
-      poster: "/demos/posters/shelf.svg",
     },
   },
 } as const;
