@@ -1,41 +1,59 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
-import { AppIcon } from "@/components/ui/AppIcon";
+import Link from "next/link";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { brand } from "@/lib/brand";
+import { LiquidNotchScene } from "@/components/hero/LiquidNotchScene";
+import "../hero/hero.css";
 
 export function Hero() {
   return (
-    <section className="border-b border-[var(--border)]">
-      <div className="mx-auto grid max-w-[var(--max-width)] gap-10 px-5 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-24">
+    <section className="home-hero">
+      <div className="relative mx-auto max-w-[var(--max-width)]">
+        <div className="home-hero__body">
         <FadeIn>
-          <div>
-            <p className="text-[11px] font-medium tracking-[0.14em] text-[var(--fg-dim)] uppercase">
+          <section className="home-hero__content">
+            <div className="home-hero__eyebrow">
+              <span />
               {brand.platformNote}
-            </p>
-            <h1 className="mt-4 text-[clamp(2.5rem,5.5vw,3.75rem)] font-bold leading-[1.05] tracking-[-0.03em]">
-              {brand.name}
-            </h1>
-            <p className="mt-2 text-xl text-[var(--fg-muted)]">{brand.tagline}</p>
-            <p className="mt-5 max-w-md text-lg leading-relaxed text-[var(--fg-muted)]">
-              {brand.shortDescription}
-            </p>
-            <p className="mt-2 text-sm text-[var(--fg-dim)]">{brand.credits}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button href="/api/download">Download for macOS</Button>
-              <Button href="/buy" variant="secondary">
-                Buy ${brand.price.toFixed(2)}
-              </Button>
             </div>
-          </div>
+
+            <h1 className="home-hero__title">{brand.name}</h1>
+            <p className="home-hero__tagline">{brand.tagline}</p>
+
+            <p className="home-hero__intro">{brand.shortDescription}</p>
+            <p className="home-hero__credits">{brand.credits}</p>
+
+            <div className="home-hero__actions">
+              <a href="/api/download" className="home-hero__btn-primary">
+                Download for macOS
+              </a>
+              <Link href="/buy" className="home-hero__btn-secondary">
+                Buy ${brand.price.toFixed(2)}
+              </Link>
+            </div>
+
+            <div className="home-hero__meta">
+              <div className="home-hero__meta-item">
+                <small>Platform</small>
+                <strong>{brand.platform}</strong>
+              </div>
+              <div className="home-hero__meta-item">
+                <small>Price</small>
+                <strong>${brand.price.toFixed(2)} once</strong>
+              </div>
+              <div className="home-hero__meta-item">
+                <small>Scroll</small>
+                <span className="home-hero__scroll-dot">
+                  <i />
+                </span>
+              </div>
+            </div>
+          </section>
         </FadeIn>
 
-        <FadeIn delay={0.08}>
-          <div className="flex justify-center lg:justify-end">
-            <AppIcon size={256} className="h-auto w-full max-w-[256px]" priority />
-          </div>
-        </FadeIn>
+        <LiquidNotchScene />
+        </div>
       </div>
     </section>
   );
