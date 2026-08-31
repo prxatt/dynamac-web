@@ -17,6 +17,13 @@ Marketing site for dynamac.com. Product name: **DynaMac** (display); domain stay
 - **Real features only:** music HUD, live agents panel, Intent tab, Shelf
 - **Do not market:** Soen, Glance, Look, Listen, local-first AI, screen read, voice
 
+## Homepage UI
+
+- **Tab widgets:** `src/components/demo/AgentLiveCard.tsx`, `IntentLiveCard.tsx`, `ShelfLiveCard.tsx` — shared shell in `TabWidgetCard.tsx`
+- **Motion:** `SectionReveal`, `ScrollCharacter`, paper-cut SVGs in `src/components/illustrations/characters/`
+- **Springs:** shared defaults in `src/lib/tab-widget-motion.ts`; DialKit panel only in `npm run dev`
+- **No screenshot posters** on the homepage — live React cards only
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

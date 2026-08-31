@@ -3,6 +3,7 @@
 import { motion, useInView } from "motion/react";
 import { useRef, type ReactNode } from "react";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
+import { sectionRevealTransition } from "@/lib/tab-widget-motion";
 
 type SectionRevealProps = {
   children: ReactNode;
@@ -28,7 +29,7 @@ export function SectionReveal({ children, className = "" }: SectionRevealProps) 
             ? { opacity: 0 }
             : { opacity: 0, y: 32 }
       }
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+      transition={sectionRevealTransition}
     >
       {children}
     </motion.div>

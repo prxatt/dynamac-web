@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { brand, getCheckoutUrl } from "@/lib/brand";
+import { SectionReveal } from "@/components/motion/SectionReveal";
 
 export function PurchaseSection() {
   const checkoutUrl = getCheckoutUrl();
@@ -7,7 +8,8 @@ export function PurchaseSection() {
   return (
     <section id="buy" className="px-5 pb-[var(--section-gap)]">
       <div className="mx-auto max-w-[var(--max-width)]">
-        <div className="max-w-2xl rounded-[var(--radius-cards)] bg-[var(--color-pure-white)] p-8 lg:p-10">
+        <SectionReveal>
+          <div className="max-w-2xl rounded-[var(--radius-cards)] bg-[var(--color-pure-white)] p-8 lg:p-10">
           <h2
             className="font-medium leading-[1.15] tracking-[-0.04em] text-[var(--color-ink-black)]"
             style={{ fontSize: "var(--text-heading)" }}
@@ -33,7 +35,8 @@ export function PurchaseSection() {
               </Button>
             )}
           </div>
-        </div>
+          </div>
+        </SectionReveal>
       </div>
     </section>
   );

@@ -3,6 +3,7 @@
 import { motion, useInView, useScroll, useTransform } from "motion/react";
 import { useRef, type ReactNode } from "react";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
+import { characterRevealTransition } from "@/lib/tab-widget-motion";
 
 type ScrollCharacterProps = {
   children: ReactNode;
@@ -37,11 +38,15 @@ export function ScrollCharacter({ children, side, className = "" }: ScrollCharac
         className="w-full"
         initial={{ opacity: 0 }}
         animate={inView ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+        transition={characterRevealTransition}
       >
         <motion.div
           className="w-full"
-          style={reducedMotion ? undefined : { y, rotate }}
+          style={
+            reducedMotion
+              ? undefined
+              : { y, rotate, willChange: inView ? "transform" : "auto" }
+          }
         >
           {children}
         </motion.div>
