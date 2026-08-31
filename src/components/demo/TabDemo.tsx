@@ -21,7 +21,7 @@ export function TabDemo({ label, demoSrc, posterSrc, accent }: TabDemoProps) {
 
   if (hasDemo) {
     return (
-      <figure className="overflow-hidden rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-panel)]">
+      <figure className="overflow-hidden rounded-[var(--radius-cards)] bg-[var(--color-pure-white)]">
         <Image
           src={demoSrc}
           alt={`${label} workflow`}
@@ -36,21 +36,11 @@ export function TabDemo({ label, demoSrc, posterSrc, accent }: TabDemoProps) {
 
   return (
     <figure
-      className="overflow-hidden rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-panel)]"
+      className="overflow-hidden rounded-[var(--radius-cards)] bg-[var(--color-pure-white)]"
       aria-label={`${label} preview`}
     >
-      <Image
-        src={posterSrc}
-        alt=""
-        width={960}
-        height={540}
-        className="h-auto w-full"
-      />
-      <span
-        className="sr-only"
-        style={{ backgroundColor: accent }}
-        aria-hidden
-      />
+      <Image src={posterSrc} alt="" width={960} height={540} className="h-auto w-full" />
+      <span className="sr-only" style={{ backgroundColor: accent }} aria-hidden />
     </figure>
   );
 }

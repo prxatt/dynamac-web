@@ -2,7 +2,15 @@
 @import "../styles/tokens.css";
 
 @theme inline {
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-inter);
+  --color-cream-paper: #f5f1e4;
+  --color-fresh-grass: #8ed462;
+  --color-ink-black: #2c2e2a;
+  --color-pure-white: #ffffff;
+  --color-stone-gray: #80827f;
+  --color-sky-pop: #2ba0ff;
+  --color-coral-pop: #ff705d;
+  --color-sunshine-pop: #f5e211;
 }
 
 html {
@@ -14,7 +22,9 @@ body {
   overflow-x: clip;
   background: var(--bg);
   color: var(--fg);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -25,7 +35,7 @@ body {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--yellow) 40%, transparent);
+  background: color-mix(in srgb, var(--color-fresh-grass) 45%, transparent);
 }
 
 .sr-only {
@@ -43,8 +53,8 @@ body {
 .prose-policy h2 {
   margin-top: 2.5rem;
   margin-bottom: 0.75rem;
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-size: var(--text-heading-sm);
+  font-weight: 500;
   color: var(--fg);
 }
 
@@ -52,7 +62,7 @@ body {
 .prose-policy li {
   color: var(--fg-muted);
   line-height: 1.75;
-  font-size: 0.9375rem;
+  font-size: var(--text-body-lg);
 }
 
 .prose-policy ul {
@@ -62,4 +72,27 @@ body {
 
 .prose-policy li + li {
   margin-top: 0.5rem;
+}
+
+.text-link {
+  border-bottom: 1px solid var(--color-stone-gray);
+  color: var(--color-ink-black);
+  text-decoration: none;
+}
+
+.text-link:hover {
+  border-bottom-color: var(--color-ink-black);
+}
+
+.page-card {
+  border-radius: var(--radius-cards);
+  background: var(--color-pure-white);
+  padding: var(--card-padding);
+}
+
+.page-title {
+  font-size: var(--text-heading-sm);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--color-ink-black);
 }

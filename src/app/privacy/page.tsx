@@ -9,7 +9,8 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <div className="mx-auto max-w-2xl px-5 py-16">
-      <h1 className="text-3xl font-bold">Privacy</h1>
+      <div className="page-card">
+      <h1 className="page-title">Privacy</h1>
       <div className="prose-policy mt-10 space-y-6">
         <p>
           {brand.name} is a macOS app by {brand.company}. Data stays on your Mac
@@ -37,10 +38,11 @@ export default function PrivacyPage() {
 
         <h2>Contact</h2>
         <p>
-          <a href={`mailto:${brand.supportEmail}`} className="text-[var(--teal)]">
+          <a href={`mailto:${brand.supportEmail}`} className="text-link">
             {brand.supportEmail}
           </a>
         </p>
+      </div>
       </div>
     </div>
   );

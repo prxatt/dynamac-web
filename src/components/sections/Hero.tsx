@@ -4,36 +4,33 @@ import { brand } from "@/lib/brand";
 
 export function Hero() {
   return (
-    <section className="border-b border-[var(--border)]">
-      <div className="mx-auto grid max-w-[var(--max-width)] gap-14 px-5 py-20 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:py-28">
+    <section className="px-5 pb-[var(--section-gap)] pt-10">
+      <div className="mx-auto grid max-w-[var(--max-width)] gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-20">
         <div>
-          <div className="mb-6 flex items-center gap-3">
-            <span
-              className="flex h-2 w-10 shrink-0 overflow-hidden rounded-sm"
-              aria-hidden
-            >
-              <span className="flex-1 bg-[var(--red)]" />
-              <span className="flex-1 bg-[var(--yellow)]" />
-              <span className="flex-1 bg-[var(--blue)]" />
-            </span>
-            <p className="text-[11px] font-medium tracking-[0.12em] text-[var(--fg-dim)] uppercase">
-              {brand.platformNote}
-            </p>
-          </div>
+          <p className="text-[length:var(--text-body-sm)] font-medium text-[var(--color-stone-gray)]">
+            {brand.platformNote}
+          </p>
 
-          <h1 className="text-[clamp(2.75rem,5vw,4.25rem)] font-bold leading-[1.02] tracking-[-0.03em]">
+          <h1
+            className="mt-6 font-medium leading-[0.95] tracking-[-0.06em] text-[var(--color-ink-black)]"
+            style={{ fontSize: "var(--text-display)" }}
+          >
             {brand.name}
           </h1>
-          <p className="mt-2 text-xl text-[var(--teal)]">{brand.tagline}</p>
-          <p className="mt-5 max-w-md text-lg leading-relaxed text-[var(--fg-muted)]">
+          <p className="mt-4 text-[length:var(--text-subheading)] font-medium text-[var(--color-ink-black)]">
+            {brand.tagline}
+          </p>
+          <p className="mt-6 max-w-lg text-[length:var(--text-body-lg)] leading-relaxed text-[var(--color-ink-black)]">
             {brand.shortDescription}
           </p>
-          <p className="mt-3 text-sm tracking-wide text-[var(--fg-dim)]">
+          <p className="mt-4 text-[length:var(--text-body-sm)] text-[var(--color-stone-gray)]">
             {brand.credits}
           </p>
 
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button href="/api/download">Download for macOS</Button>
+          <div className="mt-10 flex flex-wrap items-center gap-5">
+            <Button href="/api/download" dot="sky">
+              Download for macOS
+            </Button>
             <Button href="/buy" variant="secondary">
               Buy ${brand.price.toFixed(2)}
             </Button>
@@ -41,18 +38,18 @@ export function Hero() {
         </div>
 
         <div className="flex justify-center lg:justify-end">
-          <div className="w-full max-w-[260px]">
+          <div className="w-full max-w-[300px]">
             <div
-              className="mx-auto mb-4 h-7 w-[88px] rounded-b-2xl border border-t-0 border-[var(--border-light)] bg-[var(--bg-panel)]"
+              className="mx-auto mb-4 h-8 w-[96px] rounded-b-[20px] border border-t-0 border-[var(--color-fresh-grass)] bg-[var(--color-pure-white)]"
               aria-hidden
             />
-            <div className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-panel)] p-10">
-              <AppIcon size={180} className="mx-auto h-auto w-full max-w-[180px]" priority />
+            <div className="rounded-[var(--radius-cards)] bg-[var(--color-pure-white)] p-12">
+              <AppIcon size={200} className="mx-auto h-auto w-full max-w-[200px]" priority />
             </div>
-            <div className="mt-5 flex items-center justify-center gap-2.5" aria-hidden>
-              <span className="h-2.5 w-2.5 bg-[var(--red)]" />
-              <span className="h-2.5 w-2.5 rounded-full bg-[var(--blue)]" />
-              <span className="h-0 w-0 border-x-[5px] border-b-[9px] border-x-transparent border-b-[var(--yellow)]" />
+            <div className="mt-6 flex items-center justify-center gap-3" aria-hidden>
+              <span className="h-3 w-3 bg-[var(--color-coral-pop)]" />
+              <span className="h-3 w-3 rounded-full bg-[var(--color-sky-pop)]" />
+              <span className="h-0 w-0 border-x-[6px] border-b-[10px] border-x-transparent border-b-[var(--color-sunshine-pop)]" />
             </div>
           </div>
         </div>

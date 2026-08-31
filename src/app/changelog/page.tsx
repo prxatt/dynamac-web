@@ -22,14 +22,14 @@ export default async function ChangelogPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:py-24">
-      <h1 className="font-display text-4xl font-semibold text-[var(--fg)]">
+      <h1 className="page-title text-[length:var(--text-heading)] tracking-[-0.04em]">
         Changelog
       </h1>
       <p className="mt-4 text-[var(--fg-muted)]">
         Every {brand.name} release, pulled from{" "}
         <Link
           href={brand.repositoryUrl}
-          className="text-[var(--accent)] underline-offset-2 hover:underline"
+          className="text-link"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -61,7 +61,7 @@ export default async function ChangelogPage() {
               </pre>
               <Link
                 href={release.htmlUrl}
-                className="mt-4 inline-block text-sm text-[var(--accent)] underline-offset-2 hover:underline"
+                className="mt-4 inline-block text-sm text-link"
                 target="_blank"
                 rel="noopener noreferrer"
               >
