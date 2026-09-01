@@ -43,7 +43,7 @@ export const brand = {
       id: "intent",
       label: "Intent",
       copy: "Calendar, to-dos, and a focus timer.",
-      detail: "Today, week, and month in one strip.",
+      detail: "Today list and a horizontal day-band calendar — Bauhaus planning in the notch.",
     },
     shelf: {
       id: "shelf",

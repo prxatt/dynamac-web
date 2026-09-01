@@ -11,8 +11,8 @@ Marketing site for [dynamac.com](https://dynamac.com) — **DynaMac**, the macOS
 
 ## Homepage
 
-- **Hero** — display type on cream canvas, notch + app icon, scroll accent character
-- **Three tabs** — white editorial cards with live widgets (`AgentLiveCard`, `IntentLiveCard`, `ShelfLiveCard`) and paper-cut scroll characters (lg+)
+- **Hero** — live `NotchProductStage` (product mock, tab cycle, 3D tilt). Character band in footer.
+- **Three tabs** — unified cream sections with dark notch demos + character art (Intent has no cutout backdrop)
 - **Purchase** — $2.99 one-time CTA
 
 ## Development

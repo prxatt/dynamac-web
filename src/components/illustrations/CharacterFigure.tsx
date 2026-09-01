@@ -10,6 +10,7 @@ import type { TabIllustrationConfig } from "@/lib/illustrations";
 type CharacterFigureProps = {
   config: TabIllustrationConfig;
   side?: "left" | "right";
+  index?: number;
   className?: string;
   imageClassName?: string;
 };
@@ -21,12 +22,14 @@ function PaperCutCharacter({
   inView,
   y,
   imageClassName,
+  floatDuration,
 }: {
   config: TabIllustrationConfig;
   reducedMotion: boolean;
   inView: boolean;
   y: ReturnType<typeof useTransform<number, number>>;
   imageClassName: string;
+  floatDuration: number;
 }) {
   return (
     <motion.div
@@ -44,7 +47,7 @@ function PaperCutCharacter({
               : undefined
           }
           transition={{
-            y: { duration: 5.2, repeat: Infinity, ease: "easeInOut" },
+            y: { duration: floatDuration, repeat: Infinity, ease: "easeInOut" },
           }}
         >
           <Image
@@ -72,6 +75,7 @@ function ParallaxCharacter({
   rotateX,
   scale,
   imageClassName,
+  floatDuration,
 }: {
   config: TabIllustrationConfig;
   reducedMotion: boolean;
@@ -81,6 +85,7 @@ function ParallaxCharacter({
   rotateX: ReturnType<typeof useTransform<number, number>>;
   scale: ReturnType<typeof useTransform<number, number>>;
   imageClassName: string;
+  floatDuration: number;
 }) {
   return (
     <motion.div
@@ -111,7 +116,7 @@ function ParallaxCharacter({
               : undefined
           }
           transition={{
-            y: { duration: 5.2, repeat: Infinity, ease: "easeInOut" },
+            y: { duration: floatDuration, repeat: Infinity, ease: "easeInOut" },
           }}
         >
           <Image
@@ -134,6 +139,7 @@ function ParallaxCharacter({
 export function CharacterFigure({
   config,
   side = "right",
+  index = 0,
   className = "",
   imageClassName = "",
 }: CharacterFigureProps) {
@@ -141,6 +147,7 @@ export function CharacterFigure({
   const reducedMotion = useReducedMotion();
   const inView = useInView(ref, { once: true, margin: "-8% 0px" });
   const usePaperCut = Boolean(config.blendMultiply);
+  const floatDuration = 4.6 + (index % 3) * 0.9;
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -171,6 +178,7 @@ export function CharacterFigure({
           inView={inView}
           y={y}
           imageClassName={imageClassName}
+          floatDuration={floatDuration}
         />
       ) : (
         <ParallaxCharacter
@@ -182,6 +190,7 @@ export function CharacterFigure({
           rotateX={rotateX}
           scale={scale}
           imageClassName={imageClassName}
+          floatDuration={floatDuration}
         />
       )}
     </div>

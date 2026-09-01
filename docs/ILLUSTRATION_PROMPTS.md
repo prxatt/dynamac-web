@@ -51,7 +51,8 @@ OUTPUT: PNG, cream background, landscape 8:3 ratio.
 |------|----------------|
 | `hero-character.png` | Waving boy, backpack, coral hoodie, blue pants — welcoming hero pose, black background |
 | `character-now-playing.png` | Boy with red headphones, dancing, music note + motion lines, black background |
-| `character-intent-poses.png` | Sheet of 3 poses: running with pencil, meditating with sun/cloud, reaching for star — cream background |
+| `character-intent.jpg` | Boy thinking with calendar + hourglass — dedicated Intent tab, cream background |
+| `character-intent-poses.png` | *(deprecated reference sheet — do not use on site)* |
 | `character-shelf.png` | Boy jumping with colored folders + documents, AirDrop/share energy, black background |
 | `sticker-props.png` | 6 icon stickers: blue dot, green sprout, coral peel sticker, yellow triangle, document, headphones |
 | `textures/cream-paper.jpg` | Seamless cream paper fiber texture, tileable, no objects |

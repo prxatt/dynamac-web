@@ -28,7 +28,7 @@ export function TabCharacterScene({
     >
       <div className="absolute inset-0">
         {!hideBackdrop ? <CutoutBackdrop accent={accent} variant={index} /> : null}
-        <CharacterFigure config={config} side={side} />
+        <CharacterFigure config={config} side={side} index={index} />
       </div>
       <FloatingStickers variant={index} className="z-[1]" />
     </div>
