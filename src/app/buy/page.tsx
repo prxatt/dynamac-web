@@ -34,13 +34,15 @@ export default function BuyPage() {
             {`2. Buy license · $${brand.price.toFixed(2)}`}
           </Button>
         ) : (
-          <Button href="/buy" variant="secondary">
-            {`2. Buy license · $${brand.price.toFixed(2)}`}
-          </Button>
+          <p className="flex items-center text-[length:var(--text-body-sm)] text-[var(--fg-dim)]">
+            Checkout opens when Stripe or Lemon Squeezy is connected.
+          </p>
         )}
       </div>
       <p className="mt-4 text-[length:var(--text-body-sm)] text-[var(--color-stone-gray)]">
-        Download installs the app. Checkout sends your license key by email — both live on this page.
+        {checkoutUrl
+          ? "Download installs the app. Checkout sends your license key by email — both on this page."
+          : "Download the app now. License checkout will appear here once payments are connected."}
       </p>
 
       <p className="mt-10 text-sm text-[var(--fg-dim)]">

@@ -1,8 +1,14 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
+
+/** Native open notch width (760px) — layout box must shrink when scaled */
+const SHOWCASE_WIDTH_PX = 760;
+/** Card + tabs + padding — reserve layout height after scale */
+const SHOWCASE_HEIGHT_PX = 340;
 
 type NotchShelfStageProps = {
   children: ReactNode;
@@ -13,9 +19,52 @@ type NotchShelfStageProps = {
 
 const shelfTilt = [-1.2, 1.4, -0.8] as const;
 
+function ScaledShowcase({ children }: { children: ReactNode }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const update = () => {
+      const available = el.clientWidth;
+      const next = Math.min(1, available / SHOWCASE_WIDTH_PX);
+      setScale(next);
+    };
+
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const layoutWidth = SHOWCASE_WIDTH_PX * scale;
+  const layoutHeight = SHOWCASE_HEIGHT_PX * scale;
+
+  return (
+    <div ref={containerRef} className="w-full max-w-[47.5rem]">
+      <div
+        className="mx-auto overflow-visible"
+        style={{ width: layoutWidth, height: layoutHeight }}
+      >
+        <div
+          style={{
+            width: SHOWCASE_WIDTH_PX,
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+          }}
+        >
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /**
- * Notch demos sit on a visible “shelf” — full width, overflow visible,
- * scale-to-fit on narrow screens so nothing clips.
+ * Notch demos on a visible shelf — layout-sized scale (not CSS-only scale)
+ * so mobile never clips inside overflow-x: clip.
  */
 export function NotchShelfStage({ children, accent, mark, index }: NotchShelfStageProps) {
   const reducedMotion = useReducedMotion();
@@ -23,7 +72,6 @@ export function NotchShelfStage({ children, accent, mark, index }: NotchShelfSta
 
   return (
     <div className="relative w-full overflow-visible pb-2 pt-10">
-      {/* Shelf slab */}
       <motion.div
         className="absolute inset-x-[-2%] bottom-0 top-10 rounded-[1.75rem] border border-[var(--color-hairline-mist)] md:inset-x-0"
         style={{
@@ -38,7 +86,6 @@ export function NotchShelfStage({ children, accent, mark, index }: NotchShelfSta
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       />
 
-      {/* Accent rim */}
       <div
         className="absolute inset-x-[-2%] bottom-0 top-10 rounded-[1.75rem] md:inset-x-0"
         style={{
@@ -57,22 +104,19 @@ export function NotchShelfStage({ children, accent, mark, index }: NotchShelfSta
         </div>
       ) : null}
 
-      {/* Scaled notch — never clip the 760px demo */}
       <div className="relative z-10 flex justify-center overflow-visible px-2 pb-5 pt-2 md:px-4">
         <motion.div
-          className="origin-top overflow-visible"
-          style={{
-            transform: `rotate(${tilt}deg)`,
-          }}
+          className="w-full max-w-[47.5rem] overflow-visible"
           initial={reducedMotion ? false : { opacity: 0, scale: 0.94 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-8% 0px" }}
           transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
         >
-          <div className="w-[min(47.5rem,calc(100vw-2.5rem))] max-w-none overflow-visible sm:w-[min(47.5rem,calc(100vw-4rem))] lg:w-[47.5rem]">
-            <div className="origin-top scale-[0.58] sm:scale-[0.72] md:scale-[0.86] lg:scale-100">
-              <div className="w-[47.5rem]">{children}</div>
-            </div>
+          <div
+            className="mx-auto overflow-visible"
+            style={{ transform: `rotate(${tilt}deg)` }}
+          >
+            <ScaledShowcase>{children}</ScaledShowcase>
           </div>
         </motion.div>
       </div>

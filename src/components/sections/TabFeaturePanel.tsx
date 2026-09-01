@@ -18,6 +18,7 @@ type TabFeaturePanelProps = {
   mark: ReactNode;
   illustration: TabIllustrationConfig;
   widget: ReactNode;
+  hideCharacterBackdrop?: boolean;
 };
 
 /** Staggered zig-zag: character offset per row, notch on shelf, no vertical stack alignment */
@@ -44,6 +45,7 @@ export function TabFeaturePanel({
   mark,
   illustration,
   widget,
+  hideCharacterBackdrop = false,
 }: TabFeaturePanelProps) {
   const reducedMotion = useReducedMotion();
   const characterSide = characterSides[index % characterSides.length]!;
@@ -73,6 +75,7 @@ export function TabFeaturePanel({
             accent={accent}
             index={index}
             side={characterSide}
+            hideBackdrop={hideCharacterBackdrop}
             className="mx-auto w-full max-w-[240px] lg:max-w-[280px]"
           />
           <CharacterVfx variant={index} accent={accent} />
