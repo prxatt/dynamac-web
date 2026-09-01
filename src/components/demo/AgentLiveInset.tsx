@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { useReducedMotion } from "@/components/motion/useReducedMotion";
 import {
   accentForAgent,
   AgentOrb,
@@ -31,6 +32,7 @@ export function AgentLiveInset({
   glassStyle = "liquidLight",
 }: AgentLiveInsetProps) {
   const theme = glassStyles[glassStyle];
+  const reducedMotion = useReducedMotion();
 
   return (
     <motion.div
@@ -40,15 +42,15 @@ export function AgentLiveInset({
         borderColor: theme.border,
         color: theme.text,
       }}
-      whileHover={{ scale: 1.01 }}
+      whileHover={reducedMotion ? undefined : { scale: 1.01 }}
       transition={{ type: "spring", visualDuration: 0.32, bounce: 0.18 }}
     >
       <header className="mb-1.5 flex items-center justify-between gap-2">
         <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-coral-pop)] px-2 py-0.5 text-[8px] font-bold tracking-wider text-white">
           <motion.span
             className="h-1.5 w-1.5 rounded-full bg-white"
-            animate={{ opacity: [1, 0.4, 1] }}
-            transition={{ duration: 1.4, repeat: Infinity }}
+            animate={reducedMotion ? undefined : { opacity: [1, 0.4, 1] }}
+            transition={reducedMotion ? undefined : { duration: 1.4, repeat: Infinity }}
             aria-hidden
           />
           LIVE
@@ -63,7 +65,11 @@ export function AgentLiveInset({
           const accent = accentForAgent(agent.tool);
           return (
             <li key={agent.tool} className="flex items-center gap-2">
-              <AgentOrb tool={agent.tool} size={agent.live ? 30 : 26} pulse={Boolean(agent.live)} />
+              <AgentOrb
+                tool={agent.tool}
+                size={agent.live ? 30 : 26}
+                pulse={Boolean(agent.live) && !reducedMotion}
+              />
 
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-semibold leading-tight">{agent.name}</p>

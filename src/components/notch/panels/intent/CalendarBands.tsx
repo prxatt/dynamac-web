@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNotchDemo } from "@/components/notch/NotchDemoContext";
 import {
-  calendarDays,
   focusableFromEvent,
   focusableId,
   type DayBand,
@@ -19,13 +18,28 @@ type CalendarBandsProps = {
 
 export function CalendarBands({ minimal = false }: CalendarBandsProps) {
   const dayScrollRef = useRef<HTMLDivElement>(null);
-  const { todos, linkedItem, focusPhase, progress, startFocus, toggleTodo } = useNotchDemo();
-  const [dayIndex, setDayIndex] = useState(
-    () => calendarDays.findIndex((d) => d.isToday) || 0,
+  const {
+    todos,
+    calendarDays,
+    selectedDayKey,
+    setSelectedDayKey,
+    linkedItem,
+    focusPhase,
+    progress,
+    startFocus,
+    toggleTodo,
+  } = useNotchDemo();
+  const [dayIndex, setDayIndex] = useState(() =>
+    Math.max(0, calendarDays.findIndex((d) => d.key === selectedDayKey)),
   );
 
   const activeId = focusPhase === "work" ? focusableId(linkedItem) : null;
   const todayTodos = todos.filter((t) => !t.done);
+
+  useEffect(() => {
+    const key = calendarDays[dayIndex]?.key;
+    if (key && key !== selectedDayKey) setSelectedDayKey(key);
+  }, [dayIndex, calendarDays, selectedDayKey, setSelectedDayKey]);
 
   useEffect(() => {
     const el = dayScrollRef.current;

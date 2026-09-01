@@ -3,18 +3,23 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { useNotchDemo } from "@/components/notch/NotchDemoContext";
-import { calendarDays, planModes, type PlanMode } from "@/components/notch/intent-plan-data";
+import { planModes, type PlanMode } from "@/components/notch/intent-plan-data";
 import { AddItemSheet } from "@/components/notch/panels/intent/AddItemSheet";
 import { CalendarBands } from "@/components/notch/panels/intent/CalendarBands";
 import { TodayList } from "@/components/notch/panels/intent/TodayList";
 import { FocusTimer } from "@/components/notch/panels/FocusTimer";
 
-export function IntentPanelCompact() {
+type IntentPanelCompactProps = {
+  layoutIdPrefix?: string;
+};
+
+export function IntentPanelCompact({ layoutIdPrefix = "intent" }: IntentPanelCompactProps) {
   const [mode, setMode] = useState<PlanMode>("today");
-  const { focusPhase, focusExpanded, showAddSheet, setShowAddSheet } = useNotchDemo();
+  const { focusPhase, focusExpanded, showAddSheet, setShowAddSheet, selectedDayKey } =
+    useNotchDemo();
 
   const listMinimal = focusPhase === "work" && focusExpanded;
-  const todayDayKey = calendarDays.find((d) => d.isToday)?.key;
+  const planModeLayoutId = `${layoutIdPrefix}-plan-mode`;
 
   return (
     <div className="relative overflow-hidden">
@@ -31,7 +36,7 @@ export function IntentPanelCompact() {
                 >
                   {mode === item.id ? (
                     <motion.span
-                      layoutId="intent-plan-mode"
+                      layoutId={planModeLayoutId}
                       className="absolute inset-0 rounded-full bg-[var(--widget-inset)] ring-1 ring-[var(--widget-border)]"
                       transition={{ type: "spring", visualDuration: 0.32, bounce: 0.16 }}
                     />
@@ -86,7 +91,7 @@ export function IntentPanelCompact() {
         {showAddSheet ? (
           <AddItemSheet
             onClose={() => setShowAddSheet(false)}
-            dayKey={mode === "calendar" ? todayDayKey : undefined}
+            dayKey={mode === "calendar" ? selectedDayKey : undefined}
           />
         ) : null}
       </AnimatePresence>

@@ -9,14 +9,14 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useReducedMotion } from "@/components/motion/useReducedMotion";
 import {
+  calendarDays as initialCalendarDays,
   DEMO_NOW_MINUTES,
   focusableDurationSeconds,
   focusableFromEvent,
   getLiveEvent,
   resolveCategory,
-  todayEvents as initialTodayEvents,
+  type DayBand,
   type FocusableItem,
   type ScheduledEvent,
   type TaskCategory,
@@ -29,6 +29,7 @@ export type FocusPhase = "idle" | "work" | "break";
 
 const BREAK_SECONDS = 5 * 60;
 const DEFAULT_FOCUS_SECONDS = 25 * 60;
+const TODAY_KEY = initialCalendarDays.find((d) => d.isToday)?.key ?? "aug-31";
 
 type NotchDemoContextValue = {
   focusPhase: FocusPhase;
@@ -44,6 +45,9 @@ type NotchDemoContextValue = {
   liveEvent: ScheduledEvent | null;
   todos: TodoItem[];
   events: ScheduledEvent[];
+  calendarDays: DayBand[];
+  selectedDayKey: string;
+  setSelectedDayKey: (key: string) => void;
   setFocusStyle: (style: FocusTimerStyle) => void;
   toggleFocusExpanded: () => void;
   startFocus: (item?: FocusableItem | null) => void;
@@ -86,7 +90,6 @@ const INITIAL_TODOS: TodoItem[] = [
 ];
 
 export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderProps) {
-  const reducedMotion = useReducedMotion();
   const [focusPhase, setFocusPhase] = useState<FocusPhase>("idle");
   const [focusExpanded, setFocusExpanded] = useState(false);
   const [focusStyle, setFocusStyle] = useState<FocusTimerStyle>("blocks");
@@ -95,9 +98,14 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
   const [breakSecondsLeft, setBreakSecondsLeft] = useState(BREAK_SECONDS);
   const [totalSeconds, setTotalSeconds] = useState(DEFAULT_FOCUS_SECONDS);
   const [todos, setTodos] = useState<TodoItem[]>(INITIAL_TODOS);
-  const [events, setEvents] = useState<ScheduledEvent[]>(initialTodayEvents);
+  const [calendarDays, setCalendarDays] = useState<DayBand[]>(initialCalendarDays);
+  const [selectedDayKey, setSelectedDayKey] = useState(TODAY_KEY);
   const [showAddSheet, setShowAddSheet] = useState(false);
 
+  const events = useMemo(
+    () => calendarDays.find((d) => d.isToday)?.events ?? [],
+    [calendarDays],
+  );
   const liveEvent = useMemo(() => getLiveEvent(events), [events]);
   const focusActive = focusPhase !== "idle";
   const progress = totalSeconds > 0 ? 1 - secondsLeft / totalSeconds : 0;
@@ -173,6 +181,7 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
     }) => {
       const duration = input.durationMinutes ?? 60;
       const start = DEMO_NOW_MINUTES + 60;
+      const targetKey = input.dayKey ?? selectedDayKey ?? TODAY_KEY;
       const newEvent: ScheduledEvent = {
         id: `evt-${Date.now()}`,
         title: input.title,
@@ -181,9 +190,13 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
         category: input.category ?? resolveCategory(input.title),
         collaborators: input.collaborators,
       };
-      setEvents((list) => [...list, newEvent]);
+      setCalendarDays((days) =>
+        days.map((day) =>
+          day.key === targetKey ? { ...day, events: [...day.events, newEvent] } : day,
+        ),
+      );
     },
-    [],
+    [selectedDayKey],
   );
 
   const jumpToIntent = useCallback(() => {
@@ -191,7 +204,7 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
   }, [onTabChange]);
 
   useEffect(() => {
-    if (focusPhase === "idle" || reducedMotion) return;
+    if (focusPhase === "idle") return;
 
     const interval = window.setInterval(() => {
       if (focusPhase === "work") {
@@ -224,7 +237,7 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
     }, 1000);
 
     return () => window.clearInterval(interval);
-  }, [focusPhase, reducedMotion]);
+  }, [focusPhase]);
 
   const value = useMemo<NotchDemoContextValue>(
     () => ({
@@ -241,6 +254,9 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
       liveEvent,
       todos,
       events,
+      calendarDays,
+      selectedDayKey,
+      setSelectedDayKey,
       setFocusStyle,
       toggleFocusExpanded,
       startFocus,
@@ -267,6 +283,8 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
       liveEvent,
       todos,
       events,
+      calendarDays,
+      selectedDayKey,
       toggleFocusExpanded,
       startFocus,
       endFocus,

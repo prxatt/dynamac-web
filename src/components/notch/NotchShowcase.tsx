@@ -107,7 +107,7 @@ export function NotchShowcase({
               {active === "now-playing" ? (
                 <NowPlayingRow glassStyle={glassStyle} />
               ) : active === "intent" ? (
-                <IntentPanelCompact />
+                <IntentPanelCompact layoutIdPrefix={`${instanceId}-intent`} />
               ) : (
                 <ShelfPanelCompact />
               )}

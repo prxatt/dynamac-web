@@ -17,6 +17,7 @@ export function ShowcaseFrame({ children, className = "" }: ShowcaseFrameProps) 
     <div className={`w-full min-w-0 ${className}`}>
       <div className="overflow-x-auto overflow-y-visible [-webkit-overflow-scrolling:touch]">
         <div
+          className="mx-auto"
           style={{
             width: NOTCH_SHOWCASE.width,
             minWidth: NOTCH_SHOWCASE.width,
