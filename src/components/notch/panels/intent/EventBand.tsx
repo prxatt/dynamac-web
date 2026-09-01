@@ -86,29 +86,32 @@ export function EventBand({
         style={{
           backgroundColor: accent,
           opacity: isPast && !completedView ? 0.78 : 1,
-          outline: isLive ? "1.5px solid rgba(26,26,24,0.2)" : undefined,
+          outline: isLive ? "2px solid rgba(26,26,24,0.28)" : undefined,
+          boxShadow: isLive ? "0 2px 8px rgba(26,26,24,0.12)" : undefined,
+          zIndex: isLive ? 2 : 1,
           ...style,
         }}
-        title={event.title}
+        title={`${event.title} · ${minutesToLabel(event.startMinutes)} – ${minutesToLabel(event.endMinutes)}`}
       >
-        <div className="flex flex-wrap items-center gap-1">
-          <span className="rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
+        <div className="flex min-w-0 items-center gap-1">
+          <span className="shrink-0 rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
             {label}
           </span>
           {isLive ? (
-            <span className="rounded-full bg-black/25 px-1.5 py-px text-[6px] font-bold uppercase text-white">
+            <span className="shrink-0 rounded-full bg-black/25 px-1.5 py-px text-[6px] font-bold uppercase text-white">
               Live
             </span>
           ) : null}
+          <span className="min-w-0 flex-1 truncate text-[9px] font-bold leading-snug text-white">
+            {event.title}
+          </span>
         </div>
-        <p className="mt-0.5 line-clamp-2 text-[9px] font-bold leading-snug text-white">
-          {event.title}
-        </p>
         <p className="mt-1 flex items-center gap-1 text-[7px] font-semibold text-white/95">
-          <span>{minutesToLabel(event.startMinutes)}</span>
-          <span className="rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold">
+          <span className="shrink-0">{minutesToLabel(event.startMinutes)}</span>
+          <span className="shrink-0 rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold">
             {duration}m
           </span>
+          <span className="shrink-0 truncate">{minutesToLabel(event.endMinutes)}</span>
         </p>
       </button>
     );

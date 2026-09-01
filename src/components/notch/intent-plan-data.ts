@@ -337,12 +337,18 @@ export function timelinePosition(startMinutes: number): number {
   return ((startMinutes - CALENDAR_TIMELINE_START) / span) * 100;
 }
 
-export function timelineWidth(startMinutes: number, endMinutes: number): number {
+export function timelineWidth(
+  startMinutes: number,
+  endMinutes: number,
+  options?: { isLive?: boolean; isUpcoming?: boolean },
+): number {
   const span = CALENDAR_TIMELINE_END - CALENDAR_TIMELINE_START;
   const visibleStart = Math.max(startMinutes, CALENDAR_TIMELINE_START);
   const visibleEnd = Math.min(endMinutes, CALENDAR_TIMELINE_END);
-  const minutes = Math.max(visibleEnd - visibleStart, 30);
-  return Math.min(92, (minutes / span) * 100);
+  const minutes = Math.max(visibleEnd - visibleStart, 60);
+  const raw = (minutes / span) * 100;
+  const min = options?.isLive ? 52 : options?.isUpcoming ? 40 : 34;
+  return Math.min(96, Math.max(raw, min));
 }
 
 export function isBeforeTimelineWindow(minutes: number): boolean {
@@ -398,34 +404,63 @@ export type TimelineLanePlacement = {
   width: number;
   early: boolean;
   late: boolean;
+  isLive: boolean;
+  laneHeight: number;
 };
 
-export function assignTimelineLanes(events: ScheduledEvent[]): {
+const TIMELINE_LANE_HEIGHT = 48;
+const TIMELINE_LIVE_LANE_HEIGHT = 54;
+
+export function assignTimelineLanes(
+  events: ScheduledEvent[],
+  nowMinutes = DEMO_NOW_MINUTES,
+): {
   placements: Map<string, TimelineLanePlacement>;
   laneCount: number;
+  timelineHeight: number;
 } {
-  const sorted = [...events].sort((a, b) => a.startMinutes - b.startMinutes);
+  const sorted = [...events].sort((a, b) => {
+    const aLive = isEventLive(a, nowMinutes);
+    const bLive = isEventLive(b, nowMinutes);
+    if (aLive !== bLive) return aLive ? -1 : 1;
+    return a.startMinutes - b.startMinutes;
+  });
   const laneEnds: number[] = [];
+  const laneHeights: number[] = [];
   const placements = new Map<string, TimelineLanePlacement>();
 
   for (const event of sorted) {
+    const live = isEventLive(event, nowMinutes);
+    const upcoming = isEventUpcoming(event, nowMinutes);
     let lane = 0;
     while (lane < laneEnds.length && laneEnds[lane] > event.startMinutes) {
       lane += 1;
     }
-    if (lane === laneEnds.length) laneEnds.push(0);
+    if (lane === laneEnds.length) {
+      laneEnds.push(0);
+      laneHeights.push(TIMELINE_LANE_HEIGHT);
+    }
     laneEnds[lane] = event.endMinutes;
+    if (live) laneHeights[lane] = TIMELINE_LIVE_LANE_HEIGHT;
 
     placements.set(event.id, {
       lane,
       left: timelinePosition(event.startMinutes),
-      width: timelineWidth(event.startMinutes, event.endMinutes),
+      width: timelineWidth(event.startMinutes, event.endMinutes, { isLive: live, isUpcoming: upcoming }),
       early: isBeforeTimelineWindow(event.startMinutes),
       late: isAfterTimelineWindow(event.startMinutes),
+      isLive: live,
+      laneHeight: live ? TIMELINE_LIVE_LANE_HEIGHT : TIMELINE_LANE_HEIGHT,
     });
   }
 
-  return { placements, laneCount: Math.max(laneEnds.length, 1) };
+  const laneCount = Math.max(laneEnds.length, 1);
+  let timelineHeight = 0;
+  for (let i = 0; i < laneCount; i += 1) {
+    timelineHeight += laneHeights[i] ?? TIMELINE_LANE_HEIGHT;
+  }
+
+  return { placements, laneCount, timelineHeight: Math.max(timelineHeight, TIMELINE_LANE_HEIGHT) };
 }
 
 export type FocusableItem =

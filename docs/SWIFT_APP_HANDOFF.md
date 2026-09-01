@@ -1,163 +1,195 @@
 # DynaMac Swift App — Agent Handoff Prompt
 
-Copy everything below the line into a new Cursor agent session opened in the **DynaMac** macOS app repo (`/Users/prattmajmudar/Desktop/DynaMac` or your local clone).
+Copy everything below the line into a new Cursor agent session opened in the **DynaMac** macOS app repo (`/Users/prattmajmudar/Desktop/DynaMac`).
 
 ---
 
 ## Mission
 
-Bring the **native DynaMac Swift app** up to parity with the **dynamac-web marketing notch showcase**, which is now the **source of truth** for UI/UX. The web version is a fast iteration surface; the Mac app should match its behavior, layout, and Bauhaus visual language.
+Bring the **native DynaMac Swift app** to **100% parity** with the **dynamac-web** notch showcase — visuals, motion, colors, icons, interactions. Web is source of truth; Swift follows.
 
-**Do not** ship the old gray/dim Intent UI. **Do not** use modal dimmed overlays for add/edit sheets. **Do not** use native macOS dropdowns for category/time pickers in the notch.
+**Do not** ship dim gray Intent UI, modal overlays, native dropdowns, or crushed calendar cards.
 
-## Reference implementation (web)
+## Reference (web)
 
-- **Repo:** `dynamac-web` (GitHub: `prxatt/dynamac-web`)
-- **Preview PR:** check latest `feat/intent-notch-parity` PR for Vercel URL
-- **Key paths:**
-  - `src/components/notch/NotchShowcase.tsx` — 760px shell, three tabs
-  - `src/components/notch/panels/IntentPanelCompact.tsx` — Intent layout
-  - `src/components/notch/panels/intent/TodayList.tsx` — Today + orange frame
-  - `src/components/notch/panels/intent/CalendarBands.tsx` — week timeline strips
-  - `src/components/notch/panels/intent/CompletedList.tsx` — completed toggle views
-  - `src/components/notch/panels/intent/ItemSheet.tsx` — inline add/view/edit (no overlay)
-  - `src/components/notch/panels/intent/SheetPickers.tsx` — custom category/time pickers
-  - `src/components/notch/panels/intent/TodoRow.tsx` — todos use **checkmark**, not play
-  - `src/components/notch/panels/intent/EventBand.tsx` — events use **play** for upcoming only
-  - `src/components/notch/panels/FocusTimer.tsx` — 60-box quadrant, blocks/span, pomodoro break
-  - `src/components/notch/panels/LiveStrip.tsx` — solid Bauhaus strip under music
-  - `src/components/notch/intent-plan-data.ts` — demo data, colors, categories
-  - `src/components/notch/NotchDemoContext.tsx` — state model
+- **Repo:** `dynamac-web` · branch `feat/intent-notch-parity` · PR #4
+- **Handoff:** `docs/SWIFT_APP_HANDOFF.md` (this file)
+- **Key web files:**
+  - `src/components/notch/panels/intent/CalendarBands.tsx` — scroll days + today preview row
+  - `src/components/notch/panels/intent/CalendarDateLabel.tsx` — black ink dates
+  - `src/components/notch/panels/intent/TodayList.tsx` — time-aware agenda
+  - `src/components/notch/panels/intent/EventBand.tsx` — full + timeline variants
+  - `src/components/notch/panels/intent/TodoRow.tsx`
+  - `src/components/notch/panels/intent/ItemSheet.tsx` + `SheetPickers.tsx`
+  - `src/components/notch/panels/FocusTimer.tsx`
+  - `src/components/notch/intent-plan-data.ts` — colors, timeline, lane packing
+  - `src/components/notch/NotchDemoContext.tsx`
 
-## Swift repo map (start here)
+## Swift repo map
 
 | Concern | Path |
 |---------|------|
-| Brand / chrome | `boringNotch/Dynamac/DynamacBrand.swift`, `LiquidGlass.swift` |
-| Open notch size | `boringNotch/sizing/matters.swift` (`openNotchSize`) |
+| Intent / Plan | `boringNotch/Dynamac/PlanFocusView.swift`, `boringNotch/Dynamac/Intent/*` |
+| Brand / glass | `boringNotch/Dynamac/DynamacBrand.swift`, `LiquidGlass.swift` |
+| Notch size | `boringNotch/sizing/matters.swift` |
 | Now Playing | `boringNotch/components/Notch/NotchHomeView.swift` |
-| Plan / Intent | `boringNotch/Dynamac/PlanFocusView.swift` (or equivalent) |
-| Agents LIVE | `boringNotch/Dynamac/HomeAgentsTasksPanel.swift` |
-| Engineering constraints | `docs/ENGINEERING.md` |
-
-## Visual language (locked)
-
-### Bauhaus Intent
-- **Bold solid color blocks** — no gradients on Intent/Live/Calendar surfaces
-- **Category colors** (white type on blocks):
-  - Work `#2b5ea8`
-  - Personal `#d4556a`
-  - Hobby `#7b4fd4`
-  - Activity `#3daa3d` (replaces Admin)
-  - Custom categories: user-created with color picker
-- **Today panel:** warm orange fill `#f0a030`, dark ink `#1a1a18` always for dates, `2px` dark outline frame
-- **Calendar panel:** same orange frame as Today
-- **Month accent:** unique color per month on left bar only — date numerals always `#1a1a18`
-
-### Today tab layout
-- Left **date rail:** weekday, `09.01`, `SEP`, ‹ › day navigation (Today only)
-- Right: **time-aware agenda** when viewing today:
-  - Live events first, then upcoming events (past events hidden)
-  - Timed todos still due/upcoming; untimed todos after events
-- **Todos:** category pill + Todo pill + title; **checkmark button** on right
-- **Events:** play only for **upcoming**; Live pill when in progress
-
-### Calendar tab layout
-- Vertical scroll of day rows; auto-scroll to today on open
-- Left: **CalendarDateLabel** — black ink always (day abbr, numeral, month)
-- Right: timeline **8 AM – 6 PM** (markers 8, 11, 14, 17, 18)
-- Events before 8 / after 6 pin to edges but remain visible
-- **Lane packing:** overlapping events stack in separate lanes; `overflow-hidden` per row (never bleed into next day)
-- Untimed/timed todos in left gutter; events use same `EventBand`/`TodoRow` timeline variant as Today
-- Today row filters to live + upcoming events only
-
-### Completed view (✓ button left of +)
-- Toggle button: orange when inactive, black when active
-- **Today completed:** same orange frame + date rail; shows checked todos + **past events**
-- **Calendar completed:** framed list grouped by day; checked todos + **past events** per day
-- Tap row → inline detail sheet; tap check → uncheck
-
-### Item sheet (add / view / edit)
-- **Replaces** the list inline — **no dimmed modal overlay**
-- Compact: header (date + title), task/event toggle, title field, 3-column meta (Category · Time/Duration · Status/Start)
-- **Custom pickers** for category (built-ins + "New category") and time presets — not `NSPopUpButton` / SwiftUI `Picker` menu style
-- Actions: Cancel | Create/Save; view mode: Delete | Edit | Focus (events only)
-
-### Focus timer (right column)
-- **60 horizontal micro-boxes** always visible
-- Blocks / Span toggle
-- Fills with active category color during focus
-- **Pomodoro:** 5-min break after work phase if task remains
-- Play on event row starts focus; todos complete via checkmark only
-
-### Now Playing
-- Smaller album art, more gap before live strip
-- **Live strip:** full-width solid block under music (same style as EventBand)
-- Agent orbs: Cursor blue `#48a8fa`, Claude orange `#f5852e`
-
-### Shelf
-- Keep existing compact shelf; polish to match warm/high-contrast chrome
-
-## Demo data (Sep 1, 2026 — Tuesday)
-
-- Today key: `sep-1`
-- Sample todos: "Record tab demos" (hobby), "Wire Stripe checkout" (activity, done)
-- Sample events: Investor pitch prep (9–11), Core architecture planning (13:15–14:00), Design review (14:00–15:00 live at demo time 14:15)
-
-## Interaction rules
-
-| Item | Primary action | Secondary |
-|------|----------------|-----------|
-| Todo (open) | Tap row → detail sheet | Checkmark → complete |
-| Todo (done) | Tap row → preview | Checkmark → undo |
-| Event (upcoming) | Tap row → detail | Play → focus |
-| Event (live) | Tap row → detail | No play |
-| Event (past) | Shown in completed view | No play |
-| + button | Inline add sheet | — |
-| ✓ button | Toggle completed list | — |
-
-## Implementation order (suggested)
-
-1. **Intent panel frame** — orange today / tinted calendar + outline (match web `IntentPanelFrame`)
-2. **Today list** — date rail, TodoRow, EventBand parity
-3. **Item sheet** — inline, custom pickers, Activity category, custom category creation
-4. **Completed toggle** — Today + Calendar completed lists including past events
-5. **Calendar strips** — timeline layout + frame
-6. **Focus timer** — 60-box grid, pomodoro, blocks/span
-7. **Live strip** — solid block under Now Playing
-8. **Agents** — orb colors, LIVE inset
-9. **Shelf** — visual cohesion pass
-
-## Anti-patterns (explicitly rejected)
-
-- Dim gray Intent backgrounds that reduce readability
-- White box outlines on live events
-- Play button on todos
-- Empty dark circle "complete" buttons on open todos
-- Scrollbars visible in Today/Calendar lists
-- Full-screen modal overlays for add/edit
-- Native OS dropdown menus for notch pickers
-- Copying old reference mocks literally instead of the current web notch
-
-## Process
-
-1. Read web files listed above before coding Swift
-2. Implement in small phases; compare side-by-side with Vercel preview
-3. Web changes land first; app follows
-4. Respect `openNotchSize` and existing `DynamacChrome` tokens — extend, don't scatter one-off colors
-5. Run/build the Mac app after each phase
-
-## Success criteria
-
-- [ ] Intent Today matches web: orange frame, date rail, check vs play semantics
-- [ ] Calendar has matching outline frame and thin timeline strips
-- [ ] ✓ completed view works on both tabs (todos + past events)
-- [ ] Inline item sheet with custom pickers (Category, Time, Status)
-- [ ] Activity category + custom category creation
-- [ ] Focus 60-box quadrant + pomodoro break
-- [ ] Live strip solid Bauhaus block
-- [ ] No regressions to notch open/close animation or tab switching
+| Agents | `boringNotch/Dynamac/HomeAgentsTasksPanel.swift` |
 
 ---
 
-*Generated from dynamac-web Intent iteration. Update this doc when web UX changes.*
+## Visual language (100% locked)
+
+### Colors
+| Token | Value | Use |
+|-------|-------|-----|
+| Today/Calendar frame | `#f0a030` | Intent panel fill |
+| Ink | `#1a1a18` | **All date text — always black** |
+| Outline | `2px rgba(26,26,24,0.22)` | Panel frame |
+| Work | `#2b5ea8` | Category block |
+| Personal | `#d4556a` | Category block |
+| Hobby | `#7b4fd4` | Category block |
+| Activity | `#3daa3d` | Category block |
+| Month accents | `MONTH_COLORS` in intent-plan-data | Left bar only — never on date numerals |
+| Coral CTA | site `--color-coral-pop` | + button |
+| Agent Cursor | `#48a8fa` | Agent orb |
+| Agent Claude | `#f5852e` | Agent orb |
+
+### Typography (notch Intent)
+- Date numeral: **17px bold** tabular
+- Day abbr: 5px uppercase tracking
+- Month: 7px bold uppercase
+- Event title: **10px bold** (Today/full), **9px** (timeline)
+- Pills: 6px bold uppercase on `bg black/20`
+- Time meta: 7px semibold
+
+### Icons & controls
+- **Todo complete:** circle checkmark (white ring when open, filled white + colored ✓ when done)
+- **Event focus:** ▶ in `bg black/30` circle — upcoming only
+- **✓ completed toggle:** orange `#f0a030` inactive → black active
+- **+ add:** coral filled circle
+- **Date nav (Today only):** ‹ › in `bg black/12` circles
+- **No** empty dark circles on open todos
+- **No** white box outline on live events
+
+### Motion (match web springs)
+- Tab switch: spring `visualDuration 0.32, bounce 0.16` + `layoutId` pill
+- List ↔ sheet: opacity + `y: 4` over `0.18s`
+- Focus play: `scale 1.05` hover, `0.95` press
+- Event/todo row: `brightness 1.04` hover
+- Calendar scroll-to-today: smooth `scrollIntoView`
+- Notch open/close: preserve existing app animation — do not regress
+
+---
+
+## Today tab
+
+- Orange frame + date rail with **‹ › navigation (Today only)**
+- **Time-aware list** when viewing today:
+  1. Live events
+  2. Upcoming events (hide past)
+  3. Upcoming timed todos
+  4. Untimed todos
+- Full `EventBand` + `TodoRow` — never crushed pills
+- Todos: checkmark only · Events: play only when upcoming
+
+## Calendar tab
+
+- **Same UX:** vertical scroll through day rows (no ‹ › on Calendar)
+- Auto-scroll to today on open
+- **Today row:** full `EventBand`/`TodoRow` previews (identical to Today tab) — user must read live/upcoming tasks without opening
+- **Other days:** timeline 8 AM–6 PM (markers 8, 11, 14, 17, 18)
+  - Lane packing for overlaps; `overflow-hidden` per row
+  - Timeline cards: min-width 34% (40% upcoming, 52% live)
+  - Title on one line with **truncate + ellipsis** (never mid-word line-clamp clip)
+  - Full title in accessibility hint / tooltip
+  - Live: `2px` dark outline + subtle shadow, taller lane (54px)
+- Dates: `CalendarDateLabel` — **all black ink**, month color on 2px left bar only
+- Off-hours events pin to timeline edges but remain visible
+
+## Completed (✓)
+
+- Toggle: orange → black when active
+- Today + Calendar completed lists: done todos + past events
+- Inline sheet — no modal overlay
+
+## Item sheet
+
+- Inline replaces list; custom pickers (not native menus)
+- Category + color picker for new categories
+- Time slider 6 AM–10 PM; duration chips 30m/1h/90m
+- No time on add → third field shows **Flexible** (not Status)
+
+## Focus timer
+
+- 60-box quadrant, blocks/span toggle
+- Category color fill during focus
+- 5-min pomodoro break after work phase
+
+## Now Playing
+
+- Solid Bauhaus live strip under music (match EventBand)
+- Smaller album art, agent orb colors as above
+
+---
+
+## Implementation phases
+
+### Phase 1 — Foundation
+- [ ] `IntentPanelFrame` orange + outline
+- [ ] Category colors + `colorForCategory` helper
+- [ ] `CalendarDateLabel` black ink
+
+### Phase 2 — Today
+- [ ] Date rail + ‹ › nav
+- [ ] `TodoRow` + `EventBand` full cards
+- [ ] Time-aware filtering (`sortEventsForAgenda`, `filterTodosForAgenda`)
+
+### Phase 3 — Calendar
+- [ ] Vertical day scroll + auto-scroll today
+- [ ] Today row = full preview cards (not timeline crush)
+- [ ] Other days = timeline + lane packing (`assignTimelineLanes`)
+- [ ] Hour ruler 8–18
+
+### Phase 4 — Sheet & pickers
+- [ ] Inline `ItemSheet` add/view/edit
+- [ ] Custom category/time/duration pickers + color picker
+
+### Phase 5 — Completed + Focus
+- [ ] ✓ toggle views
+- [ ] 60-box focus timer + pomodoro
+- [ ] Play/check semantics
+
+### Phase 6 — Motion & polish
+- [ ] Spring tab transitions
+- [ ] Sheet crossfade
+- [ ] Hover/press micro-interactions
+- [ ] Side-by-side compare with Vercel preview
+
+### Phase 7 — Now Playing + Agents + Shelf
+- [ ] Live strip solid block
+- [ ] Agent orb colors
+- [ ] Shelf cohesion pass
+
+---
+
+## Anti-patterns
+
+- Dim gray Intent backgrounds
+- Month-colored date numerals on orange (invisible text)
+- `maxHeight` clipping on calendar cards
+- `line-clamp` mid-word truncation on titles
+- Timeline pills instead of readable previews on today row
+- Modal overlays · native dropdowns
+- Play on todos · empty complete circles
+- ‹ › navigation on Calendar tab
+
+## Success criteria
+
+- [ ] Pixel-close to web at `openNotchSize`
+- [ ] Live event readable on Calendar today row without tap
+- [ ] All animations and colors match web spec
+- [ ] No notch regression on open/close or tab switch
+
+---
+
+*Last updated from dynamac-web Intent iteration. Re-read web files before each phase.*

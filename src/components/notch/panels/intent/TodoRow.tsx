@@ -13,8 +13,11 @@ type TodoRowProps = {
   active?: boolean;
   focusProgress?: number;
   completedView?: boolean;
+  timeline?: boolean;
   onSelect?: () => void;
-  onToggle: () => void;
+  onToggle?: () => void;
+  className?: string;
+  style?: React.CSSProperties;
 };
 
 export function TodoRow({
@@ -22,12 +25,43 @@ export function TodoRow({
   active = false,
   focusProgress = 0,
   completedView = false,
+  timeline = false,
   onSelect,
   onToggle,
+  className = "",
+  style,
 }: TodoRowProps) {
   const { customCategories } = useNotchDemo();
   const accent = colorForCategory(todo.category, customCategories);
   const label = labelForCategory(todo.category, customCategories);
+
+  if (timeline) {
+    return (
+      <button
+        type="button"
+        onClick={onSelect}
+        className={`max-w-[44%] rounded-xl px-2 py-1.5 text-left transition-[filter] hover:brightness-[1.05] ${className}`}
+        style={{
+          backgroundColor: accent,
+          opacity: todo.done && !completedView ? 0.78 : 1,
+          ...style,
+        }}
+        title={todo.title}
+      >
+        <div className="flex min-w-0 items-center gap-1">
+          <span className="shrink-0 rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
+            {label}
+          </span>
+          <span className="shrink-0 rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
+            {todo.timeLabel ? todo.timeLabel : "Todo"}
+          </span>
+          <span className="min-w-0 flex-1 truncate text-[9px] font-bold leading-snug text-white">
+            {todo.title}
+          </span>
+        </div>
+      </button>
+    );
+  }
 
   return (
     <div
@@ -87,7 +121,7 @@ export function TodoRow({
         type="button"
         onClick={(e) => {
           e.stopPropagation();
-          onToggle();
+          onToggle?.();
         }}
         className="grid h-5 w-5 shrink-0 place-items-center rounded-full transition-colors"
         style={{
