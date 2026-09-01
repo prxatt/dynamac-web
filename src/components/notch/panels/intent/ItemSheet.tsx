@@ -8,6 +8,7 @@ import {
   eventDurationMinutes,
   formatBandDate,
   labelForCategory,
+  labelToMinutes,
   minutesToLabel,
   resolveCategory,
   TODAY_PANEL_COLOR,
@@ -17,9 +18,10 @@ import {
 } from "@/components/notch/intent-plan-data";
 import {
   CategoryPicker,
+  DurationPicker,
   MetaField,
   StatusPicker,
-  TimePicker,
+  TimeSlider,
   type TaskStatus,
 } from "@/components/notch/panels/intent/SheetPickers";
 
@@ -75,10 +77,13 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
   const [category, setCategory] = useState<TaskCategory>(
     () => todo?.category ?? event?.category ?? "work",
   );
-  const [taskTime, setTaskTime] = useState(() => todo?.timeLabel ?? "");
+  const [taskTimeMinutes, setTaskTimeMinutes] = useState<number | null>(() =>
+    labelToMinutes(todo?.timeLabel ?? ""),
+  );
   const [status, setStatus] = useState<TaskStatus>(() => (todo?.done ? "Done" : "Open"));
+  const [startMinutes, setStartMinutes] = useState(() => event?.startMinutes ?? 9 * 60);
   const [duration, setDuration] = useState(() =>
-    event ? String(eventDurationMinutes(event)) : "45",
+    event ? eventDurationMinutes(event) : 60,
   );
 
   if (!isAdd && !todo && !event) return null;
@@ -95,6 +100,18 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
   const isTodoItem = itemKind === "todo" || itemKind === "task";
   const surface = isAdd ? panelTint ?? TODAY_PANEL_COLOR : colorForCategory(category, customCategories);
   const ink = isAdd ? "#1a1a18" : "#ffffff";
+  const taskTimeLabel = taskTimeMinutes !== null ? minutesToLabel(taskTimeMinutes) : "";
+  const showStatusField = isTodoItem && (mode === "edit" || (mode === "add" && taskTimeMinutes !== null));
+  const thirdFieldLabel = isTodoItem
+    ? showStatusField
+      ? "Status"
+      : taskTimeMinutes !== null
+        ? "Scheduled"
+        : "When"
+    : editing
+      ? "Duration"
+      : "Ends";
+  const endMinutes = startMinutes + duration;
 
   function handleSave() {
     const trimmed =
@@ -106,14 +123,15 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
         addTodo({
           title: trimmed,
           category,
-          timeLabel: taskTime || undefined,
+          timeLabel: taskTimeLabel || undefined,
           dayKey: addDayKey ?? todayBand.key,
         });
       } else {
         addEvent({
           title: trimmed,
           category,
-          durationMinutes: Number(duration) || 45,
+          durationMinutes: duration,
+          startMinutes,
           dayKey: addDayKey,
         });
       }
@@ -127,7 +145,7 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
       updateTodo(todo.id, {
         title: trimmed,
         category,
-        timeLabel: taskTime || undefined,
+        timeLabel: taskTimeLabel || undefined,
       });
       if (wasDone !== shouldBeDone) toggleTodo(todo.id);
       setMode("view");
@@ -138,7 +156,8 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
       updateEvent(eventDayKey, event.id, {
         title: trimmed,
         category,
-        durationMinutes: Number(duration) || eventDurationMinutes(event),
+        durationMinutes: duration,
+        startMinutes,
       });
       setMode("view");
     }
@@ -169,7 +188,7 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -4 }}
       transition={{ duration: 0.18 }}
-      className="overflow-hidden rounded-xl p-2.5"
+      className="overflow-visible rounded-xl p-2.5"
       style={{ backgroundColor: surface, color: ink }}
     >
       <div className="mb-2.5 flex items-start justify-between gap-3">
@@ -253,37 +272,40 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
         </MetaField>
 
         <MetaField
-          label={itemKind === "event" ? "Duration" : "Time"}
+          label={itemKind === "event" ? "Start" : "Time"}
           ink={ink}
           isAdd={isAdd}
         >
-          {itemKind === "event" ? (
-            editing ? (
-              <input
-                type="number"
-                value={duration}
-                onChange={(e) => setDuration(e.target.value)}
-                className="w-full bg-transparent text-[9px] font-bold outline-none"
-                style={{ color: ink }}
-                min={15}
-                step={15}
+          {editing ? (
+            itemKind === "event" ? (
+              <TimeSlider
+                valueMinutes={startMinutes}
+                onChange={(m) => setStartMinutes(m ?? 9 * 60)}
+                ink={ink}
+                allowClear={false}
               />
             ) : (
-              <span>{duration}m</span>
+              <TimeSlider
+                valueMinutes={taskTimeMinutes}
+                onChange={setTaskTimeMinutes}
+                ink={ink}
+              />
             )
-          ) : editing ? (
-            <TimePicker value={taskTime} onChange={setTaskTime} ink={ink} isAdd={isAdd} />
+          ) : itemKind === "event" ? (
+            <span>{event ? minutesToLabel(event.startMinutes) : "—"}</span>
           ) : (
-            <span>{taskTime || "Anytime"}</span>
+            <span>{taskTimeLabel || "Anytime"}</span>
           )}
         </MetaField>
 
-        <MetaField label={itemKind === "event" ? "Start" : "Status"} ink={ink} isAdd={isAdd}>
+        <MetaField label={thirdFieldLabel} ink={ink} isAdd={isAdd}>
           {itemKind === "event" ? (
-            <span>
-              {event ? minutesToLabel(event.startMinutes) : "—"}
-            </span>
-          ) : editing ? (
+            editing ? (
+              <DurationPicker valueMinutes={duration} onChange={setDuration} ink={ink} />
+            ) : (
+              <span>{minutesToLabel(endMinutes)}</span>
+            )
+          ) : showStatusField && editing ? (
             <StatusPicker
               value={status}
               onChange={setStatus}
@@ -292,7 +314,13 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
               disabled={mode === "add"}
             />
           ) : (
-            <span>{todo?.done ? "Done" : "Open"}</span>
+            <span>
+              {taskTimeMinutes !== null
+                ? taskTimeLabel
+                : mode === "add"
+                  ? "Flexible"
+                  : "Anytime"}
+            </span>
           )}
         </MetaField>
       </div>

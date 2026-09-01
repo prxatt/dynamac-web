@@ -55,7 +55,7 @@ type NotchDemoContextValue = {
   events: ScheduledEvent[];
   calendarDays: DayBand[];
   customCategories: Record<string, CustomCategory>;
-  addCustomCategory: (label: string) => string;
+  addCustomCategory: (label: string, color?: string) => string;
   selectedDayKey: string;
   setSelectedDayKey: (key: string) => void;
   setFocusStyle: (style: FocusTimerStyle) => void;
@@ -75,6 +75,7 @@ type NotchDemoContextValue = {
     title: string;
     category?: TaskCategory;
     durationMinutes?: number;
+    startMinutes?: number;
     collaborators?: string[];
     dayKey?: string;
   }) => void;
@@ -95,6 +96,7 @@ type NotchDemoContextValue = {
       title?: string;
       category?: TaskCategory;
       durationMinutes?: number;
+      startMinutes?: number;
       collaborators?: string[];
     },
   ) => void;
@@ -203,14 +205,14 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
     setTodos((list) => list.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
   }, []);
 
-  const addCustomCategory = useCallback((label: string) => {
+  const addCustomCategory = useCallback((label: string, color?: string) => {
     const trimmed = label.trim();
     const id = customCategoryId(trimmed);
     setCustomCategories((prev) => {
       if (prev[id]) return prev;
-      const color =
+      const fallback =
         CUSTOM_CATEGORY_PALETTE[Object.keys(prev).length % CUSTOM_CATEGORY_PALETTE.length];
-      return { ...prev, [id]: { id, label: trimmed, color } };
+      return { ...prev, [id]: { id, label: trimmed, color: color ?? fallback } };
     });
     return id;
   }, []);
@@ -244,11 +246,12 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
       title: string;
       category?: TaskCategory;
       durationMinutes?: number;
+      startMinutes?: number;
       collaborators?: string[];
       dayKey?: string;
     }) => {
       const duration = input.durationMinutes ?? 60;
-      const start = DEMO_NOW_MINUTES + 60;
+      const start = input.startMinutes ?? DEMO_NOW_MINUTES + 60;
       const targetKey = input.dayKey ?? selectedDayKey ?? TODAY_KEY;
       const newEvent: ScheduledEvent = {
         id: `evt-${Date.now()}`,
@@ -296,6 +299,7 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
         title?: string;
         category?: TaskCategory;
         durationMinutes?: number;
+        startMinutes?: number;
         collaborators?: string[];
       },
     ) => {
@@ -307,12 +311,14 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
             events: day.events.map((event) => {
               if (event.id !== id) return event;
               const duration = patch.durationMinutes ?? event.endMinutes - event.startMinutes;
+              const startMinutes = patch.startMinutes ?? event.startMinutes;
               return {
                 ...event,
                 title: patch.title ?? event.title,
                 category: patch.category ?? event.category,
                 collaborators: patch.collaborators ?? event.collaborators,
-                endMinutes: event.startMinutes + duration,
+                startMinutes,
+                endMinutes: startMinutes + duration,
               };
             }),
           };

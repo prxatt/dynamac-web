@@ -5,6 +5,7 @@ import { formatBandDate, type DayBand } from "@/components/notch/intent-plan-dat
 type DateRailProps = {
   day: DayBand;
   showTodayBadge?: boolean;
+  compact?: boolean;
   onPrev?: () => void;
   onNext?: () => void;
   canPrev?: boolean;
@@ -14,6 +15,7 @@ type DateRailProps = {
 export function DateRail({
   day,
   showTodayBadge = false,
+  compact = false,
   onPrev,
   onNext,
   canPrev = false,
@@ -22,22 +24,40 @@ export function DateRail({
   const showNav = onPrev && onNext;
 
   return (
-    <div className="flex w-[3.1rem] shrink-0 flex-col justify-between border-r border-black/12 pr-1 text-[#1a1a18]">
+    <div
+      className={`flex shrink-0 flex-col text-[#1a1a18] ${
+        compact
+          ? "w-[2.35rem] items-center justify-center text-center"
+          : "w-[3.1rem] justify-between border-r border-black/12 pr-1"
+      }`}
+    >
       <div>
-        <div className="flex items-center gap-0.5">
-          <p className="text-[5px] font-bold uppercase leading-none opacity-75">
-            {day.dayLabel}
+        {!compact ? (
+          <div className="flex items-center gap-0.5">
+            <p className="text-[5px] font-bold uppercase leading-none opacity-75">
+              {day.dayLabel}
+            </p>
+            {showTodayBadge ? (
+              <span className="rounded-full bg-black/12 px-1 py-px text-[4px] font-bold uppercase">
+                Today
+              </span>
+            ) : null}
+          </div>
+        ) : (
+          <p className="text-[5px] font-bold uppercase leading-none opacity-70">
+            {day.dayLabel.slice(0, 3)}
           </p>
-          {showTodayBadge ? (
-            <span className="rounded-full bg-black/12 px-1 py-px text-[4px] font-bold uppercase">
-              Today
-            </span>
-          ) : null}
-        </div>
-        <p className="mt-0.5 text-[14px] font-bold leading-none tabular-nums tracking-tight">
-          {formatBandDate(day)}
+        )}
+        <p
+          className={`font-bold leading-none tabular-nums tracking-tight ${
+            compact ? "text-[13px]" : "mt-0.5 text-[14px]"
+          }`}
+        >
+          {compact ? String(day.date).padStart(2, "0") : formatBandDate(day)}
         </p>
-        <p className="text-[8px] font-bold leading-none text-[#6b3f12]">{day.monthLabel}</p>
+        <p className={`font-bold leading-none ${compact ? "text-[6px]" : "text-[8px] text-[#6b3f12]"}`}>
+          {day.monthLabel}
+        </p>
       </div>
 
       {showNav ? (

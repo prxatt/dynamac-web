@@ -5,8 +5,14 @@ import {
   BUILTIN_CATEGORIES,
   CATEGORY_COLORS,
   CATEGORY_LABELS,
+  clampMinutes,
   colorForCategory,
+  CUSTOM_CATEGORY_PALETTE,
   labelForCategory,
+  minutesToLabel,
+  TIME_SLIDER_END,
+  TIME_SLIDER_START,
+  TIME_SLIDER_STEP,
   type CustomCategory,
   type TaskCategory,
 } from "@/components/notch/intent-plan-data";
@@ -71,11 +77,17 @@ function PickerShell({ ink, value, open, onToggle, dotColor, children }: PickerS
   );
 }
 
+const PICKER_PANEL_STYLE = {
+  backgroundColor: "#fff8eb",
+  border: "1.5px solid rgba(26,26,24,0.18)",
+  boxShadow: "0 6px 18px rgba(26,26,24,0.18)",
+} as const;
+
 type CategoryPickerProps = {
   value: TaskCategory;
   onChange: (category: TaskCategory) => void;
   customCategories: Record<string, CustomCategory>;
-  onCreateCategory: (label: string) => string;
+  onCreateCategory: (label: string, color: string) => string;
   ink: Ink;
   isAdd: boolean;
 };
@@ -86,17 +98,20 @@ export function CategoryPicker({
   customCategories,
   onCreateCategory,
   ink,
-  isAdd,
 }: CategoryPickerProps) {
   const [open, setOpen] = useState(false);
   const [creating, setCreating] = useState(false);
   const [draft, setDraft] = useState("");
+  const [draftColor, setDraftColor] = useState<string>(CUSTOM_CATEGORY_PALETTE[0]);
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
     function onPointerDown(e: MouseEvent) {
-      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+      if (!rootRef.current?.contains(e.target as Node)) {
+        setOpen(false);
+        setCreating(false);
+      }
     }
     document.addEventListener("mousedown", onPointerDown);
     return () => document.removeEventListener("mousedown", onPointerDown);
@@ -114,24 +129,22 @@ export function CategoryPicker({
   function commitCustom() {
     const trimmed = draft.trim();
     if (!trimmed) return;
-    pick(onCreateCategory(trimmed));
+    pick(onCreateCategory(trimmed, draftColor));
   }
 
   return (
-    <div ref={rootRef}>
+    <div ref={rootRef} className="relative z-30">
       <PickerShell
         ink={ink}
         value={labelForCategory(value, customCategories)}
         open={open}
         onToggle={() => setOpen((v) => !v)}
         dotColor={colorForCategory(value, customCategories)}
-      >
+      />
+      {open ? (
         <div
-          className="absolute left-0 right-0 top-[calc(100%+4px)] z-20 flex flex-col gap-0.5 rounded-lg p-1 shadow-lg"
-          style={{
-            backgroundColor: isAdd ? "#f5e6c8" : "rgba(0,0,0,0.88)",
-            color: ink,
-          }}
+          className="absolute bottom-[calc(100%+6px)] left-0 right-0 z-50 flex max-h-[7rem] flex-col gap-0.5 overflow-y-auto rounded-lg p-1.5"
+          style={PICKER_PANEL_STYLE}
         >
           {BUILTIN_CATEGORIES.map((id) => (
             <PickerOption
@@ -140,7 +153,6 @@ export function CategoryPicker({
               dot={CATEGORY_COLORS[id]}
               active={value === id}
               ink={ink}
-              isAdd={isAdd}
               onClick={() => pick(id)}
             />
           ))}
@@ -151,12 +163,11 @@ export function CategoryPicker({
               dot={cat.color}
               active={value === cat.id}
               ink={ink}
-              isAdd={isAdd}
               onClick={() => pick(cat.id)}
             />
           ))}
           {creating ? (
-            <div className="flex items-center gap-1 px-1 py-0.5">
+            <div className="space-y-1 rounded-md bg-black/5 p-1.5">
               <input
                 type="text"
                 value={draft}
@@ -165,29 +176,58 @@ export function CategoryPicker({
                   if (e.key === "Enter") commitCustom();
                   if (e.key === "Escape") setCreating(false);
                 }}
-                placeholder="Name…"
-                className="min-w-0 flex-1 rounded bg-white/50 px-1.5 py-0.5 text-[8px] font-semibold outline-none"
+                placeholder="Category name…"
+                className="w-full rounded-md bg-white px-1.5 py-1 text-[8px] font-semibold text-[#1a1a18] outline-none ring-1 ring-black/10"
                 autoFocus
               />
+              <div className="flex flex-wrap items-center gap-1">
+                {CUSTOM_CATEGORY_PALETTE.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() => setDraftColor(color)}
+                    className="h-3.5 w-3.5 rounded-full"
+                    style={{
+                      backgroundColor: color,
+                      outline: draftColor === color ? "2px solid #1a1a18" : undefined,
+                    }}
+                    aria-label={`Pick ${color}`}
+                  />
+                ))}
+                <label className="relative h-3.5 w-3.5 cursor-pointer overflow-hidden rounded-full ring-1 ring-black/15">
+                  <input
+                    type="color"
+                    value={draftColor}
+                    onChange={(e) => setDraftColor(e.target.value)}
+                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                  />
+                  <span
+                    className="block h-full w-full"
+                    style={{
+                      background: `conic-gradient(${draftColor} 0 75%, #e8e4dc 75% 100%)`,
+                    }}
+                  />
+                </label>
+              </div>
               <button
                 type="button"
                 onClick={commitCustom}
-                className="rounded bg-black/80 px-1.5 py-0.5 text-[7px] font-bold text-white"
+                className="w-full rounded-md bg-[#1a1a18] px-2 py-1 text-[7px] font-bold text-white"
               >
-                Add
+                Add category
               </button>
             </div>
           ) : (
             <button
               type="button"
               onClick={() => setCreating(true)}
-              className="rounded-md px-1.5 py-1 text-left text-[8px] font-bold opacity-80 hover:bg-black/8"
+              className="rounded-md px-1.5 py-1 text-left text-[8px] font-bold text-[#1a1a18] hover:bg-black/6"
             >
               + New category
             </button>
           )}
         </div>
-      </PickerShell>
+      ) : null}
     </div>
   );
 }
@@ -197,14 +237,12 @@ function PickerOption({
   dot,
   active,
   ink,
-  isAdd,
   onClick,
 }: {
   label: string;
   dot: string;
   active: boolean;
   ink: Ink;
-  isAdd: boolean;
   onClick: () => void;
 }) {
   return (
@@ -213,77 +251,103 @@ function PickerOption({
       onClick={onClick}
       className="flex w-full items-center gap-1.5 rounded-md px-1.5 py-1 text-left text-[8px] font-bold"
       style={{
-        backgroundColor: active ? (isAdd ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.15)") : undefined,
+        backgroundColor: active ? "rgba(26,26,24,0.1)" : undefined,
         color: ink,
       }}
     >
-      <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: dot }} />
+      <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: dot }} />
       {label}
     </button>
   );
 }
 
-const TIME_PRESETS = ["Anytime", "9:00 AM", "12:00 PM", "3:00 PM", "6:00 PM"] as const;
-
-type TimePickerProps = {
-  value: string;
-  onChange: (time: string) => void;
+type TimeSliderProps = {
+  valueMinutes: number | null;
+  onChange: (minutes: number | null) => void;
   ink: Ink;
-  isAdd: boolean;
+  allowClear?: boolean;
 };
 
-export function TimePicker({ value, onChange, ink, isAdd }: TimePickerProps) {
-  const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-  const display = value || "Anytime";
-
-  useEffect(() => {
-    if (!open) return;
-    function onPointerDown(e: MouseEvent) {
-      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
-    }
-    document.addEventListener("mousedown", onPointerDown);
-    return () => document.removeEventListener("mousedown", onPointerDown);
-  }, [open]);
-
-  function pick(time: string) {
-    onChange(time === "Anytime" ? "" : time);
-    setOpen(false);
-  }
+export function TimeSlider({ valueMinutes, onChange, ink, allowClear = true }: TimeSliderProps) {
+  const hasTime = valueMinutes !== null;
+  const sliderValue = valueMinutes ?? 9 * 60;
 
   return (
-    <div ref={rootRef}>
-      <PickerShell
-        ink={ink}
-        value={display}
-        open={open}
-        onToggle={() => setOpen((v) => !v)}
-      >
-        <div
-          className="absolute left-0 right-0 top-[calc(100%+4px)] z-20 flex flex-col gap-0.5 rounded-lg p-1 shadow-lg"
-          style={{
-            backgroundColor: isAdd ? "#f5e6c8" : "rgba(0,0,0,0.88)",
-            color: ink,
-          }}
-        >
-          {TIME_PRESETS.map((time) => (
-            <button
-              key={time}
-              type="button"
-              onClick={() => pick(time)}
-              className="rounded-md px-1.5 py-1 text-left text-[8px] font-bold hover:bg-black/8"
-              style={{
-                backgroundColor:
-                  (time === "Anytime" && !value) || value === time
-                    ? "rgba(0,0,0,0.1)"
-                    : undefined,
-              }}
-            >
-              {time}
-            </button>
-          ))}
-        </div>
-      </PickerShell>
+    <div className="space-y-1">
+      <div className="flex items-center justify-between gap-1">
+        <span className="text-[8px] font-bold" style={{ color: ink }}>
+          {hasTime ? minutesToLabel(valueMinutes!) : "Anytime"}
+        </span>
+        {allowClear && hasTime ? (
+          <button
+            type="button"
+            onClick={() => onChange(null)}
+            className="rounded px-1 py-px text-[6px] font-bold opacity-60 hover:opacity-100"
+            style={{ color: ink }}
+          >
+            Clear
+          </button>
+        ) : null}
+      </div>
+      <input
+        type="range"
+        min={TIME_SLIDER_START}
+        max={TIME_SLIDER_END}
+        step={TIME_SLIDER_STEP}
+        value={sliderValue}
+        onChange={(e) => onChange(clampMinutes(Number(e.target.value)))}
+        className="h-1 w-full cursor-pointer accent-[#1a1a18]"
+        aria-label="Pick time"
+      />
+    </div>
+  );
+}
+
+const DURATION_PRESETS = [
+  { label: "30m", minutes: 30 },
+  { label: "1h", minutes: 60 },
+  { label: "90m", minutes: 90 },
+] as const;
+
+type DurationPickerProps = {
+  valueMinutes: number;
+  onChange: (minutes: number) => void;
+  ink: Ink;
+};
+
+export function DurationPicker({ valueMinutes, onChange, ink }: DurationPickerProps) {
+  return (
+    <div className="space-y-1">
+      <div className="flex gap-0.5">
+        {DURATION_PRESETS.map((preset) => (
+          <button
+            key={preset.minutes}
+            type="button"
+            onClick={() => onChange(preset.minutes)}
+            className="rounded-full px-1.5 py-px text-[6px] font-bold"
+            style={{
+              backgroundColor:
+                valueMinutes === preset.minutes ? "rgba(26,26,24,0.88)" : "rgba(0,0,0,0.1)",
+              color: valueMinutes === preset.minutes ? "#fff" : ink,
+            }}
+          >
+            {preset.label}
+          </button>
+        ))}
+      </div>
+      <input
+        type="range"
+        min={15}
+        max={180}
+        step={15}
+        value={valueMinutes}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="h-1 w-full cursor-pointer accent-[#1a1a18]"
+        aria-label="Duration"
+      />
+      <span className="text-[7px] font-semibold opacity-70" style={{ color: ink }}>
+        {valueMinutes} min
+      </span>
     </div>
   );
 }
@@ -299,7 +363,7 @@ type StatusPickerProps = {
   disabled?: boolean;
 };
 
-export function StatusPicker({ value, onChange, ink, isAdd, disabled }: StatusPickerProps) {
+export function StatusPicker({ value, onChange, ink, disabled }: StatusPickerProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -317,19 +381,17 @@ export function StatusPicker({ value, onChange, ink, isAdd, disabled }: StatusPi
   }
 
   return (
-    <div ref={rootRef}>
+    <div ref={rootRef} className="relative z-30">
       <PickerShell
         ink={ink}
         value={value}
         open={open}
         onToggle={() => setOpen((v) => !v)}
-      >
+      />
+      {open ? (
         <div
-          className="absolute left-0 right-0 top-[calc(100%+4px)] z-20 flex flex-col gap-0.5 rounded-lg p-1 shadow-lg"
-          style={{
-            backgroundColor: isAdd ? "#f5e6c8" : "rgba(0,0,0,0.88)",
-            color: ink,
-          }}
+          className="absolute bottom-[calc(100%+6px)] left-0 right-0 z-50 flex flex-col gap-0.5 rounded-lg p-1.5"
+          style={PICKER_PANEL_STYLE}
         >
           {STATUS_OPTIONS.map((status) => (
             <button
@@ -339,16 +401,16 @@ export function StatusPicker({ value, onChange, ink, isAdd, disabled }: StatusPi
                 onChange(status);
                 setOpen(false);
               }}
-              className="rounded-md px-1.5 py-1 text-left text-[8px] font-bold hover:bg-black/8"
+              className="rounded-md px-1.5 py-1 text-left text-[8px] font-bold text-[#1a1a18] hover:bg-black/6"
               style={{
-                backgroundColor: value === status ? "rgba(0,0,0,0.1)" : undefined,
+                backgroundColor: value === status ? "rgba(26,26,24,0.1)" : undefined,
               }}
             >
               {status}
             </button>
           ))}
         </div>
-      </PickerShell>
+      ) : null}
     </div>
   );
 }

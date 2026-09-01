@@ -89,7 +89,7 @@ export function IntentPanelCompact({ layoutIdPrefix = "intent" }: IntentPanelCom
                   setShowCompleted(false);
                   openItemSheet({
                     kind: "add",
-                    dayKey: mode === "calendar" ? selectedDayKey : undefined,
+                    dayKey: selectedDayKey,
                   });
                 }}
                 className="flex h-5 w-5 items-center justify-center rounded-full text-[12px] font-bold leading-none"
@@ -104,7 +104,7 @@ export function IntentPanelCompact({ layoutIdPrefix = "intent" }: IntentPanelCom
             </div>
           </div>
 
-          <div className="mt-2 min-h-[5.5rem]">
+          <div className={`mt-2 min-h-[5.5rem] ${itemSheet ? "overflow-visible" : ""}`}>
             <AnimatePresence mode="wait">
               {itemSheet ? (
                 <ItemSheet

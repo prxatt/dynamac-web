@@ -14,12 +14,12 @@ export const BUILTIN_CATEGORIES: BuiltinTaskCategory[] = [
   "activity",
 ];
 
-/** Solid block fills — high contrast with white type (not site background colors) */
+/** Category fills — semantically tied to each kind of task */
 export const CATEGORY_COLORS: Record<BuiltinTaskCategory, string> = {
-  work: "#1a7fd4",
-  personal: "#e04f3d",
-  hobby: "#7c4dff",
-  activity: "#4a9e32",
+  work: "#2b5ea8",
+  personal: "#d4556a",
+  hobby: "#7b4fd4",
+  activity: "#3daa3d",
 };
 
 export const CATEGORY_LABELS: Record<BuiltinTaskCategory, string> = {
@@ -35,7 +35,29 @@ export const CUSTOM_CATEGORY_PALETTE = [
   "#2e8b57",
   "#c45bff",
   "#e85d75",
+  "#00a8a8",
+  "#ff8c42",
 ] as const;
+
+/** One distinct Bauhaus fill per month — never reused */
+export const MONTH_COLORS: Record<string, string> = {
+  JAN: "#5b7fd4",
+  FEB: "#e85d75",
+  MAR: "#4a9e32",
+  APR: "#f5c842",
+  MAY: "#9b59b6",
+  JUN: "#00a8a8",
+  JUL: "#e04f3d",
+  AUG: "#ff8c42",
+  SEP: "#f0a030",
+  OCT: "#8b5a2b",
+  NOV: "#6b4c9a",
+  DEC: "#2e5aac",
+};
+
+export function colorForMonth(monthLabel: string): string {
+  return MONTH_COLORS[monthLabel] ?? "#c8c4bc";
+}
 
 export type CustomCategory = {
   id: string;
@@ -152,7 +174,7 @@ export const calendarDays: DayBand[] = [
     dayLabel: "Saturday",
     date: 30,
     monthLabel: "AUG",
-    bandColor: "#1a7fd4",
+    bandColor: colorForMonth("AUG"),
     isToday: false,
     events: [
       {
@@ -169,7 +191,7 @@ export const calendarDays: DayBand[] = [
     dayLabel: "Monday",
     date: 31,
     monthLabel: "AUG",
-    bandColor: "#7c4dff",
+    bandColor: colorForMonth("AUG"),
     isToday: false,
     events: [],
   },
@@ -178,7 +200,7 @@ export const calendarDays: DayBand[] = [
     dayLabel: "Tuesday",
     date: 1,
     monthLabel: "SEP",
-    bandColor: "#f0a030",
+    bandColor: colorForMonth("SEP"),
     isToday: true,
     events: todayEvents,
   },
@@ -187,7 +209,7 @@ export const calendarDays: DayBand[] = [
     dayLabel: "Wednesday",
     date: 2,
     monthLabel: "SEP",
-    bandColor: "#e04f3d",
+    bandColor: colorForMonth("SEP"),
     isToday: false,
     events: [],
   },
@@ -196,7 +218,7 @@ export const calendarDays: DayBand[] = [
     dayLabel: "Thursday",
     date: 3,
     monthLabel: "SEP",
-    bandColor: "#5c5e5a",
+    bandColor: colorForMonth("SEP"),
     isToday: false,
     events: [
       {
@@ -253,14 +275,37 @@ export function getLiveEventToday(nowMinutes = DEMO_NOW_MINUTES): ScheduledEvent
 /** Warm orange panel fill — Today tab reference */
 export const TODAY_PANEL_COLOR = "#f0a030";
 
-/** Shared Intent list frame — warm orange, high contrast */
+/** Shared Intent list frame */
 export const INTENT_PANEL_FRAME = {
   todayFill: TODAY_PANEL_COLOR,
-  calendarFill: TODAY_PANEL_COLOR,
+  calendarFill: "rgba(240, 160, 48, 0.18)",
   outline: "2px solid rgba(26, 26, 24, 0.22)",
   ink: "#1a1a18",
   inkMuted: "rgba(26, 26, 24, 0.62)",
 } as const;
+
+export const TIME_SLIDER_START = 6 * 60;
+export const TIME_SLIDER_END = 22 * 60;
+export const TIME_SLIDER_STEP = 15;
+
+export function labelToMinutes(label: string): number | null {
+  if (!label || label === "Anytime") return null;
+  const match = label.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!match) return null;
+  let h = Number(match[1]);
+  const m = Number(match[2]);
+  const period = match[3].toUpperCase();
+  if (period === "PM" && h !== 12) h += 12;
+  if (period === "AM" && h === 12) h = 0;
+  return h * 60 + m;
+}
+
+export function clampMinutes(minutes: number): number {
+  return Math.max(
+    TIME_SLIDER_START,
+    Math.min(TIME_SLIDER_END, Math.round(minutes / TIME_SLIDER_STEP) * TIME_SLIDER_STEP),
+  );
+}
 
 export function getTodayBand(): DayBand {
   return calendarDays.find((d) => d.isToday) ?? calendarDays[0];
