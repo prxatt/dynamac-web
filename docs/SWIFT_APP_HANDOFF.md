@@ -45,27 +45,31 @@ Bring the **native DynaMac Swift app** up to parity with the **dynamac-web marke
 ### Bauhaus Intent
 - **Bold solid color blocks** — no gradients on Intent/Live/Calendar surfaces
 - **Category colors** (white type on blocks):
-  - Work `#1a7fd4`
-  - Personal `#e04f3d`
-  - Hobby `#7c4dff`
-  - Activity `#4a9e32` (replaces Admin)
-  - Custom categories: user-created, palette rotation
-- **Today panel:** warm orange fill `#f0a030`, dark ink `#1a1a18`, `2px` dark outline frame
-- **Calendar panel:** same outline frame, lighter orange tint `rgba(240,160,48,0.28)`
-- **High contrast** — avoid dim gray widget chrome that hurts readability
+  - Work `#2b5ea8`
+  - Personal `#d4556a`
+  - Hobby `#7b4fd4`
+  - Activity `#3daa3d` (replaces Admin)
+  - Custom categories: user-created with color picker
+- **Today panel:** warm orange fill `#f0a030`, dark ink `#1a1a18` always for dates, `2px` dark outline frame
+- **Calendar panel:** same orange frame as Today
+- **Month accent:** unique color per month on left bar only — date numerals always `#1a1a18`
 
 ### Today tab layout
-- Left **date rail:** weekday, `09.01`, `SEP` (no redundant "Today" pill next to date)
-- Right: stacked **todo rows** + **event bands**
-- **Todos:** category pill + Todo pill + title; **checkmark button** on right (centered in circle) to complete/undo — **no play button**
-- **Events:** title row + start / duration pill / end; **play button** only for **upcoming** events (not live, not past)
-- **Live events:** "Live" pill only — no white dot, no white box outline
+- Left **date rail:** weekday, `09.01`, `SEP`, ‹ › day navigation (Today only)
+- Right: **time-aware agenda** when viewing today:
+  - Live events first, then upcoming events (past events hidden)
+  - Timed todos still due/upcoming; untimed todos after events
+- **Todos:** category pill + Todo pill + title; **checkmark button** on right
+- **Events:** play only for **upcoming**; Live pill when in progress
 
 ### Calendar tab layout
-- Vertical scroll of **thin day strips** (~2.35rem)
-- Left: centered date column (day, number, month)
-- Right: horizontal timeline with positioned task labels
-- Same **outline frame** as Today
+- Vertical scroll of day rows; auto-scroll to today on open
+- Left: **CalendarDateLabel** — black ink always (day abbr, numeral, month)
+- Right: timeline **8 AM – 6 PM** (markers 8, 11, 14, 17, 18)
+- Events before 8 / after 6 pin to edges but remain visible
+- **Lane packing:** overlapping events stack in separate lanes; `overflow-hidden` per row (never bleed into next day)
+- Untimed/timed todos in left gutter; events use same `EventBand`/`TodoRow` timeline variant as Today
+- Today row filters to live + upcoming events only
 
 ### Completed view (✓ button left of +)
 - Toggle button: orange when inactive, black when active

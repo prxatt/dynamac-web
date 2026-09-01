@@ -278,7 +278,7 @@ export const TODAY_PANEL_COLOR = "#f0a030";
 /** Shared Intent list frame */
 export const INTENT_PANEL_FRAME = {
   todayFill: TODAY_PANEL_COLOR,
-  calendarFill: "rgba(240, 160, 48, 0.18)",
+  calendarFill: TODAY_PANEL_COLOR,
   outline: "2px solid rgba(26, 26, 24, 0.22)",
   ink: "#1a1a18",
   inkMuted: "rgba(26, 26, 24, 0.62)",
@@ -324,17 +324,108 @@ function monthLabelToNumber(label: string): number {
   return index >= 0 ? index + 1 : 1;
 }
 
-/** Timeline window for calendar strips (minutes from midnight) */
+/** Timeline window for calendar strips — 8 AM through 6 PM */
 export const CALENDAR_TIMELINE_START = 8 * 60;
-export const CALENDAR_TIMELINE_END = 20 * 60;
+export const CALENDAR_TIMELINE_END = 18 * 60;
+
+export const CALENDAR_HOUR_MARKERS = [8, 11, 14, 17, 18] as const;
 
 export function timelinePosition(startMinutes: number): number {
   const span = CALENDAR_TIMELINE_END - CALENDAR_TIMELINE_START;
-  const clamped = Math.max(
-    CALENDAR_TIMELINE_START,
-    Math.min(CALENDAR_TIMELINE_END - 1, startMinutes),
+  if (startMinutes <= CALENDAR_TIMELINE_START) return 0;
+  if (startMinutes >= CALENDAR_TIMELINE_END) return 100;
+  return ((startMinutes - CALENDAR_TIMELINE_START) / span) * 100;
+}
+
+export function timelineWidth(startMinutes: number, endMinutes: number): number {
+  const span = CALENDAR_TIMELINE_END - CALENDAR_TIMELINE_START;
+  const visibleStart = Math.max(startMinutes, CALENDAR_TIMELINE_START);
+  const visibleEnd = Math.min(endMinutes, CALENDAR_TIMELINE_END);
+  const minutes = Math.max(visibleEnd - visibleStart, 30);
+  return Math.min(92, (minutes / span) * 100);
+}
+
+export function isBeforeTimelineWindow(minutes: number): boolean {
+  return minutes < CALENDAR_TIMELINE_START;
+}
+
+export function isAfterTimelineWindow(minutes: number): boolean {
+  return minutes >= CALENDAR_TIMELINE_END;
+}
+
+export function isTodoPast(todo: TodoItem, nowMinutes = DEMO_NOW_MINUTES): boolean {
+  if (!todo.timeLabel) return false;
+  const mins = labelToMinutes(todo.timeLabel);
+  return mins !== null && mins < nowMinutes;
+}
+
+/** Today / current day: live + upcoming only, sorted by relevance */
+export function sortEventsForAgenda(
+  events: ScheduledEvent[],
+  options: { isToday: boolean; nowMinutes?: number },
+): ScheduledEvent[] {
+  const now = options.nowMinutes ?? DEMO_NOW_MINUTES;
+  const list = options.isToday ? events.filter((e) => !isEventPast(e, now)) : [...events];
+  return list.sort((a, b) => {
+    const aLive = isEventLive(a, now);
+    const bLive = isEventLive(b, now);
+    if (aLive !== bLive) return aLive ? -1 : 1;
+    return a.startMinutes - b.startMinutes;
+  });
+}
+
+export function filterTodosForAgenda(
+  todos: TodoItem[],
+  dayKey: string,
+  isToday: boolean,
+  nowMinutes = DEMO_NOW_MINUTES,
+): { untimed: TodoItem[]; timed: TodoItem[] } {
+  const forDay = todos.filter(
+    (t) => !t.done && (t.dayKey === dayKey || (isToday && !t.dayKey)),
   );
-  return ((clamped - CALENDAR_TIMELINE_START) / span) * 100;
+  const untimed = forDay.filter((t) => !t.timeLabel);
+  const timed = forDay.filter((t) => {
+    if (!t.timeLabel) return false;
+    if (!isToday) return true;
+    return !isTodoPast(t, nowMinutes);
+  });
+  return { untimed, timed };
+}
+
+export type TimelineLanePlacement = {
+  lane: number;
+  left: number;
+  width: number;
+  early: boolean;
+  late: boolean;
+};
+
+export function assignTimelineLanes(events: ScheduledEvent[]): {
+  placements: Map<string, TimelineLanePlacement>;
+  laneCount: number;
+} {
+  const sorted = [...events].sort((a, b) => a.startMinutes - b.startMinutes);
+  const laneEnds: number[] = [];
+  const placements = new Map<string, TimelineLanePlacement>();
+
+  for (const event of sorted) {
+    let lane = 0;
+    while (lane < laneEnds.length && laneEnds[lane] > event.startMinutes) {
+      lane += 1;
+    }
+    if (lane === laneEnds.length) laneEnds.push(0);
+    laneEnds[lane] = event.endMinutes;
+
+    placements.set(event.id, {
+      lane,
+      left: timelinePosition(event.startMinutes),
+      width: timelineWidth(event.startMinutes, event.endMinutes),
+      early: isBeforeTimelineWindow(event.startMinutes),
+      late: isAfterTimelineWindow(event.startMinutes),
+    });
+  }
+
+  return { placements, laneCount: Math.max(laneEnds.length, 1) };
 }
 
 export type FocusableItem =

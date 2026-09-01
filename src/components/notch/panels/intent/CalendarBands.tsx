@@ -1,26 +1,38 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useNotchDemo } from "@/components/notch/NotchDemoContext";
 import {
-  colorForCategory,
-  formatBandDate,
+  assignTimelineLanes,
+  CALENDAR_HOUR_MARKERS,
+  filterTodosForAgenda,
   INTENT_PANEL_FRAME,
-  timelinePosition,
+  sortEventsForAgenda,
   type DayBand,
   type ScheduledEvent,
   type TodoItem,
 } from "@/components/notch/intent-plan-data";
-import { DateRail } from "@/components/notch/panels/intent/DateRail";
+import { CalendarDateLabel } from "@/components/notch/panels/intent/CalendarDateLabel";
+import { EventBand } from "@/components/notch/panels/intent/EventBand";
 import { HIDDEN_SCROLL, IntentPanelFrame } from "@/components/notch/panels/intent/IntentPanelFrame";
+import { TodoRow } from "@/components/notch/panels/intent/TodoRow";
 
 type CalendarBandsProps = {
   minimal?: boolean;
 };
 
+const LANE_HEIGHT = 34;
+const TIMELINE_HEADER = 14;
+const TODO_GUTTER_WIDTH = "19%";
+
 export function CalendarBands({ minimal = false }: CalendarBandsProps) {
   const { calendarDays, openItemSheet } = useNotchDemo();
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const todayEl = scrollRef.current?.querySelector('[data-today-row="true"]');
+    todayEl?.scrollIntoView({ block: "center", behavior: "smooth" });
+  }, []);
 
   if (minimal) {
     return (
@@ -31,12 +43,13 @@ export function CalendarBands({ minimal = false }: CalendarBandsProps) {
   }
 
   return (
-    <IntentPanelFrame variant="calendar">
-      <div ref={scrollRef} className={`max-h-[5.5rem] space-y-1.5 ${HIDDEN_SCROLL}`}>
-        {calendarDays.map((day) => (
+    <IntentPanelFrame variant="today" className="p-1.5">
+      <div ref={scrollRef} className={`max-h-[5.75rem] ${HIDDEN_SCROLL}`}>
+        {calendarDays.map((day, index) => (
           <DayTimelineStrip
             key={day.key}
             day={day}
+            isLast={index === calendarDays.length - 1}
             onSelectEvent={(event) =>
               openItemSheet({ kind: "event", id: event.id, dayKey: day.key })
             }
@@ -50,89 +63,116 @@ export function CalendarBands({ minimal = false }: CalendarBandsProps) {
 
 function DayTimelineStrip({
   day,
+  isLast,
   onSelectEvent,
   onSelectTodo,
 }: {
   day: DayBand;
+  isLast: boolean;
   onSelectEvent: (event: ScheduledEvent) => void;
   onSelectTodo: (todo: TodoItem) => void;
 }) {
-  const { todos, customCategories } = useNotchDemo();
-  const dayTodos = todos.filter(
-    (t) =>
-      !t.done &&
-      (t.dayKey === day.key || (day.isToday && !t.dayKey)),
+  const { todos } = useNotchDemo();
+  const { untimed: dayTodos, timed: timedTodos } = filterTodosForAgenda(
+    todos,
+    day.key,
+    day.isToday,
   );
-  const markers = [9, 12, 15, 18];
+  const visibleEvents = sortEventsForAgenda(day.events, { isToday: day.isToday });
+  const { placements, laneCount } = assignTimelineLanes(visibleEvents);
+  const hasItems = visibleEvents.length > 0 || dayTodos.length > 0 || timedTodos.length > 0;
+  const timelineHeight = Math.max(laneCount * LANE_HEIGHT, 28);
+  const rowMinHeight = TIMELINE_HEADER + timelineHeight + 10;
 
   return (
     <div
-      className="flex min-h-[2.5rem] items-stretch gap-1.5 overflow-hidden rounded-xl p-1"
-      style={{
-        backgroundColor: day.bandColor,
-        outline: day.isToday ? "2px solid #1a1a18" : "1px solid rgba(26,26,24,0.12)",
-      }}
+      data-today-row={day.isToday ? "true" : undefined}
+      className={`flex items-stretch gap-2 overflow-hidden py-1.5 ${isLast ? "" : "border-b border-black/10"}`}
+      style={{ minHeight: hasItems ? rowMinHeight : 44 }}
     >
-      <DateRail day={day} showTodayBadge={day.isToday} compact />
+      <CalendarDateLabel day={day} />
 
-      <div className="relative min-w-0 flex-1 py-0.5">
-        <div className="absolute inset-x-0 top-0 flex justify-between px-0.5">
-          {markers.map((h) => (
-            <span key={h} className="text-[4px] font-bold text-black/50">
-              {h}
-            </span>
-          ))}
-        </div>
+      <div className="flex min-w-0 flex-1 gap-1 overflow-hidden">
+        {(dayTodos.length > 0 || timedTodos.length > 0) && (
+          <div
+            className="flex shrink-0 flex-col gap-0.5 overflow-hidden"
+            style={{ width: TODO_GUTTER_WIDTH }}
+          >
+            {dayTodos.map((todo) => (
+              <TodoRow
+                key={todo.id}
+                todo={todo}
+                timeline
+                onSelect={() => onSelectTodo(todo)}
+                className="w-full max-w-none"
+              />
+            ))}
+            {timedTodos.map((todo) => (
+              <TodoRow
+                key={todo.id}
+                todo={todo}
+                timeline
+                onSelect={() => onSelectTodo(todo)}
+                className="w-full max-w-none"
+              />
+            ))}
+          </div>
+        )}
 
-        <div className="absolute inset-x-0 top-[0.55rem] h-px bg-black/18" />
-
-        <div className="absolute inset-x-0 bottom-0 top-[0.7rem]">
-          {dayTodos.map((todo, index) => (
-            <button
-              key={todo.id}
-              type="button"
-              onClick={() => onSelectTodo(todo)}
-              className="absolute max-w-[42%] rounded-md px-1.5 py-0.5 text-left text-[6px] font-bold leading-tight text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.2)]"
-              style={{
-                left: "2%",
-                top: `${8 + (index % 2) * 40}%`,
-                backgroundColor: colorForCategory(todo.category, customCategories),
-              }}
-            >
-              <span className="line-clamp-2 break-words">{todo.title}</span>
-            </button>
-          ))}
-
-          {day.events.map((event, index) => {
-            const left = timelinePosition(event.startMinutes);
-            const top = 8 + (index % 2) * 42;
-            return (
-              <button
-                key={event.id}
-                type="button"
-                onClick={() => onSelectEvent(event)}
-                className="absolute max-w-[38%] rounded-md px-1.5 py-0.5 text-left text-[6px] font-bold leading-tight text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.2)]"
-                style={{
-                  left: `${left}%`,
-                  top: `${top}%`,
-                  backgroundColor: colorForCategory(event.category, customCategories),
-                  transform: "translateX(-8%)",
-                }}
-                title={`${formatBandDate(day)} · ${event.title}`}
+        <div className="relative min-w-0 flex-1 overflow-hidden">
+          <div className="absolute inset-x-0 top-0 flex justify-between px-0.5">
+            {CALENDAR_HOUR_MARKERS.map((h) => (
+              <span
+                key={h}
+                className="text-[5px] font-bold tabular-nums"
+                style={{ color: INTENT_PANEL_FRAME.inkMuted }}
               >
-                <span className="line-clamp-2 break-words">{event.title}</span>
-              </button>
-            );
-          })}
+                {h}
+              </span>
+            ))}
+          </div>
 
-          {day.events.length === 0 && dayTodos.length === 0 ? (
-            <p
-              className="flex h-full items-center justify-center text-[6px] font-bold"
-              style={{ color: INTENT_PANEL_FRAME.inkMuted }}
-            >
-              Clear
-            </p>
-          ) : null}
+          <div
+            className="absolute inset-x-0 top-[0.65rem] h-px"
+            style={{ backgroundColor: "rgba(26,26,24,0.14)" }}
+          />
+
+          <div
+            className="absolute inset-x-0 top-[0.85rem] overflow-hidden"
+            style={{ height: timelineHeight }}
+          >
+            {visibleEvents.map((event) => {
+              const place = placements.get(event.id);
+              if (!place) return null;
+              return (
+                <EventBand
+                  key={event.id}
+                  event={event}
+                  timeline
+                  onSelect={() => onSelectEvent(event)}
+                  onPlay={() => {}}
+                  className="absolute overflow-hidden"
+                  style={{
+                    left: `${place.left}%`,
+                    width: `${place.width}%`,
+                    top: place.lane * LANE_HEIGHT,
+                    maxHeight: LANE_HEIGHT - 2,
+                    transform: place.early ? "none" : "translateX(-4%)",
+                    opacity: place.late || place.early ? 0.92 : 1,
+                  }}
+                />
+              );
+            })}
+
+            {!hasItems ? (
+              <p
+                className="flex h-full items-center pl-1 text-[7px] font-semibold italic"
+                style={{ color: INTENT_PANEL_FRAME.inkMuted }}
+              >
+                Open
+              </p>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

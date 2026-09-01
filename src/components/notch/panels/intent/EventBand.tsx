@@ -16,12 +16,15 @@ import { MiniFocusGrid } from "@/components/notch/panels/MiniFocusGrid";
 type EventBandProps = {
   event: ScheduledEvent;
   compact?: boolean;
+  timeline?: boolean;
   active?: boolean;
   completedView?: boolean;
   focusProgress?: number;
   onSelect?: () => void;
   onPlay: () => void;
   live?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
 };
 
 function FocusPlayButton({ onClick, label }: { onClick: () => void; label: string }) {
@@ -43,12 +46,15 @@ function FocusPlayButton({ onClick, label }: { onClick: () => void; label: strin
 export function EventBand({
   event,
   compact = false,
+  timeline = false,
   active = false,
   completedView = false,
   focusProgress = 0,
   onSelect,
   onPlay,
   live,
+  className = "",
+  style,
 }: EventBandProps) {
   const { customCategories } = useNotchDemo();
   const duration = eventDurationMinutes(event);
@@ -62,12 +68,49 @@ export function EventBand({
   if (compact) {
     return (
       <div
-        className="flex w-full items-center gap-2 rounded-xl px-2 py-1"
-        style={{ backgroundColor: accent, opacity: isPast && !completedView ? 0.72 : 1 }}
+        className={`flex w-full items-center gap-2 rounded-xl px-2 py-1 ${className}`}
+        style={{ backgroundColor: accent, opacity: isPast && !completedView ? 0.72 : 1, ...style }}
       >
         <p className="min-w-0 flex-1 truncate text-[9px] font-bold text-white">{event.title}</p>
         {showPlay ? <FocusPlayButton onClick={onPlay} label={playLabel} /> : null}
       </div>
+    );
+  }
+
+  if (timeline) {
+    return (
+      <button
+        type="button"
+        onClick={onSelect}
+        className={`rounded-xl px-2 py-1.5 text-left transition-[filter] hover:brightness-[1.05] ${className}`}
+        style={{
+          backgroundColor: accent,
+          opacity: isPast && !completedView ? 0.78 : 1,
+          outline: isLive ? "1.5px solid rgba(26,26,24,0.2)" : undefined,
+          ...style,
+        }}
+        title={event.title}
+      >
+        <div className="flex flex-wrap items-center gap-1">
+          <span className="rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
+            {label}
+          </span>
+          {isLive ? (
+            <span className="rounded-full bg-black/25 px-1.5 py-px text-[6px] font-bold uppercase text-white">
+              Live
+            </span>
+          ) : null}
+        </div>
+        <p className="mt-0.5 line-clamp-2 text-[9px] font-bold leading-snug text-white">
+          {event.title}
+        </p>
+        <p className="mt-1 flex items-center gap-1 text-[7px] font-semibold text-white/95">
+          <span>{minutesToLabel(event.startMinutes)}</span>
+          <span className="rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold">
+            {duration}m
+          </span>
+        </p>
+      </button>
     );
   }
 

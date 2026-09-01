@@ -3,9 +3,11 @@
 import { useMemo } from "react";
 import { useNotchDemo } from "@/components/notch/NotchDemoContext";
 import {
+  filterTodosForAgenda,
   focusableFromEvent,
   focusableId,
   formatBandDate,
+  sortEventsForAgenda,
 } from "@/components/notch/intent-plan-data";
 import { EventBand } from "@/components/notch/panels/intent/EventBand";
 import {
@@ -35,27 +37,15 @@ export function TodayList({ minimal = false }: TodayListProps) {
   const activeId = focusPhase === "work" ? focusableId(linkedItem) : null;
   const day = calendarDays.find((d) => d.key === selectedDayKey) ?? calendarDays[0];
 
-  const openTodos = useMemo(
-    () =>
-      todos.filter(
-        (t) =>
-          !t.done &&
-          !t.timeLabel &&
-          (t.dayKey === day.key || (day.isToday && !t.dayKey)),
-      ),
+  const { untimed: openTodos, timed: timedTodos } = useMemo(
+    () => filterTodosForAgenda(todos, day.key, day.isToday),
     [todos, day.key, day.isToday],
   );
-  const timedTodos = useMemo(
-    () =>
-      todos.filter(
-        (t) =>
-          !t.done &&
-          t.timeLabel &&
-          (t.dayKey === day.key || (day.isToday && !t.dayKey)),
-      ),
-    [todos, day.key, day.isToday],
+
+  const dayEvents = useMemo(
+    () => sortEventsForAgenda(day.events, { isToday: day.isToday }),
+    [day.events, day.isToday],
   );
-  const dayEvents = day.events;
 
   if (minimal) {
     const open = todos.filter((t) => !t.done).length;
@@ -70,14 +60,14 @@ export function TodayList({ minimal = false }: TodayListProps) {
     <IntentPanelFrame variant="today" className="flex gap-2">
       <TodayDateRail />
       <div className={`min-w-0 flex-1 space-y-1.5 max-h-[5.5rem] ${HIDDEN_SCROLL}`}>
-        {openTodos.map((todo) => (
-          <TodoRow
-            key={todo.id}
-            todo={todo}
-            active={activeId === todo.id}
+        {dayEvents.map((event) => (
+          <EventBand
+            key={event.id}
+            event={event}
+            active={activeId === event.id}
             focusProgress={progress}
-            onSelect={() => openItemSheet({ kind: "todo", id: todo.id })}
-            onToggle={() => toggleTodo(todo.id)}
+            onSelect={() => openItemSheet({ kind: "event", id: event.id, dayKey: day.key })}
+            onPlay={() => startFocus(focusableFromEvent(event))}
           />
         ))}
         {timedTodos.map((todo) => (
@@ -90,14 +80,14 @@ export function TodayList({ minimal = false }: TodayListProps) {
             onToggle={() => toggleTodo(todo.id)}
           />
         ))}
-        {dayEvents.map((event) => (
-          <EventBand
-            key={event.id}
-            event={event}
-            active={activeId === event.id}
+        {openTodos.map((todo) => (
+          <TodoRow
+            key={todo.id}
+            todo={todo}
+            active={activeId === todo.id}
             focusProgress={progress}
-            onSelect={() => openItemSheet({ kind: "event", id: event.id, dayKey: day.key })}
-            onPlay={() => startFocus(focusableFromEvent(event))}
+            onSelect={() => openItemSheet({ kind: "todo", id: todo.id })}
+            onToggle={() => toggleTodo(todo.id)}
           />
         ))}
       </div>
