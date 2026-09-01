@@ -1,10 +1,11 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNotchDemo, type ItemSheetState } from "@/components/notch/NotchDemoContext";
 import {
   colorForCategory,
+  defaultEventStartMinutes,
   eventDurationMinutes,
   formatBandDate,
   labelForCategory,
@@ -77,11 +78,14 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
   const [category, setCategory] = useState<TaskCategory>(
     () => todo?.category ?? event?.category ?? "work",
   );
+  const categoryTouchedRef = useRef(!isAdd);
   const [taskTimeMinutes, setTaskTimeMinutes] = useState<number | null>(() =>
     labelToMinutes(todo?.timeLabel ?? ""),
   );
   const [status, setStatus] = useState<TaskStatus>(() => (todo?.done ? "Done" : "Open"));
-  const [startMinutes, setStartMinutes] = useState(() => event?.startMinutes ?? 9 * 60);
+  const [startMinutes, setStartMinutes] = useState(() =>
+    event?.startMinutes ?? defaultEventStartMinutes(),
+  );
   const [duration, setDuration] = useState(() =>
     event ? eventDurationMinutes(event) : 60,
   );
@@ -90,18 +94,21 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
 
   const itemKind: "todo" | "event" | AddKind = isAdd ? addKind : sheet.kind;
   const todayBand = calendarDays.find((d) => d.isToday) ?? calendarDays[0];
+  const todoDayKey = todo?.dayKey;
   const headerBand = addDayKey
     ? calendarDays.find((d) => d.key === addDayKey) ?? todayBand
     : eventDayKey
       ? calendarDays.find((d) => d.key === eventDayKey) ?? todayBand
-      : todayBand;
+      : todoDayKey
+        ? calendarDays.find((d) => d.key === todoDayKey) ?? todayBand
+        : todayBand;
   const header = `${headerBand.dayLabel} · ${formatBandDate(headerBand)} ${headerBand.monthLabel}`;
   const editing = mode === "add" || mode === "edit";
   const isTodoItem = itemKind === "todo" || itemKind === "task";
   const surface = isAdd ? panelTint ?? TODAY_PANEL_COLOR : colorForCategory(category, customCategories);
   const ink = isAdd ? "#1a1a18" : "#ffffff";
   const taskTimeLabel = taskTimeMinutes !== null ? minutesToLabel(taskTimeMinutes) : "";
-  const showStatusField = isTodoItem && (mode === "edit" || (mode === "add" && taskTimeMinutes !== null));
+  const showStatusField = isTodoItem && (mode === "view" || mode === "edit");
   const thirdFieldLabel = isTodoItem
     ? showStatusField
       ? "Status"
@@ -244,7 +251,9 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
           value={title}
           onChange={(e) => {
             setTitle(e.target.value);
-            if (mode === "add") setCategory(resolveCategory(e.target.value));
+            if (mode === "add" && !categoryTouchedRef.current) {
+              setCategory(resolveCategory(e.target.value));
+            }
           }}
           placeholder="Title…"
           className="mb-2.5 w-full rounded-lg px-2.5 py-1.5 text-[9px] font-semibold outline-none"
@@ -260,7 +269,10 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
           {editing ? (
             <CategoryPicker
               value={category}
-              onChange={setCategory}
+              onChange={(next) => {
+                categoryTouchedRef.current = true;
+                setCategory(next);
+              }}
               customCategories={customCategories}
               onCreateCategory={addCustomCategory}
               ink={ink}
@@ -280,7 +292,7 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
             itemKind === "event" ? (
               <TimeSlider
                 valueMinutes={startMinutes}
-                onChange={(m) => setStartMinutes(m ?? 9 * 60)}
+                onChange={(m) => setStartMinutes(m ?? defaultEventStartMinutes())}
                 ink={ink}
                 allowClear={false}
               />
@@ -311,8 +323,9 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
               onChange={setStatus}
               ink={ink}
               isAdd={isAdd}
-              disabled={mode === "add"}
             />
+          ) : showStatusField && !editing ? (
+            <span>{todo?.done ? "Done" : "Open"}</span>
           ) : (
             <span>
               {taskTimeMinutes !== null

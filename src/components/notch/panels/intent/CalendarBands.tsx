@@ -11,7 +11,10 @@ import {
   focusableId,
   groupCalendarDaysByMonth,
   INTENT_PANEL_FRAME,
+  labelToMinutes,
+  referenceMinutesForDay,
   sortEventsForAgenda,
+  timelinePosition,
   type DayBand,
   type ScheduledEvent,
   type TodoItem,
@@ -104,7 +107,8 @@ function DayTimelineStrip({
   onPlayEvent: (event: ScheduledEvent) => void;
   onToggleTodo: (id: string) => void;
 }) {
-  const { todos } = useNotchDemo();
+  const { todos, calendarDays } = useNotchDemo();
+  const nowMinutes = referenceMinutesForDay(day, calendarDays);
   const { untimed: dayTodos, timed: timedTodos } = filterTodosForAgenda(
     todos,
     day.key,
@@ -132,7 +136,8 @@ function DayTimelineStrip({
   }
 
   const { placements, timelineHeight } = assignTimelineLanes(visibleEvents);
-  const rowMinHeight = TIMELINE_HEADER + timelineHeight + 12;
+  const timedLaneHeight = timedTodos.length > 0 ? 22 + timedTodos.length * 22 : 0;
+  const rowMinHeight = TIMELINE_HEADER + timelineHeight + timedLaneHeight + 12;
 
   return (
     <div
@@ -144,6 +149,8 @@ function DayTimelineStrip({
         visibleEvents={visibleEvents}
         placements={placements}
         timelineHeight={timelineHeight}
+        timedLaneHeight={timedLaneHeight}
+        nowMinutes={nowMinutes}
         dayTodos={dayTodos}
         timedTodos={timedTodos}
         hasItems={hasItems}
@@ -180,6 +187,8 @@ function TodayCalendarRow({
   onPlayEvent: (event: ScheduledEvent) => void;
   onToggleTodo: (id: string) => void;
 }) {
+  const { calendarDays } = useNotchDemo();
+  const nowMinutes = referenceMinutesForDay(day, calendarDays);
   const hasItems =
     visibleEvents.length > 0 || dayTodos.length > 0 || timedTodos.length > 0;
 
@@ -194,6 +203,7 @@ function TodayCalendarRow({
           <EventBand
             key={event.id}
             event={event}
+            nowMinutes={nowMinutes}
             active={activeId === event.id}
             focusProgress={focusProgress}
             onSelect={() => onSelectEvent(event)}
@@ -238,6 +248,8 @@ function TimelineTrack({
   visibleEvents,
   placements,
   timelineHeight,
+  timedLaneHeight,
+  nowMinutes,
   dayTodos,
   timedTodos,
   hasItems,
@@ -247,6 +259,8 @@ function TimelineTrack({
   visibleEvents: ScheduledEvent[];
   placements: ReturnType<typeof assignTimelineLanes>["placements"];
   timelineHeight: number;
+  timedLaneHeight: number;
+  nowMinutes: number;
   dayTodos: TodoItem[];
   timedTodos: TodoItem[];
   hasItems: boolean;
@@ -268,12 +282,12 @@ function TimelineTrack({
 
   return (
     <div className="flex min-w-0 flex-1 gap-1 overflow-hidden">
-      {(dayTodos.length > 0 || timedTodos.length > 0) && (
+      {dayTodos.length > 0 && (
         <div
           className="flex shrink-0 flex-col gap-0.5"
           style={{ width: TODO_GUTTER_WIDTH }}
         >
-          {[...dayTodos, ...timedTodos].map((todo) => (
+          {dayTodos.map((todo) => (
             <TodoRow
               key={todo.id}
               todo={todo}
@@ -289,7 +303,7 @@ function TimelineTrack({
         <HourRuler />
         <div
           className="absolute inset-x-0 top-[0.85rem]"
-          style={{ height: timelineHeight }}
+          style={{ height: timelineHeight + timedLaneHeight }}
         >
           {visibleEvents.map((event) => {
             const place = placements.get(event.id);
@@ -299,6 +313,7 @@ function TimelineTrack({
               <EventBand
                 key={event.id}
                 event={event}
+                nowMinutes={nowMinutes}
                 timeline
                 onSelect={() => onSelectEvent(event)}
                 onPlay={() => {}}
@@ -309,6 +324,24 @@ function TimelineTrack({
                   top,
                   minHeight: place.laneHeight - 4,
                   transform: place.early ? "none" : "translateX(-3%)",
+                }}
+              />
+            );
+          })}
+          {timedTodos.map((todo, index) => {
+            const mins = labelToMinutes(todo.timeLabel ?? "");
+            if (mins === null) return null;
+            return (
+              <TodoRow
+                key={todo.id}
+                todo={todo}
+                timeline
+                onSelect={() => onSelectTodo(todo)}
+                className="absolute max-w-[28%]"
+                style={{
+                  left: `${timelinePosition(mins)}%`,
+                  top: timelineHeight + index * 22,
+                  transform: "translateX(-50%)",
                 }}
               />
             );
@@ -330,12 +363,15 @@ function TimelineTrack({
 function HourRuler() {
   return (
     <>
-      <div className="flex justify-between px-0.5">
+      <div className="relative h-3 px-0.5">
         {CALENDAR_HOUR_MARKERS.map((h) => (
           <span
             key={h}
-            className="text-[5px] font-bold tabular-nums"
-            style={{ color: INTENT_PANEL_FRAME.inkMuted }}
+            className="absolute -translate-x-1/2 text-[5px] font-bold tabular-nums"
+            style={{
+              left: `${timelinePosition(h * 60)}%`,
+              color: INTENT_PANEL_FRAME.inkMuted,
+            }}
           >
             {h}
           </span>

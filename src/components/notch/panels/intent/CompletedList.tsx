@@ -6,6 +6,7 @@ import {
   getTodayBand,
   INTENT_PANEL_FRAME,
   isEventPast,
+  referenceMinutesForDay,
 } from "@/components/notch/intent-plan-data";
 import { DateRail } from "@/components/notch/panels/intent/DateRail";
 import { EventBand } from "@/components/notch/panels/intent/EventBand";
@@ -17,20 +18,21 @@ import { TodayDateRail } from "@/components/notch/panels/intent/TodayDateRail";
 import { TodoRow } from "@/components/notch/panels/intent/TodoRow";
 
 export function CompletedTodayList() {
-  const { todos, toggleTodo, openItemSheet } = useNotchDemo();
-  const today = getTodayBand();
+  const { todos, calendarDays, selectedDayKey, toggleTodo, openItemSheet } = useNotchDemo();
+  const day = calendarDays.find((d) => d.key === selectedDayKey) ?? calendarDays[0];
+  const refMinutes = referenceMinutesForDay(day, calendarDays);
 
   const completed = useMemo(
     () =>
       todos.filter(
-        (t) => t.done && (t.dayKey === today.key || (!t.dayKey && today.isToday)),
+        (t) => t.done && (t.dayKey === day.key || (!t.dayKey && day.isToday)),
       ),
-    [todos, today.key, today.isToday],
+    [todos, day.key, day.isToday],
   );
 
   const pastEvents = useMemo(
-    () => today.events.filter((e) => isEventPast(e)),
-    [today.events],
+    () => day.events.filter((e) => isEventPast(e, refMinutes)),
+    [day.events, refMinutes],
   );
 
   return (
@@ -64,7 +66,7 @@ export function CompletedTodayList() {
                 event={event}
                 completedView
                 onSelect={() =>
-                  openItemSheet({ kind: "event", id: event.id, dayKey: today.key })
+                  openItemSheet({ kind: "event", id: event.id, dayKey: day.key })
                 }
                 onPlay={() => {}}
               />
@@ -88,7 +90,9 @@ export function CompletedCalendarList() {
             t.done &&
             (t.dayKey === day.key || (!t.dayKey && day.key === today.key)),
         );
-        const dayEvents = day.events.filter((e) => isEventPast(e));
+        const dayEvents = day.events.filter((e) =>
+          isEventPast(e, referenceMinutesForDay(day, calendarDays)),
+        );
         return { day, todos: dayTodos, events: dayEvents };
       })
       .filter((entry) => entry.todos.length > 0 || entry.events.length > 0);

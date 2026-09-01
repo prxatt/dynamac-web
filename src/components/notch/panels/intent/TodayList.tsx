@@ -7,6 +7,7 @@ import {
   focusableFromEvent,
   focusableId,
   formatBandDate,
+  referenceMinutesForDay,
   sortEventsForAgenda,
 } from "@/components/notch/intent-plan-data";
 import { EventBand } from "@/components/notch/panels/intent/EventBand";
@@ -36,6 +37,7 @@ export function TodayList({ minimal = false }: TodayListProps) {
 
   const activeId = focusPhase === "work" ? focusableId(linkedItem) : null;
   const day = calendarDays.find((d) => d.key === selectedDayKey) ?? calendarDays[0];
+  const nowMinutes = referenceMinutesForDay(day, calendarDays);
 
   const { untimed: openTodos, timed: timedTodos } = useMemo(
     () => filterTodosForAgenda(todos, day.key, day.isToday),
@@ -64,6 +66,7 @@ export function TodayList({ minimal = false }: TodayListProps) {
           <EventBand
             key={event.id}
             event={event}
+            nowMinutes={nowMinutes}
             active={activeId === event.id}
             focusProgress={progress}
             onSelect={() => openItemSheet({ kind: "event", id: event.id, dayKey: day.key })}

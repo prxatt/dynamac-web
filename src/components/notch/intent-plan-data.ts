@@ -273,6 +273,24 @@ export function getTodayDayKey(days: DayBand[] = calendarDays): string {
   return days.find((d) => d.isToday)?.key ?? dayKeyFromDate(DEMO_TODAY_DATE);
 }
 
+/** Clock position for live/past/upcoming on a given agenda day */
+export function referenceMinutesForDay(
+  day: DayBand,
+  allDays: DayBand[] = calendarDays,
+): number {
+  if (day.isToday) return DEMO_NOW_MINUTES;
+  const todayIndex = allDays.findIndex((d) => d.isToday);
+  const dayIndex = allDays.findIndex((d) => d.key === day.key);
+  if (todayIndex === -1 || dayIndex === -1) return DEMO_NOW_MINUTES;
+  if (dayIndex < todayIndex) return CALENDAR_TIMELINE_END;
+  if (dayIndex > todayIndex) return CALENDAR_TIMELINE_START;
+  return DEMO_NOW_MINUTES;
+}
+
+export function defaultEventStartMinutes(nowMinutes = DEMO_NOW_MINUTES): number {
+  return clampMinutes(nowMinutes + 60);
+}
+
 export function groupCalendarDaysByMonth(
   days: DayBand[],
 ): { monthLabel: string; days: DayBand[] }[] {

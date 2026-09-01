@@ -23,6 +23,7 @@ type EventBandProps = {
   onSelect?: () => void;
   onPlay: () => void;
   live?: boolean;
+  nowMinutes?: number;
   className?: string;
   style?: React.CSSProperties;
 };
@@ -53,14 +54,16 @@ export function EventBand({
   onSelect,
   onPlay,
   live,
+  nowMinutes,
   className = "",
   style,
 }: EventBandProps) {
   const { customCategories } = useNotchDemo();
   const duration = eventDurationMinutes(event);
-  const isLive = live ?? isEventLive(event);
-  const isPast = isEventPast(event);
-  const showPlay = canFocusEvent(event);
+  const clock = nowMinutes ?? undefined;
+  const isLive = live ?? isEventLive(event, clock);
+  const isPast = isEventPast(event, clock);
+  const showPlay = canFocusEvent(event, clock);
   const accent = colorForCategory(event.category, customCategories);
   const label = labelForCategory(event.category, customCategories);
   const playLabel = `Start focus on ${event.title}`;
