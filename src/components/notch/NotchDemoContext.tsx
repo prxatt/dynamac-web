@@ -10,13 +10,14 @@ import {
   type ReactNode,
 } from "react";
 import {
-  calendarDays as initialCalendarDays,
+  buildCalendarDayRange,
   CUSTOM_CATEGORY_PALETTE,
   customCategoryId,
   DEMO_NOW_MINUTES,
   focusableDurationSeconds,
   focusableFromEvent,
   getLiveEvent,
+  getTodayDayKey,
   resolveCategory,
   type CustomCategory,
   type DayBand,
@@ -37,7 +38,7 @@ export type ItemSheetState =
 
 const BREAK_SECONDS = 5 * 60;
 const DEFAULT_FOCUS_SECONDS = 25 * 60;
-const TODAY_KEY = initialCalendarDays.find((d) => d.isToday)?.key ?? "sep-1";
+const TODAY_KEY = getTodayDayKey();
 
 type NotchDemoContextValue = {
   focusPhase: FocusPhase;
@@ -137,7 +138,7 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
   const [breakSecondsLeft, setBreakSecondsLeft] = useState(BREAK_SECONDS);
   const [totalSeconds, setTotalSeconds] = useState(DEFAULT_FOCUS_SECONDS);
   const [todos, setTodos] = useState<TodoItem[]>(INITIAL_TODOS);
-  const [calendarDays, setCalendarDays] = useState<DayBand[]>(initialCalendarDays);
+  const [calendarDays, setCalendarDays] = useState<DayBand[]>(() => buildCalendarDayRange());
   const [customCategories, setCustomCategories] = useState<Record<string, CustomCategory>>({});
   const [selectedDayKey, setSelectedDayKey] = useState(TODAY_KEY);
   const [itemSheet, setItemSheet] = useState<ItemSheetState | null>(null);

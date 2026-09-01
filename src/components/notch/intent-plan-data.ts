@@ -168,69 +168,127 @@ export const todayEvents: ScheduledEvent[] = [
   },
 ];
 
-export const calendarDays: DayBand[] = [
-  {
-    key: "aug-30",
-    dayLabel: "Saturday",
-    date: 30,
-    monthLabel: "AUG",
-    bandColor: colorForMonth("AUG"),
-    isToday: false,
-    events: [
-      {
-        id: "d30-1",
-        title: "Core architecture planning",
-        startMinutes: 9 * 60,
-        endMinutes: 10 * 60 + 30,
-        category: "work",
-      },
-    ],
-  },
-  {
-    key: "aug-31",
-    dayLabel: "Monday",
-    date: 31,
-    monthLabel: "AUG",
-    bandColor: colorForMonth("AUG"),
-    isToday: false,
-    events: [],
-  },
-  {
-    key: "sep-1",
-    dayLabel: "Tuesday",
-    date: 1,
-    monthLabel: "SEP",
-    bandColor: colorForMonth("SEP"),
-    isToday: true,
-    events: todayEvents,
-  },
-  {
-    key: "sep-2",
-    dayLabel: "Wednesday",
-    date: 2,
-    monthLabel: "SEP",
-    bandColor: colorForMonth("SEP"),
-    isToday: false,
-    events: [],
-  },
-  {
-    key: "sep-3",
-    dayLabel: "Thursday",
-    date: 3,
-    monthLabel: "SEP",
-    bandColor: colorForMonth("SEP"),
-    isToday: false,
-    events: [
-      {
-        id: "d3-1",
-        title: "Press kit",
-        startMinutes: 13 * 60,
-        endMinutes: 14 * 60,
-        category: "work",
-      },
-    ],
-  },
-];
+const MONTH_SHORT = [
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "may",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "oct",
+  "nov",
+  "dec",
+] as const;
+
+const DAY_NAMES = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+] as const;
+
+const MONTH_LABELS = [
+  "JAN",
+  "FEB",
+  "MAR",
+  "APR",
+  "MAY",
+  "JUN",
+  "JUL",
+  "AUG",
+  "SEP",
+  "OCT",
+  "NOV",
+  "DEC",
+] as const;
+
+/** Demo anchor: Tuesday, Sep 1 2026 */
+export const DEMO_TODAY_DATE = new Date(2026, 8, 1);
+
+export const CALENDAR_PAST_DAYS = 30;
+export const CALENDAR_FUTURE_DAYS = 30;
+
+export function dayKeyFromDate(date: Date): string {
+  return `${MONTH_SHORT[date.getMonth()]}-${date.getDate()}`;
+}
+
+/** Seed events for specific days in the scroll range */
+const CALENDAR_EVENT_SEEDS: Record<string, ScheduledEvent[]> = {
+  "aug-30": [
+    {
+      id: "d30-1",
+      title: "Core architecture planning",
+      startMinutes: 9 * 60,
+      endMinutes: 10 * 60 + 30,
+      category: "work",
+    },
+  ],
+  "sep-1": todayEvents,
+  "sep-3": [
+    {
+      id: "d3-1",
+      title: "Press kit",
+      startMinutes: 13 * 60,
+      endMinutes: 14 * 60,
+      category: "work",
+    },
+  ],
+};
+
+export function buildCalendarDayRange(
+  anchor = DEMO_TODAY_DATE,
+  pastDays = CALENDAR_PAST_DAYS,
+  futureDays = CALENDAR_FUTURE_DAYS,
+): DayBand[] {
+  const days: DayBand[] = [];
+
+  for (let offset = -pastDays; offset <= futureDays; offset += 1) {
+    const date = new Date(anchor);
+    date.setDate(date.getDate() + offset);
+    const key = dayKeyFromDate(date);
+    const monthLabel = MONTH_LABELS[date.getMonth()];
+    const isToday = offset === 0;
+
+    days.push({
+      key,
+      dayLabel: DAY_NAMES[date.getDay()],
+      date: date.getDate(),
+      monthLabel,
+      bandColor: colorForMonth(monthLabel),
+      isToday,
+      events: CALENDAR_EVENT_SEEDS[key] ?? [],
+    });
+  }
+
+  return days;
+}
+
+export function getTodayDayKey(days: DayBand[] = calendarDays): string {
+  return days.find((d) => d.isToday)?.key ?? dayKeyFromDate(DEMO_TODAY_DATE);
+}
+
+export function groupCalendarDaysByMonth(
+  days: DayBand[],
+): { monthLabel: string; days: DayBand[] }[] {
+  const groups: { monthLabel: string; days: DayBand[] }[] = [];
+  for (const day of days) {
+    const tail = groups[groups.length - 1];
+    if (tail?.monthLabel === day.monthLabel) {
+      tail.days.push(day);
+    } else {
+      groups.push({ monthLabel: day.monthLabel, days: [day] });
+    }
+  }
+  return groups;
+}
+
+export const calendarDays: DayBand[] = buildCalendarDayRange();
 
 export function minutesToLabel(minutes: number): string {
   const h24 = Math.floor(minutes / 60);

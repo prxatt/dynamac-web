@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useNotchDemo } from "@/components/notch/NotchDemoContext";
 import {
   assignTimelineLanes,
   CALENDAR_HOUR_MARKERS,
+  colorForMonth,
   filterTodosForAgenda,
   focusableFromEvent,
   focusableId,
+  groupCalendarDaysByMonth,
   INTENT_PANEL_FRAME,
   sortEventsForAgenda,
   type DayBand,
@@ -16,7 +18,7 @@ import {
 } from "@/components/notch/intent-plan-data";
 import { CalendarDateLabel } from "@/components/notch/panels/intent/CalendarDateLabel";
 import { EventBand } from "@/components/notch/panels/intent/EventBand";
-import { HIDDEN_SCROLL, IntentPanelFrame } from "@/components/notch/panels/intent/IntentPanelFrame";
+import { HIDDEN_SCROLL } from "@/components/notch/panels/intent/IntentPanelFrame";
 import { TodoRow } from "@/components/notch/panels/intent/TodoRow";
 
 type CalendarBandsProps = {
@@ -31,6 +33,7 @@ export function CalendarBands({ minimal = false }: CalendarBandsProps) {
     useNotchDemo();
   const scrollRef = useRef<HTMLDivElement>(null);
   const activeId = focusPhase === "work" ? focusableId(linkedItem) : null;
+  const monthGroups = useMemo(() => groupCalendarDaysByMonth(calendarDays), [calendarDays]);
 
   useEffect(() => {
     const todayEl = scrollRef.current?.querySelector('[data-today-row="true"]');
@@ -40,31 +43,45 @@ export function CalendarBands({ minimal = false }: CalendarBandsProps) {
   if (minimal) {
     return (
       <p className="w-full text-left text-[9px] font-medium" style={{ color: "var(--widget-muted)" }}>
-        Calendar · week view
+        Calendar · scroll ±30 days
       </p>
     );
   }
 
   return (
-    <IntentPanelFrame variant="today" className="p-1.5">
+    <div
+      className="overflow-hidden rounded-xl p-1"
+      style={{
+        outline: INTENT_PANEL_FRAME.outline,
+        backgroundColor: "rgba(26, 26, 24, 0.05)",
+      }}
+    >
       <div ref={scrollRef} className={`max-h-[6.25rem] ${HIDDEN_SCROLL}`}>
-        {calendarDays.map((day, index) => (
-          <DayTimelineStrip
-            key={day.key}
-            day={day}
-            isLast={index === calendarDays.length - 1}
-            activeId={activeId}
-            focusProgress={progress}
-            onSelectEvent={(event) =>
-              openItemSheet({ kind: "event", id: event.id, dayKey: day.key })
-            }
-            onSelectTodo={(todo) => openItemSheet({ kind: "todo", id: todo.id })}
-            onPlayEvent={(event) => startFocus(focusableFromEvent(event))}
-            onToggleTodo={toggleTodo}
-          />
+        {monthGroups.map((group) => (
+          <div
+            key={`${group.monthLabel}-${group.days[0]?.key}`}
+            className="mb-1 rounded-lg p-1 last:mb-0"
+            style={{ backgroundColor: colorForMonth(group.monthLabel) }}
+          >
+            {group.days.map((day, index) => (
+              <DayTimelineStrip
+                key={day.key}
+                day={day}
+                isLast={index === group.days.length - 1}
+                activeId={activeId}
+                focusProgress={progress}
+                onSelectEvent={(event) =>
+                  openItemSheet({ kind: "event", id: event.id, dayKey: day.key })
+                }
+                onSelectTodo={(todo) => openItemSheet({ kind: "todo", id: todo.id })}
+                onPlayEvent={(event) => startFocus(focusableFromEvent(event))}
+                onToggleTodo={toggleTodo}
+              />
+            ))}
+          </div>
         ))}
       </div>
-    </IntentPanelFrame>
+    </div>
   );
 }
 
