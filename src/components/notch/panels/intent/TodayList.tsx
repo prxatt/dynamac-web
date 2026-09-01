@@ -40,13 +40,13 @@ export function TodayList({ minimal = false }: TodayListProps) {
   const nowMinutes = referenceMinutesForDay(day, calendarDays);
 
   const { untimed: openTodos, timed: timedTodos } = useMemo(
-    () => filterTodosForAgenda(todos, day.key, day.isToday),
-    [todos, day.key, day.isToday],
+    () => filterTodosForAgenda(todos, day.key, day.isToday, nowMinutes),
+    [todos, day.key, day.isToday, nowMinutes],
   );
 
   const dayEvents = useMemo(
-    () => sortEventsForAgenda(day.events, { isToday: day.isToday }),
-    [day.events, day.isToday],
+    () => sortEventsForAgenda(day.events, { isToday: day.isToday, nowMinutes }),
+    [day.events, day.isToday, nowMinutes],
   );
 
   if (minimal) {

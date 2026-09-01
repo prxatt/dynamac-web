@@ -64,6 +64,7 @@ export function CompletedTodayList() {
               <EventBand
                 key={event.id}
                 event={event}
+                nowMinutes={refMinutes}
                 completedView
                 onSelect={() =>
                   openItemSheet({ kind: "event", id: event.id, dayKey: day.key })
@@ -130,17 +131,21 @@ export function CompletedCalendarList() {
                     onToggle={() => toggleTodo(todo.id)}
                   />
                 ))}
-                {dayEvents.map((event) => (
-                  <EventBand
-                    key={event.id}
-                    event={event}
-                    completedView
-                    onSelect={() =>
-                      openItemSheet({ kind: "event", id: event.id, dayKey: day.key })
-                    }
-                    onPlay={() => {}}
-                  />
-                ))}
+                {dayEvents.map((event) => {
+                  const refMinutes = referenceMinutesForDay(day, calendarDays);
+                  return (
+                    <EventBand
+                      key={event.id}
+                      event={event}
+                      nowMinutes={refMinutes}
+                      completedView
+                      onSelect={() =>
+                        openItemSheet({ kind: "event", id: event.id, dayKey: day.key })
+                      }
+                      onPlay={() => {}}
+                    />
+                  );
+                })}
               </div>
             </div>
           ))}

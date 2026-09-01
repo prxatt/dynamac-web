@@ -14,6 +14,7 @@ import {
   labelToMinutes,
   referenceMinutesForDay,
   sortEventsForAgenda,
+  timelineMarkerPosition,
   timelinePosition,
   type DayBand,
   type ScheduledEvent,
@@ -63,8 +64,8 @@ export function CalendarBands({ minimal = false }: CalendarBandsProps) {
         {monthGroups.map((group) => (
           <div
             key={`${group.monthLabel}-${group.days[0]?.key}`}
-            className="mb-1 rounded-lg p-1 last:mb-0"
-            style={{ backgroundColor: colorForMonth(group.monthLabel) }}
+            className="mb-1 rounded-lg border-l-[3px] p-1 last:mb-0"
+            style={{ borderColor: colorForMonth(group.monthLabel) }}
           >
             {group.days.map((day, index) => (
               <DayTimelineStrip
@@ -113,8 +114,12 @@ function DayTimelineStrip({
     todos,
     day.key,
     day.isToday,
+    nowMinutes,
   );
-  const visibleEvents = sortEventsForAgenda(day.events, { isToday: day.isToday });
+  const visibleEvents = sortEventsForAgenda(day.events, {
+    isToday: day.isToday,
+    nowMinutes,
+  });
   const hasItems = visibleEvents.length > 0 || dayTodos.length > 0 || timedTodos.length > 0;
 
   if (day.isToday) {
@@ -122,6 +127,7 @@ function DayTimelineStrip({
       <TodayCalendarRow
         day={day}
         isLast={isLast}
+        nowMinutes={nowMinutes}
         visibleEvents={visibleEvents}
         dayTodos={dayTodos}
         timedTodos={timedTodos}
@@ -135,7 +141,7 @@ function DayTimelineStrip({
     );
   }
 
-  const { placements, timelineHeight } = assignTimelineLanes(visibleEvents);
+  const { placements, timelineHeight } = assignTimelineLanes(visibleEvents, nowMinutes);
   const timedLaneHeight = timedTodos.length > 0 ? 22 + timedTodos.length * 22 : 0;
   const rowMinHeight = TIMELINE_HEADER + timelineHeight + timedLaneHeight + 12;
 
@@ -165,6 +171,7 @@ function DayTimelineStrip({
 function TodayCalendarRow({
   day,
   isLast,
+  nowMinutes,
   visibleEvents,
   dayTodos,
   timedTodos,
@@ -177,6 +184,7 @@ function TodayCalendarRow({
 }: {
   day: DayBand;
   isLast: boolean;
+  nowMinutes: number;
   visibleEvents: ScheduledEvent[];
   dayTodos: TodoItem[];
   timedTodos: TodoItem[];
@@ -187,8 +195,6 @@ function TodayCalendarRow({
   onPlayEvent: (event: ScheduledEvent) => void;
   onToggleTodo: (id: string) => void;
 }) {
-  const { calendarDays } = useNotchDemo();
-  const nowMinutes = referenceMinutesForDay(day, calendarDays);
   const hasItems =
     visibleEvents.length > 0 || dayTodos.length > 0 || timedTodos.length > 0;
 
@@ -364,18 +370,25 @@ function HourRuler() {
   return (
     <>
       <div className="relative h-3 px-0.5">
-        {CALENDAR_HOUR_MARKERS.map((h) => (
-          <span
-            key={h}
-            className="absolute -translate-x-1/2 text-[5px] font-bold tabular-nums"
-            style={{
-              left: `${timelinePosition(h * 60)}%`,
-              color: INTENT_PANEL_FRAME.inkMuted,
-            }}
-          >
-            {h}
-          </span>
-        ))}
+        {CALENDAR_HOUR_MARKERS.map((h, index) => {
+          const isFirst = index === 0;
+          const isLast = index === CALENDAR_HOUR_MARKERS.length - 1;
+          const left = timelineMarkerPosition(h * 60);
+          return (
+            <span
+              key={h}
+              className={`absolute text-[5px] font-bold tabular-nums ${
+                isFirst ? "" : isLast ? "-translate-x-full" : "-translate-x-1/2"
+              }`}
+              style={{
+                left: `${left}%`,
+                color: INTENT_PANEL_FRAME.inkMuted,
+              }}
+            >
+              {h}
+            </span>
+          );
+        })}
       </div>
       <div
         className="mt-[0.35rem] h-px"

@@ -282,8 +282,8 @@ export function referenceMinutesForDay(
   const todayIndex = allDays.findIndex((d) => d.isToday);
   const dayIndex = allDays.findIndex((d) => d.key === day.key);
   if (todayIndex === -1 || dayIndex === -1) return DEMO_NOW_MINUTES;
-  if (dayIndex < todayIndex) return CALENDAR_TIMELINE_END;
-  if (dayIndex > todayIndex) return CALENDAR_TIMELINE_START;
+  if (dayIndex < todayIndex) return DAY_END_MINUTES;
+  if (dayIndex > todayIndex) return DAY_START_MINUTES;
   return DEMO_NOW_MINUTES;
 }
 
@@ -364,6 +364,10 @@ export const TIME_SLIDER_START = 6 * 60;
 export const TIME_SLIDER_END = 22 * 60;
 export const TIME_SLIDER_STEP = 15;
 
+/** Full-day bounds for “pretend we’re at start/end of day” on non-today rows */
+export const DAY_START_MINUTES = 0;
+export const DAY_END_MINUTES = 24 * 60 - 1;
+
 export function labelToMinutes(label: string): number | null {
   if (!label || label === "Anytime") return null;
   const match = label.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
@@ -411,6 +415,13 @@ export function timelinePosition(startMinutes: number): number {
   if (startMinutes <= CALENDAR_TIMELINE_START) return 0;
   if (startMinutes >= CALENDAR_TIMELINE_END) return 100;
   return ((startMinutes - CALENDAR_TIMELINE_START) / span) * 100;
+}
+
+/** Hour labels inset so 8 AM / 6 PM aren’t clipped at strip edges */
+export function timelineMarkerPosition(startMinutes: number): number {
+  const raw = timelinePosition(startMinutes);
+  const inset = 4;
+  return inset + (raw / 100) * (100 - inset * 2);
 }
 
 export function timelineWidth(
