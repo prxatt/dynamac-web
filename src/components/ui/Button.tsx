@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { type ComponentPropsWithoutRef, type ReactNode } from "react";
+import { DownloadIcon } from "@/components/ui/DownloadIcon";
 
 type ButtonVariant = "primary" | "secondary" | "accent" | "ghost";
 
@@ -18,6 +19,7 @@ type ButtonProps = ComponentPropsWithoutRef<"button"> & {
   href?: string;
   external?: boolean;
   dot?: "sky" | "grass" | "none";
+  downloadIcon?: boolean;
   children: ReactNode;
 };
 
@@ -42,6 +44,7 @@ export function Button({
   href,
   external,
   dot = variant === "primary" ? "sky" : "none",
+  downloadIcon = false,
   className = "",
   children,
   ...props
@@ -55,8 +58,11 @@ export function Button({
 
   const content = (
     <>
+      {downloadIcon ? <DownloadIcon className="h-4 w-4 shrink-0" /> : null}
       <span>{children}</span>
-      {dot !== "none" && variant !== "accent" ? <ActionDot dot={dot} /> : null}
+      {dot !== "none" && variant !== "accent" && !downloadIcon ? (
+        <ActionDot dot={dot} />
+      ) : null}
     </>
   );
 

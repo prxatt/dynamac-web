@@ -19,9 +19,9 @@ Marketing site for dynamac.com. Product name: **DynaMac** (display); domain stay
 
 ## Homepage UI
 
-- **Tab widgets:** `src/components/demo/AgentLiveCard.tsx`, `IntentLiveCard.tsx`, `ShelfLiveCard.tsx` — shared shell in `TabWidgetCard.tsx`
+- **Tab demos:** `NowPlayingLiveCard`, `IntentLiveCard`, `ShelfLiveCard` — dark `NotchShell` mocks matching the app UI
 - **Illustrations:** `public/illustrations/*.png` — GPT-generated characters; prompts in `docs/ILLUSTRATION_PROMPTS.md`
-- **Motion:** `ScrollIllustration` parallax on tab sections; tab widgets unchanged (`AgentLiveCard`, `IntentLiveCard`, `ShelfLiveCard`)
+- **Hero:** `NotchProductStage` — animated liquid-glass notch mock (product-first). STS video upgrade path in `docs/DYNAMAC_HERO_PIPELINE.md`. Character `hero-band` in footer.
 - **Springs:** shared defaults in `src/lib/tab-widget-motion.ts`; DialKit panel only in `npm run dev`
 - **No screenshot posters** on the homepage — live React cards only
 

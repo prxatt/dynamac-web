@@ -20,13 +20,9 @@ export function HeroProduct() {
 
   return (
     <section ref={ref} className="relative overflow-visible">
-      <div className="flex flex-col items-center gap-10 sm:gap-12">
-        <div className="order-1 w-full">
-          <NotchProductStage />
-        </div>
-
+      <div className="flex flex-col items-center gap-8 sm:gap-10">
         <motion.div
-          className="order-2 mx-auto w-full max-w-xl text-center"
+          className="mx-auto w-full max-w-xl text-center"
           style={reducedMotion ? undefined : { y: copyY }}
           initial={reducedMotion ? false : { y: 16 }}
           animate={{ y: 0 }}
@@ -50,16 +46,20 @@ export function HeroProduct() {
           <p className="mt-3 text-[length:var(--text-body-sm)] text-[var(--color-stone-gray)]">
             {brand.credits} · ${brand.price.toFixed(2)} once
           </p>
-
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <Button href="/api/download" dot="sky">
-              Download for macOS
-            </Button>
-            <Button href="/buy" variant="secondary">
-              Buy license
-            </Button>
-          </div>
         </motion.div>
+
+        <div className="w-full">
+          <NotchProductStage />
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <Button href="/buy" downloadIcon>
+            Get DynaMac — free download
+          </Button>
+          <Button href="/buy" variant="secondary">
+            License · ${brand.price.toFixed(2)} once
+          </Button>
+        </div>
       </div>
     </section>
   );

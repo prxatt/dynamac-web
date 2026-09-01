@@ -54,7 +54,6 @@ export function TabsSection() {
               mark={<TabMark mark={tab.mark} color={tab.accent} />}
               illustration={tabIllustrations[tab.id]!}
               widget={<TabShowcaseDemo tab={tab.id as NotchTabId} />}
-              hideCharacterBackdrop={tab.id === "intent"}
             />
           ))}
         </div>
