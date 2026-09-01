@@ -40,7 +40,20 @@ export function HeroProduct() {
             <br />
             working.
           </h1>
-          <p className="mt-4 text-[length:var(--text-subheading)] font-medium text-[var(--color-ink-black)]">
+        </motion.div>
+
+        <div className="w-full">
+          <NotchProductStage />
+        </div>
+
+        <motion.div
+          className="mx-auto w-full max-w-xl text-center"
+          style={reducedMotion ? undefined : { y: copyY }}
+          initial={reducedMotion ? false : { y: 12 }}
+          animate={{ y: 0 }}
+          transition={{ ...sectionRevealTransition, delay: 0.06 }}
+        >
+          <p className="text-[length:var(--text-subheading)] font-medium text-[var(--color-ink-black)]">
             {brand.shortDescription}
           </p>
           <p className="mt-3 text-[length:var(--text-body-sm)] text-[var(--color-stone-gray)]">
@@ -48,16 +61,12 @@ export function HeroProduct() {
           </p>
         </motion.div>
 
-        <div className="w-full">
-          <NotchProductStage />
-        </div>
-
         <div className="flex flex-wrap items-center justify-center gap-4">
           <Button href="/buy" downloadIcon>
             Get DynaMac — free download
           </Button>
           <Button href="/buy" variant="secondary">
-            License · ${brand.price.toFixed(2)} once
+            License · {`$${brand.price.toFixed(2)}`} once
           </Button>
         </div>
       </div>
