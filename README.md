@@ -6,7 +6,14 @@ Marketing site for [dynamac.com](https://dynamac.com) — **DynaMac**, the macOS
 
 - Next.js 16 (App Router)
 - Tailwind CSS v4
-- Framer Motion (scroll fade-ins, respects reduced motion)
+- Motion (`motion/react`) — scroll reveals, parallax characters, `prefers-reduced-motion` safe
+- DialKit (dev only) — tune tab widget hover springs in `npm run dev`
+
+## Homepage
+
+- **Hero** — display type on cream canvas, notch + app icon, scroll accent character
+- **Three tabs** — white editorial cards with live widgets (`AgentLiveCard`, `IntentLiveCard`, `ShelfLiveCard`) and paper-cut scroll characters (lg+)
+- **Purchase** — $2.99 one-time CTA
 
 ## Development
 
@@ -17,6 +24,23 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+### Dev server won't start?
+
+Another Next.js process may be holding port 3000:
+
+```bash
+npm run dev:clean
+```
+
+Or manually:
+
+```bash
+lsof -ti:3000 | xargs kill -9
+npm run dev
+```
+
+If the page is blank, confirm you're in `dynamac-web` (not the macOS app repo) and on branch `feat/dialkit-agent-card` or `main`.
 
 ## Environment
 
@@ -33,6 +57,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ```bash
 npm run dev        # Development server
+npm run dev:clean  # Kill stale :3000/:3001 then start dev
 npm run build      # Production build
 npm run start      # Start production server
 npm run lint       # ESLint

@@ -10,7 +10,8 @@ export const metadata: Metadata = {
 export default function PressPage() {
   return (
     <div className="mx-auto max-w-2xl px-5 py-16">
-      <h1 className="text-3xl font-bold">Press</h1>
+      <div className="page-card">
+      <h1 className="page-title">Press</h1>
       <p className="mt-4 text-[var(--fg-muted)]">{brand.shortDescription}</p>
       <p className="mt-2 text-sm text-[var(--fg-dim)]">{brand.credits}</p>
 
@@ -37,10 +38,11 @@ export default function PressPage() {
       </p>
 
       <p className="mt-4 text-sm">
-        <a href={`mailto:${brand.supportEmail}`} className="text-[var(--teal)]">
+        <a href={`mailto:${brand.supportEmail}`} className="text-link">
           {brand.supportEmail}
         </a>
       </p>
+      </div>
     </div>
   );
 }

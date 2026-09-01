@@ -9,9 +9,8 @@ export default function SupportPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:py-24">
-      <h1 className="font-display text-4xl font-semibold text-[var(--fg)]">
-        Support
-      </h1>
+      <div className="page-card">
+      <h1 className="page-title">Support</h1>
       <p className="mt-4 text-[var(--fg-muted)]">
         Questions about {brand.name}, licensing, or permissions? Send a message or
         email us directly.
@@ -24,7 +23,7 @@ export default function SupportPage() {
             did not open, email{" "}
             <a
               href={`mailto:${brand.supportEmail}`}
-              className="text-[var(--accent)] underline-offset-2 hover:underline"
+              className="text-link"
             >
               {brand.supportEmail}
             </a>
@@ -90,13 +89,11 @@ export default function SupportPage() {
 
       <p className="mt-8 text-sm text-[var(--fg-subtle)]">
         Direct email:{" "}
-        <a
-          href={`mailto:${brand.supportEmail}`}
-          className="text-[var(--accent)] underline-offset-2 hover:underline"
-        >
+        <a href={`mailto:${brand.supportEmail}`} className="text-link">
           {brand.supportEmail}
         </a>
       </p>
+      </div>
     </div>
   );
 }

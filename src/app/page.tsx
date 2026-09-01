@@ -1,5 +1,4 @@
 import { Hero } from "@/components/sections/Hero";
-import { PurchaseSection } from "@/components/sections/PurchaseSection";
 import { TabsSection } from "@/components/sections/TabsSection";
 
 export default function HomePage() {
@@ -7,7 +6,6 @@ export default function HomePage() {
     <>
       <Hero />
       <TabsSection />
-      <PurchaseSection />
     </>
   );
 }

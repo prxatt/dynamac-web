@@ -1,19 +1,7 @@
 # Tab demo media
 
-## Shipped placeholders
+The homepage uses live React card widgets (`AgentLiveCard`, `IntentLiveCard`, `ShelfLiveCard`) instead of screenshot posters.
 
-`posters/*.svg` — stylized notch UI previews (safe to commit).
+Optional Screen Studio recordings can still live here for press or social (`now-playing.webp`, etc.) but are not used on the marketing homepage.
 
-## Your recordings (local only)
-
-Export from Screen Studio and drop into this folder:
-
-| File | Tab |
-|------|-----|
-| `now-playing.webp` | Now Playing + agents |
-| `intent.webp` | Intent calendar/focus |
-| `shelf.webp` | Shelf files/AirDrop |
-
-Specs: 1200×675 WebP, loop, under 2MB.
-
-The site auto-detects `.webp` files and replaces the SVG poster when present.
+Specs if recording: 1200×675 WebP, loop, under 2MB.

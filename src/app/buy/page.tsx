@@ -13,8 +13,9 @@ export default function BuyPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-16">
-      <h1 className="text-3xl font-bold">Buy {brand.name}</h1>
-      <p className="mt-4 text-lg text-[var(--fg-muted)]">
+      <div className="page-card">
+      <h1 className="page-title">Buy {brand.name}</h1>
+      <p className="mt-4 text-[length:var(--text-body-lg)] text-[var(--fg-muted)]">
         ${brand.price.toFixed(2)} one-time. All 1.x updates. macOS 14+.
       </p>
 
@@ -39,10 +40,11 @@ export default function BuyPage() {
 
       <p className="mt-10 text-sm text-[var(--fg-dim)]">
         Questions?{" "}
-        <a href={`mailto:${brand.supportEmail}`} className="text-[var(--teal)]">
+        <a href={`mailto:${brand.supportEmail}`} className="text-link">
           {brand.supportEmail}
         </a>
       </p>
+      </div>
     </div>
   );
 }

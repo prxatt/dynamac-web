@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans } from "next/font/google";
+import type { ReactNode } from "react";
+import { Inter } from "next/font/google";
 import Script from "next/script";
+import { DialKitDevRoot } from "@/components/dev/DialKitDevRoot";
 import { Footer } from "@/components/layout/Footer";
 import { Nav } from "@/components/layout/Nav";
 import { SkipLink } from "@/components/layout/SkipLink";
@@ -9,10 +11,10 @@ import { appIconSrc } from "@/components/ui/AppIcon";
 import { buildAllJsonLd } from "@/lib/schema";
 import "./globals.css";
 
-const plex = IBM_Plex_Sans({
-  variable: "--font-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500"],
   display: "swap",
 });
 
@@ -53,12 +55,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   const jsonLdBlocks = buildAllJsonLd();
   const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
   return (
-    <html lang="en" className={`${plex.variable} h-full`}>
+    <html lang="en" className={`${inter.variable} h-full`}>
       <body className="min-h-full flex flex-col antialiased">
         <SkipLink />
         <Nav />
@@ -81,6 +83,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             strategy="afterInteractive"
           />
         ) : null}
+        {process.env.NODE_ENV === "development" ? <DialKitDevRoot /> : null}
       </body>
     </html>
   );

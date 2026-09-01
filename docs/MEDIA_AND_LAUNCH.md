@@ -5,13 +5,13 @@
 - Marketing site with home, buy, privacy, changelog, support, press
 - Download redirect via `/api/download` → GitHub Releases
 - Buy page ready for Stripe or Lemon Squeezy (env var when you connect)
-- SVG tab posters in `public/demos/posters/`; auto-upgrades to `.webp` when you add recordings
+- Live tab card widgets on the homepage (`AgentLiveCard`, `IntentLiveCard`, `ShelfLiveCard`)
 - SEO: JSON-LD, sitemap, robots, `llms.txt`
 - App icon in nav, hero, favicon, OG
 
-## Your workflow: tab GIFs
+## Your workflow: tab recordings (optional)
 
-Use **Screen Studio** on a clean desktop.
+Screen Studio clips in `public/demos/` are optional — for press, Product Hunt, or social. The homepage uses live React widgets, not video posters.
 
 1. Record each tab (~3–4s loop)
 2. Export 1200×675 WebP, under 2MB
@@ -40,7 +40,7 @@ Or **Lemon Squeezy**: `NEXT_PUBLIC_LEMON_SQUEEZY_CHECKOUT_URL`
 
 ## Before Product Hunt
 
-- [ ] Real tab WebP demos in `public/demos/`
+- [ ] Optional tab WebP clips for press / Product Hunt
 - [ ] Stripe or Lemon Squeezy live
 - [ ] OG image with real UI screenshot (optional upgrade from app icon)
 - [ ] Submit sitemap in Google Search Console

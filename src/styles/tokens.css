@@ -1,29 +1,69 @@
 :root {
-  --bg: #0a0a0a;
-  --bg-panel: #141414;
-  --bg-elevated: #161616;
-  --bg-glass: rgba(255, 255, 255, 0.06);
-  --fg: #f2f2f2;
-  --fg-muted: #a3a3a3;
-  --fg-dim: #666666;
-  --fg-subtle: #737373;
-  --teal: #8cc7b8;
-  --red: #c41e3a;
-  --blue: #1e4d8c;
-  --yellow: #e8b923;
-  --accent: #8cc7b8;
-  --border: #262626;
-  --border-light: #333333;
-  --border-subtle: #1f1f1f;
-  --focus: #e8b923;
-  --focus-ring: #e8b923;
-  --radius: 10px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --max-width: 1100px;
-  --nav-height: 52px;
-  --glow-red: rgba(196, 30, 58, 0.22);
-  --glow-blue: rgba(30, 77, 140, 0.2);
-  --glow-yellow: rgba(232, 185, 35, 0.16);
-  --glow-teal: rgba(140, 199, 184, 0.18);
+  /* MindMarket-inspired palette — warm editorial canvas */
+  --color-fresh-grass: #8ed462;
+  --color-cream-paper: #f5f1e4;
+  --color-ink-black: #2c2e2a;
+  --color-pure-white: #ffffff;
+  --color-sandstone: #e0dbce;
+  --color-stone-gray: #80827f;
+  --color-hairline-mist: #d5d5d4;
+  --color-pure-ink: #000000;
+  --color-sky-pop: #2ba0ff;
+  --color-coral-pop: #ff705d;
+  --color-sunshine-pop: #f5e211;
+
+  /* Typography — --font-inter is set by next/font on <html> */
+  --text-body-sm: 15px;
+  --text-body-lg: 18px;
+  --text-subheading: 20px;
+  --text-heading-sm: 30px;
+  --text-heading: 53px;
+  --text-heading-lg: 81px;
+  --text-display: clamp(3.25rem, 11vw, 8.75rem);
+
+  /* Spacing */
+  --spacing-20: 20px;
+  --spacing-60: 60px;
+  --spacing-136: 136px;
+
+  /* Layout */
+  --page-max-width: 1200px;
+  --section-gap: 100px;
+  --card-padding: 21px;
+  --nav-height: 64px;
+
+  /* Radii */
+  --radius-small: 10px;
+  --radius-nav: 50px;
+  --radius-cards: 50px;
+  --radius-buttons: 50px;
+
+  /* Surfaces */
+  --surface-cream: var(--color-cream-paper);
+  --surface-elevated: var(--color-pure-white);
+  --surface-inset: var(--color-sandstone);
+
+  /* Semantic aliases (existing components) */
+  --bg: var(--color-cream-paper);
+  --fg: var(--color-ink-black);
+  --fg-muted: var(--color-stone-gray);
+  --fg-dim: var(--color-stone-gray);
+  --fg-subtle: var(--color-stone-gray);
+  --bg-panel: var(--color-pure-white);
+  --bg-elevated: var(--color-sandstone);
+  --bg-glass: var(--color-pure-white);
+  --border: var(--color-hairline-mist);
+  --border-light: var(--color-hairline-mist);
+  --border-subtle: var(--color-hairline-mist);
+  --teal: var(--color-fresh-grass);
+  --red: var(--color-coral-pop);
+  --blue: var(--color-sky-pop);
+  --yellow: var(--color-sunshine-pop);
+  --accent: var(--color-fresh-grass);
+  --focus: var(--color-fresh-grass);
+  --focus-ring: var(--color-fresh-grass);
+  --radius: var(--radius-buttons);
+  --radius-md: var(--radius-small);
+  --radius-lg: var(--radius-cards);
+  --max-width: var(--page-max-width);
 }
