@@ -111,7 +111,7 @@ export function IntentPanelCompact({ layoutIdPrefix = "intent" }: IntentPanelCom
                   key="item-sheet"
                   sheet={itemSheet}
                   onClose={closeItemSheet}
-                  panelTint={mode === "today" ? "#f0a030" : undefined}
+                  panelTint="#f0a030"
                 />
               ) : (
                 <motion.div

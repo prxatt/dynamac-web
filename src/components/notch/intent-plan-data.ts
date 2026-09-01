@@ -253,10 +253,10 @@ export function getLiveEventToday(nowMinutes = DEMO_NOW_MINUTES): ScheduledEvent
 /** Warm orange panel fill — Today tab reference */
 export const TODAY_PANEL_COLOR = "#f0a030";
 
-/** Shared Intent list frame — warm, readable (not dim gray) */
+/** Shared Intent list frame — warm orange, high contrast */
 export const INTENT_PANEL_FRAME = {
   todayFill: TODAY_PANEL_COLOR,
-  calendarFill: "rgba(240, 160, 48, 0.28)",
+  calendarFill: TODAY_PANEL_COLOR,
   outline: "2px solid rgba(26, 26, 24, 0.22)",
   ink: "#1a1a18",
   inkMuted: "rgba(26, 26, 24, 0.62)",

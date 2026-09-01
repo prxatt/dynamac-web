@@ -7,6 +7,7 @@ import {
   INTENT_PANEL_FRAME,
   isEventPast,
 } from "@/components/notch/intent-plan-data";
+import { DateRail } from "@/components/notch/panels/intent/DateRail";
 import { EventBand } from "@/components/notch/panels/intent/EventBand";
 import {
   HIDDEN_SCROLL,
@@ -99,67 +100,48 @@ export function CompletedCalendarList() {
   );
 
   return (
-    <IntentPanelFrame variant="calendar">
-      <div className={`max-h-[5.5rem] ${HIDDEN_SCROLL}`}>
-        <p
-          className="mb-1 text-[6px] font-bold uppercase tracking-wide"
-          style={{ color: INTENT_PANEL_FRAME.inkMuted }}
-        >
-          Completed · {total}
+    <IntentPanelFrame variant="today">
+      <p
+        className="mb-1.5 text-[6px] font-bold uppercase tracking-wide"
+        style={{ color: INTENT_PANEL_FRAME.inkMuted }}
+      >
+        Completed · {total}
+      </p>
+      {daysWithCompleted.length === 0 ? (
+        <p className="py-2 text-[8px] font-semibold" style={{ color: INTENT_PANEL_FRAME.inkMuted }}>
+          Nothing completed yet
         </p>
-        {daysWithCompleted.length === 0 ? (
-          <p className="py-2 text-[8px] font-semibold" style={{ color: INTENT_PANEL_FRAME.inkMuted }}>
-            Nothing completed yet
-          </p>
-        ) : (
-          <div className="space-y-1">
-            {daysWithCompleted.map(({ day, todos: dayTodos, events: dayEvents }) => (
-              <div
-                key={day.key}
-                className="overflow-hidden rounded-lg p-1"
-                style={{
-                  backgroundColor: day.bandColor,
-                  outline: day.isToday ? "1.5px solid #1a1a18" : undefined,
-                }}
-              >
-                <div className="flex gap-1.5">
-                  <div className="flex w-[2.35rem] shrink-0 flex-col items-center justify-center text-center text-black">
-                    <p className="text-[5px] font-bold uppercase leading-none opacity-70">
-                      {day.dayLabel.slice(0, 3)}
-                    </p>
-                    <p className="text-[13px] font-bold leading-none tabular-nums">
-                      {String(day.date).padStart(2, "0")}
-                    </p>
-                    <p className="text-[6px] font-bold leading-none">{day.monthLabel}</p>
-                  </div>
-                  <div className="min-w-0 flex-1 space-y-1">
-                    {dayTodos.map((todo) => (
-                      <TodoRow
-                        key={todo.id}
-                        todo={todo}
-                        completedView
-                        onSelect={() => openItemSheet({ kind: "todo", id: todo.id })}
-                        onToggle={() => toggleTodo(todo.id)}
-                      />
-                    ))}
-                    {dayEvents.map((event) => (
-                      <EventBand
-                        key={event.id}
-                        event={event}
-                        completedView
-                        onSelect={() =>
-                          openItemSheet({ kind: "event", id: event.id, dayKey: day.key })
-                        }
-                        onPlay={() => {}}
-                      />
-                    ))}
-                  </div>
-                </div>
+      ) : (
+        <div className={`max-h-[5rem] space-y-2 ${HIDDEN_SCROLL}`}>
+          {daysWithCompleted.map(({ day, todos: dayTodos, events: dayEvents }) => (
+            <div key={day.key} className="flex gap-2 border-t border-black/10 pt-1.5 first:border-t-0 first:pt-0">
+              <DateRail day={day} showTodayBadge={day.isToday} />
+              <div className="min-w-0 flex-1 space-y-1.5">
+                {dayTodos.map((todo) => (
+                  <TodoRow
+                    key={todo.id}
+                    todo={todo}
+                    completedView
+                    onSelect={() => openItemSheet({ kind: "todo", id: todo.id })}
+                    onToggle={() => toggleTodo(todo.id)}
+                  />
+                ))}
+                {dayEvents.map((event) => (
+                  <EventBand
+                    key={event.id}
+                    event={event}
+                    completedView
+                    onSelect={() =>
+                      openItemSheet({ kind: "event", id: event.id, dayKey: day.key })
+                    }
+                    onPlay={() => {}}
+                  />
+                ))}
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+            </div>
+          ))}
+        </div>
+      )}
     </IntentPanelFrame>
   );
 }
