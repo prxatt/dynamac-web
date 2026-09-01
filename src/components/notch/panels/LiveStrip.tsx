@@ -3,18 +3,17 @@
 import { motion } from "motion/react";
 import { useNotchDemo } from "@/components/notch/NotchDemoContext";
 import {
-  CATEGORY_LABELS,
   colorForCategory,
   focusableCategory,
   focusableLabel,
+  labelForCategory,
   minutesToLabel,
-  type TaskCategory,
 } from "@/components/notch/intent-plan-data";
 import { formatFocusTime, MiniFocusGrid } from "@/components/notch/panels/MiniFocusGrid";
 
 /** Full-width Bauhaus block under music — same solid style as Today events */
 export function LiveStrip() {
-  const { focusPhase, liveEvent, linkedItem, progress, secondsLeft, jumpToIntent } =
+  const { focusPhase, liveEvent, linkedItem, progress, secondsLeft, jumpToIntent, customCategories } =
     useNotchDemo();
 
   const isWorking = focusPhase === "work";
@@ -22,11 +21,11 @@ export function LiveStrip() {
   if (!ongoing) return null;
 
   const title = isWorking ? focusableLabel(linkedItem) : (liveEvent?.title ?? "");
-  const category: TaskCategory = isWorking
+  const category = isWorking
     ? focusableCategory(linkedItem)
-    : (liveEvent?.category ?? "other");
-  const accent = colorForCategory(category);
-  const label = CATEGORY_LABELS[category];
+    : (liveEvent?.category ?? "work");
+  const accent = colorForCategory(category, customCategories);
+  const label = labelForCategory(category, customCategories);
   const meta = isWorking
     ? formatFocusTime(secondsLeft)
     : liveEvent

@@ -26,9 +26,11 @@ export function TabCharacterScene({
     <div
       className={`relative mx-auto aspect-[4/5] w-full max-w-[min(100%,240px)] ${className}`}
     >
-      {!hideBackdrop ? <CutoutBackdrop accent={accent} variant={index} /> : null}
-      <FloatingStickers variant={index} />
-      <CharacterFigure config={config} side={side} />
+      <div className="absolute inset-0">
+        {!hideBackdrop ? <CutoutBackdrop accent={accent} variant={index} /> : null}
+        <CharacterFigure config={config} side={side} />
+      </div>
+      <FloatingStickers variant={index} className="z-[1]" />
     </div>
   );
 }

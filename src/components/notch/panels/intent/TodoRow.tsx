@@ -1,60 +1,77 @@
 "use client";
 
 import {
-  CATEGORY_LABELS,
   colorForCategory,
+  labelForCategory,
   type TodoItem,
 } from "@/components/notch/intent-plan-data";
+import { useNotchDemo } from "@/components/notch/NotchDemoContext";
 import { MiniFocusGrid } from "@/components/notch/panels/MiniFocusGrid";
 
 type TodoRowProps = {
   todo: TodoItem;
   active?: boolean;
   focusProgress?: number;
+  completedView?: boolean;
+  onSelect?: () => void;
   onToggle: () => void;
-  onPlay: () => void;
 };
 
-export function TodoRow({ todo, active = false, focusProgress = 0, onToggle, onPlay }: TodoRowProps) {
-  const accent = colorForCategory(todo.category);
-  const label = CATEGORY_LABELS[todo.category];
+export function TodoRow({
+  todo,
+  active = false,
+  focusProgress = 0,
+  completedView = false,
+  onSelect,
+  onToggle,
+}: TodoRowProps) {
+  const { customCategories } = useNotchDemo();
+  const accent = colorForCategory(todo.category, customCategories);
+  const label = labelForCategory(todo.category, customCategories);
 
   return (
     <div
-      className="group flex items-center gap-1.5 rounded-xl px-2 py-1.5"
+      role={onSelect ? "button" : undefined}
+      tabIndex={onSelect ? 0 : undefined}
+      onClick={onSelect}
+      onKeyDown={
+        onSelect
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onSelect();
+              }
+            }
+          : undefined
+      }
+      className={`flex cursor-pointer items-center gap-2 rounded-xl px-2.5 py-2 ${onSelect ? "hover:brightness-[1.04]" : ""}`}
       style={{
         backgroundColor: accent,
-        opacity: todo.done ? 0.55 : 1,
-        boxShadow: active ? "0 0 0 2px rgba(255,255,255,0.85)" : undefined,
+        opacity: todo.done && !completedView ? 0.72 : 1,
+        outline: active ? "2px solid rgba(0,0,0,0.22)" : undefined,
       }}
     >
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-1.5">
-          <span className="rounded-full bg-black/25 px-1 py-px text-[6px] font-bold uppercase text-white">
+        <div className="flex flex-wrap items-center gap-1">
+          <span className="rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
             {label}
           </span>
-          {todo.timeLabel ? (
+          <span className="rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
+            {todo.timeLabel ? todo.timeLabel : "Todo"}
+          </span>
+          {todo.done ? (
             <span className="rounded-full bg-black/25 px-1.5 py-px text-[6px] font-bold text-white">
-              {todo.timeLabel}
-            </span>
-          ) : (
-            <span className="rounded-full bg-black/25 px-1.5 py-px text-[6px] font-bold uppercase text-white">
-              Todo
-            </span>
-          )}
-          {active ? (
-            <span className="rounded-full bg-white/25 px-1.5 py-px text-[6px] font-bold uppercase text-white">
-              Focus
+              Done
             </span>
           ) : null}
         </div>
         <p
-          className={`mt-0.5 truncate text-[10px] font-bold text-white ${todo.done ? "line-through" : ""}`}
+          className={`mt-0.5 truncate text-[10px] font-bold leading-snug text-white ${todo.done ? "line-through" : ""}`}
         >
           {todo.title}
         </p>
         {active ? (
-          <div className="mt-1">
+          <div className="mt-1.5">
             <MiniFocusGrid
               progress={focusProgress}
               active
@@ -68,20 +85,21 @@ export function TodoRow({ todo, active = false, focusProgress = 0, onToggle, onP
 
       <button
         type="button"
-        onClick={onPlay}
-        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-black/25 text-[8px] font-bold text-white"
-        aria-label={`Start focus on ${todo.title}`}
-      >
-        ▶
-      </button>
-
-      <button
-        type="button"
-        onClick={onToggle}
-        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-black/25"
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggle();
+        }}
+        className="grid h-5 w-5 shrink-0 place-items-center rounded-full transition-colors"
+        style={{
+          backgroundColor: todo.done ? "rgba(255,255,255,0.95)" : "rgba(0,0,0,0.2)",
+          color: todo.done ? accent : "#fff",
+          boxShadow: todo.done ? undefined : "inset 0 0 0 1.5px rgba(255,255,255,0.6)",
+        }}
         aria-label={todo.done ? "Mark incomplete" : "Mark complete"}
       >
-        {todo.done ? <span className="text-[8px] font-bold text-white">✓</span> : null}
+        <span className="text-[10px] font-bold leading-none">
+          {todo.done ? "✓" : ""}
+        </span>
       </button>
     </div>
   );

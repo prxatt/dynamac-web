@@ -11,11 +11,14 @@ import {
 } from "react";
 import {
   calendarDays as initialCalendarDays,
+  CUSTOM_CATEGORY_PALETTE,
+  customCategoryId,
   DEMO_NOW_MINUTES,
   focusableDurationSeconds,
   focusableFromEvent,
   getLiveEvent,
   resolveCategory,
+  type CustomCategory,
   type DayBand,
   type FocusableItem,
   type ScheduledEvent,
@@ -27,9 +30,14 @@ import type { NotchTabId } from "@/components/notch/notch-styles";
 export type FocusTimerStyle = "blocks" | "span";
 export type FocusPhase = "idle" | "work" | "break";
 
+export type ItemSheetState =
+  | { kind: "add"; dayKey?: string }
+  | { kind: "todo"; id: string }
+  | { kind: "event"; id: string; dayKey?: string };
+
 const BREAK_SECONDS = 5 * 60;
 const DEFAULT_FOCUS_SECONDS = 25 * 60;
-const TODAY_KEY = initialCalendarDays.find((d) => d.isToday)?.key ?? "aug-31";
+const TODAY_KEY = initialCalendarDays.find((d) => d.isToday)?.key ?? "sep-1";
 
 type NotchDemoContextValue = {
   focusPhase: FocusPhase;
@@ -46,6 +54,8 @@ type NotchDemoContextValue = {
   todos: TodoItem[];
   events: ScheduledEvent[];
   calendarDays: DayBand[];
+  customCategories: Record<string, CustomCategory>;
+  addCustomCategory: (label: string) => string;
   selectedDayKey: string;
   setSelectedDayKey: (key: string) => void;
   setFocusStyle: (style: FocusTimerStyle) => void;
@@ -57,6 +67,8 @@ type NotchDemoContextValue = {
   addTodo: (input: {
     title: string;
     category?: TaskCategory;
+    timeLabel?: string;
+    dayKey?: string;
     collaborators?: string[];
   }) => void;
   addEvent: (input: {
@@ -66,8 +78,32 @@ type NotchDemoContextValue = {
     collaborators?: string[];
     dayKey?: string;
   }) => void;
+  updateTodo: (
+    id: string,
+    patch: {
+      title?: string;
+      category?: TaskCategory;
+      timeLabel?: string;
+      collaborators?: string[];
+    },
+  ) => void;
+  deleteTodo: (id: string) => void;
+  updateEvent: (
+    dayKey: string,
+    id: string,
+    patch: {
+      title?: string;
+      category?: TaskCategory;
+      durationMinutes?: number;
+      collaborators?: string[];
+    },
+  ) => void;
+  deleteEvent: (dayKey: string, id: string) => void;
+  itemSheet: ItemSheetState | null;
+  openItemSheet: (sheet: ItemSheetState) => void;
+  closeItemSheet: () => void;
   showAddSheet: boolean;
-  setShowAddSheet: (open: boolean) => void;
+  setShowAddSheet: (open: boolean, dayKey?: string) => void;
   jumpToIntent: () => void;
 };
 
@@ -79,13 +115,14 @@ type NotchDemoProviderProps = {
 };
 
 const INITIAL_TODOS: TodoItem[] = [
-  { id: "todo-1", title: "Record tab demos", done: false, category: "hobby" },
+  { id: "todo-1", title: "Record tab demos", done: false, category: "hobby", dayKey: TODAY_KEY },
   {
     id: "todo-2",
     title: "Wire Stripe checkout",
     done: true,
-    category: "admin",
+    category: "activity",
     timeLabel: "04:30 PM",
+    dayKey: TODAY_KEY,
   },
 ];
 
@@ -99,8 +136,19 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
   const [totalSeconds, setTotalSeconds] = useState(DEFAULT_FOCUS_SECONDS);
   const [todos, setTodos] = useState<TodoItem[]>(INITIAL_TODOS);
   const [calendarDays, setCalendarDays] = useState<DayBand[]>(initialCalendarDays);
+  const [customCategories, setCustomCategories] = useState<Record<string, CustomCategory>>({});
   const [selectedDayKey, setSelectedDayKey] = useState(TODAY_KEY);
-  const [showAddSheet, setShowAddSheet] = useState(false);
+  const [itemSheet, setItemSheet] = useState<ItemSheetState | null>(null);
+  const showAddSheet = itemSheet?.kind === "add";
+  const setShowAddSheet = useCallback((open: boolean, dayKey?: string) => {
+    setItemSheet(open ? { kind: "add", dayKey } : null);
+  }, []);
+  const openItemSheet = useCallback((sheet: ItemSheetState) => {
+    setItemSheet(sheet);
+  }, []);
+  const closeItemSheet = useCallback(() => {
+    setItemSheet(null);
+  }, []);
 
   const events = useMemo(
     () => calendarDays.find((d) => d.isToday)?.events ?? [],
@@ -155,14 +203,34 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
     setTodos((list) => list.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
   }, []);
 
+  const addCustomCategory = useCallback((label: string) => {
+    const trimmed = label.trim();
+    const id = customCategoryId(trimmed);
+    setCustomCategories((prev) => {
+      if (prev[id]) return prev;
+      const color =
+        CUSTOM_CATEGORY_PALETTE[Object.keys(prev).length % CUSTOM_CATEGORY_PALETTE.length];
+      return { ...prev, [id]: { id, label: trimmed, color } };
+    });
+    return id;
+  }, []);
+
   const addTodo = useCallback(
-    (input: { title: string; category?: TaskCategory; collaborators?: string[] }) => {
+    (input: {
+      title: string;
+      category?: TaskCategory;
+      timeLabel?: string;
+      dayKey?: string;
+      collaborators?: string[];
+    }) => {
       setTodos((list) => [
         {
           id: `todo-${Date.now()}`,
           title: input.title,
           done: false,
           category: input.category ?? resolveCategory(input.title),
+          timeLabel: input.timeLabel,
+          dayKey: input.dayKey ?? TODAY_KEY,
           collaborators: input.collaborators,
         },
         ...list,
@@ -198,6 +266,71 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
     },
     [selectedDayKey],
   );
+
+  const updateTodo = useCallback(
+    (
+      id: string,
+      patch: {
+        title?: string;
+        category?: TaskCategory;
+        timeLabel?: string;
+        collaborators?: string[];
+      },
+    ) => {
+      setTodos((list) =>
+        list.map((t) => (t.id === id ? { ...t, ...patch } : t)),
+      );
+    },
+    [],
+  );
+
+  const deleteTodo = useCallback((id: string) => {
+    setTodos((list) => list.filter((t) => t.id !== id));
+  }, []);
+
+  const updateEvent = useCallback(
+    (
+      dayKey: string,
+      id: string,
+      patch: {
+        title?: string;
+        category?: TaskCategory;
+        durationMinutes?: number;
+        collaborators?: string[];
+      },
+    ) => {
+      setCalendarDays((days) =>
+        days.map((day) => {
+          if (day.key !== dayKey) return day;
+          return {
+            ...day,
+            events: day.events.map((event) => {
+              if (event.id !== id) return event;
+              const duration = patch.durationMinutes ?? event.endMinutes - event.startMinutes;
+              return {
+                ...event,
+                title: patch.title ?? event.title,
+                category: patch.category ?? event.category,
+                collaborators: patch.collaborators ?? event.collaborators,
+                endMinutes: event.startMinutes + duration,
+              };
+            }),
+          };
+        }),
+      );
+    },
+    [],
+  );
+
+  const deleteEvent = useCallback((dayKey: string, id: string) => {
+    setCalendarDays((days) =>
+      days.map((day) =>
+        day.key === dayKey
+          ? { ...day, events: day.events.filter((e) => e.id !== id) }
+          : day,
+      ),
+    );
+  }, []);
 
   const jumpToIntent = useCallback(() => {
     onTabChange?.("intent");
@@ -255,6 +388,8 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
       todos,
       events,
       calendarDays,
+      customCategories,
+      addCustomCategory,
       selectedDayKey,
       setSelectedDayKey,
       setFocusStyle,
@@ -265,6 +400,13 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
       toggleTodo,
       addTodo,
       addEvent,
+      updateTodo,
+      deleteTodo,
+      updateEvent,
+      deleteEvent,
+      itemSheet,
+      openItemSheet,
+      closeItemSheet,
       showAddSheet,
       setShowAddSheet,
       jumpToIntent,
@@ -284,6 +426,8 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
       todos,
       events,
       calendarDays,
+      customCategories,
+      addCustomCategory,
       selectedDayKey,
       toggleFocusExpanded,
       startFocus,
@@ -292,6 +436,13 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
       toggleTodo,
       addTodo,
       addEvent,
+      updateTodo,
+      deleteTodo,
+      updateEvent,
+      deleteEvent,
+      itemSheet,
+      openItemSheet,
+      closeItemSheet,
       showAddSheet,
       jumpToIntent,
     ],

@@ -1,38 +1,89 @@
-/** Demo plan data — Aug 31, 2026 showcase */
+/** Demo plan data — Sep 1, 2026 showcase */
 
 export type PlanMode = "today" | "calendar";
 
-export type TaskCategory = "work" | "personal" | "hobby" | "admin" | "other";
+export type BuiltinTaskCategory = "work" | "personal" | "hobby" | "activity";
+
+/** Built-in or custom category id (`custom-<slug>`) */
+export type TaskCategory = BuiltinTaskCategory | string;
+
+export const BUILTIN_CATEGORIES: BuiltinTaskCategory[] = [
+  "work",
+  "personal",
+  "hobby",
+  "activity",
+];
 
 /** Solid block fills — high contrast with white type (not site background colors) */
-export const CATEGORY_COLORS: Record<TaskCategory, string> = {
+export const CATEGORY_COLORS: Record<BuiltinTaskCategory, string> = {
   work: "#1a7fd4",
   personal: "#e04f3d",
   hobby: "#7c4dff",
-  admin: "#4a9e32",
-  other: "#5c5e5a",
+  activity: "#4a9e32",
 };
 
-export const CATEGORY_LABELS: Record<TaskCategory, string> = {
+export const CATEGORY_LABELS: Record<BuiltinTaskCategory, string> = {
   work: "Work",
   personal: "Personal",
   hobby: "Hobby",
-  admin: "Admin",
-  other: "Other",
+  activity: "Activity",
 };
+
+export const CUSTOM_CATEGORY_PALETTE = [
+  "#5c5e5a",
+  "#d4a017",
+  "#2e8b57",
+  "#c45bff",
+  "#e85d75",
+] as const;
+
+export type CustomCategory = {
+  id: string;
+  label: string;
+  color: string;
+};
+
+export function isBuiltinCategory(category: TaskCategory): category is BuiltinTaskCategory {
+  return (BUILTIN_CATEGORIES as string[]).includes(category);
+}
+
+export function slugifyCategory(label: string): string {
+  return label
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+export function customCategoryId(label: string): string {
+  const slug = slugifyCategory(label) || "category";
+  return `custom-${slug}`;
+}
 
 /** Deterministic category from title/keywords — no AI randomness */
 export function resolveCategory(hint: string): TaskCategory {
   const s = hint.toLowerCase();
   if (/\b(ship|review|standup|launch|design|arch|press|core)\b/.test(s)) return "work";
-  if (/\b(wire|checkout|stripe|admin|organize)\b/.test(s)) return "admin";
+  if (/\b(wire|checkout|stripe|organize|run|gym|walk|workout)\b/.test(s)) return "activity";
   if (/\b(demo|record|tab|creative|ui)\b/.test(s)) return "hobby";
   if (/\b(health|family|personal|yoga)\b/.test(s)) return "personal";
-  return "other";
+  return "work";
 }
 
-export function colorForCategory(category: TaskCategory): string {
-  return CATEGORY_COLORS[category];
+export function labelForCategory(
+  category: TaskCategory,
+  customCategories: Record<string, CustomCategory> = {},
+): string {
+  if (isBuiltinCategory(category)) return CATEGORY_LABELS[category];
+  return customCategories[category]?.label ?? "Custom";
+}
+
+export function colorForCategory(
+  category: TaskCategory,
+  customCategories: Record<string, CustomCategory> = {},
+): string {
+  if (isBuiltinCategory(category)) return CATEGORY_COLORS[category];
+  return customCategories[category]?.color ?? CUSTOM_CATEGORY_PALETTE[0];
 }
 
 export type TodoItem = {
@@ -41,6 +92,7 @@ export type TodoItem = {
   done: boolean;
   category: TaskCategory;
   timeLabel?: string;
+  dayKey?: string;
   collaborators?: string[];
 };
 
@@ -73,16 +125,23 @@ export const planModes: { id: PlanMode; label: string }[] = [
 export const todayEvents: ScheduledEvent[] = [
   {
     id: "evt-1",
-    title: "Design review",
-    startMinutes: 14 * 60,
-    endMinutes: 15 * 60,
+    title: "Investor pitch prep",
+    startMinutes: 9 * 60,
+    endMinutes: 11 * 60,
     category: "work",
   },
   {
     id: "evt-2",
-    title: "Ship DynaMac",
-    startMinutes: 16 * 60 + 30,
-    endMinutes: 17 * 60 + 30,
+    title: "Core architecture planning",
+    startMinutes: 13 * 60 + 15,
+    endMinutes: 14 * 60,
+    category: "work",
+  },
+  {
+    id: "evt-3",
+    title: "Design review",
+    startMinutes: 14 * 60,
+    endMinutes: 15 * 60,
     category: "work",
   },
 ];
@@ -111,32 +170,17 @@ export const calendarDays: DayBand[] = [
     date: 31,
     monthLabel: "AUG",
     bandColor: "#7c4dff",
-    isToday: true,
-    events: todayEvents,
+    isToday: false,
+    events: [],
   },
   {
     key: "sep-1",
     dayLabel: "Tuesday",
     date: 1,
     monthLabel: "SEP",
-    bandColor: "#4a9e32",
-    isToday: false,
-    events: [
-      {
-        id: "d1-1",
-        title: "Standup",
-        startMinutes: 9 * 60,
-        endMinutes: 9 * 60 + 30,
-        category: "work",
-      },
-      {
-        id: "d1-2",
-        title: "Launch prep",
-        startMinutes: 15 * 60,
-        endMinutes: 16 * 60,
-        category: "work",
-      },
-    ],
+    bandColor: "#f0a030",
+    isToday: true,
+    events: todayEvents,
   },
   {
     key: "sep-2",
@@ -182,6 +226,19 @@ export function isEventLive(event: ScheduledEvent, nowMinutes = DEMO_NOW_MINUTES
   return nowMinutes >= event.startMinutes && nowMinutes < event.endMinutes;
 }
 
+export function isEventPast(event: ScheduledEvent, nowMinutes = DEMO_NOW_MINUTES): boolean {
+  return nowMinutes >= event.endMinutes;
+}
+
+export function isEventUpcoming(event: ScheduledEvent, nowMinutes = DEMO_NOW_MINUTES): boolean {
+  return nowMinutes < event.startMinutes;
+}
+
+/** Play focus only before an event starts — not while live or after it ends */
+export function canFocusEvent(event: ScheduledEvent, nowMinutes = DEMO_NOW_MINUTES): boolean {
+  return isEventUpcoming(event, nowMinutes);
+}
+
 export function getLiveEvent(
   events: ScheduledEvent[],
   nowMinutes = DEMO_NOW_MINUTES,
@@ -191,6 +248,48 @@ export function getLiveEvent(
 
 export function getLiveEventToday(nowMinutes = DEMO_NOW_MINUTES): ScheduledEvent | null {
   return getLiveEvent(todayEvents, nowMinutes);
+}
+
+/** Warm orange panel fill — Today tab reference */
+export const TODAY_PANEL_COLOR = "#f0a030";
+
+/** Shared Intent list frame — warm, readable (not dim gray) */
+export const INTENT_PANEL_FRAME = {
+  todayFill: TODAY_PANEL_COLOR,
+  calendarFill: "rgba(240, 160, 48, 0.28)",
+  outline: "2px solid rgba(26, 26, 24, 0.22)",
+  ink: "#1a1a18",
+  inkMuted: "rgba(26, 26, 24, 0.62)",
+} as const;
+
+export function getTodayBand(): DayBand {
+  return calendarDays.find((d) => d.isToday) ?? calendarDays[0];
+}
+
+export function formatBandDate(band: DayBand): string {
+  const monthNum = monthLabelToNumber(band.monthLabel);
+  const dd = String(band.date).padStart(2, "0");
+  const mm = String(monthNum).padStart(2, "0");
+  return `${mm}.${dd}`;
+}
+
+function monthLabelToNumber(label: string): number {
+  const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+  const index = months.indexOf(label);
+  return index >= 0 ? index + 1 : 1;
+}
+
+/** Timeline window for calendar strips (minutes from midnight) */
+export const CALENDAR_TIMELINE_START = 8 * 60;
+export const CALENDAR_TIMELINE_END = 20 * 60;
+
+export function timelinePosition(startMinutes: number): number {
+  const span = CALENDAR_TIMELINE_END - CALENDAR_TIMELINE_START;
+  const clamped = Math.max(
+    CALENDAR_TIMELINE_START,
+    Math.min(CALENDAR_TIMELINE_END - 1, startMinutes),
+  );
+  return ((clamped - CALENDAR_TIMELINE_START) / span) * 100;
 }
 
 export type FocusableItem =
@@ -212,7 +311,7 @@ export function focusableLabel(item: FocusableItem | null): string {
 }
 
 export function focusableCategory(item: FocusableItem | null): TaskCategory {
-  if (!item) return "other";
+  if (!item) return "work";
   return item.kind === "event" ? item.event.category : item.todo.category;
 }
 

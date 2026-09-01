@@ -14,6 +14,123 @@ type CharacterFigureProps = {
   imageClassName?: string;
 };
 
+/** Paper-cut assets: 2D motion only so mix-blend-multiply reaches the blob backdrop. */
+function PaperCutCharacter({
+  config,
+  reducedMotion,
+  inView,
+  y,
+  imageClassName,
+}: {
+  config: TabIllustrationConfig;
+  reducedMotion: boolean;
+  inView: boolean;
+  y: ReturnType<typeof useTransform<number, number>>;
+  imageClassName: string;
+}) {
+  return (
+    <motion.div
+      className="relative h-[94%] w-[94%]"
+      initial={reducedMotion ? false : { opacity: 0.85 }}
+      animate={inView ? { opacity: 1, transition: characterRevealTransition } : undefined}
+    >
+      <motion.div style={reducedMotion ? undefined : { y }}>
+        <motion.div
+          animate={
+            inView && !reducedMotion
+              ? {
+                  y: [0, -14, 0],
+                }
+              : undefined
+          }
+          transition={{
+            y: { duration: 5.2, repeat: Infinity, ease: "easeInOut" },
+          }}
+        >
+          <Image
+            src={config.src}
+            alt=""
+            width={config.width}
+            height={config.height}
+            className={`h-full w-full object-contain object-bottom mix-blend-multiply ${imageClassName}`}
+            style={{ objectPosition: config.objectPosition ?? "center bottom" }}
+            sizes="(max-width: 768px) 60vw, 320px"
+          />
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/** Photo assets: full 3D parallax — no blend mode. */
+function ParallaxCharacter({
+  config,
+  reducedMotion,
+  inView,
+  y,
+  rotateY,
+  rotateX,
+  scale,
+  imageClassName,
+}: {
+  config: TabIllustrationConfig;
+  reducedMotion: boolean;
+  inView: boolean;
+  y: ReturnType<typeof useTransform<number, number>>;
+  rotateY: ReturnType<typeof useTransform<number, number>>;
+  rotateX: ReturnType<typeof useTransform<number, number>>;
+  scale: ReturnType<typeof useTransform<number, number>>;
+  imageClassName: string;
+}) {
+  return (
+    <motion.div
+      className="relative h-[94%] w-[94%]"
+      initial={reducedMotion ? false : { opacity: 0.85 }}
+      animate={inView ? { opacity: 1, transition: characterRevealTransition } : undefined}
+    >
+      <motion.div
+        className="h-full w-full [transform-style:preserve-3d]"
+        style={
+          reducedMotion
+            ? undefined
+            : {
+                y,
+                rotateY,
+                rotateX,
+                scale,
+              }
+        }
+      >
+        <motion.div
+          className="h-full w-full"
+          animate={
+            inView && !reducedMotion
+              ? {
+                  y: [0, -14, 0],
+                }
+              : undefined
+          }
+          transition={{
+            y: { duration: 5.2, repeat: Infinity, ease: "easeInOut" },
+          }}
+        >
+          <Image
+            src={config.src}
+            alt=""
+            width={config.width}
+            height={config.height}
+            className={`h-full w-full object-contain object-bottom ${
+              config.objectPosition ? "scale-[1.35]" : ""
+            } ${imageClassName}`}
+            style={{ objectPosition: config.objectPosition ?? "center bottom" }}
+            sizes="(max-width: 768px) 60vw, 320px"
+          />
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export function CharacterFigure({
   config,
   side = "right",
@@ -23,6 +140,7 @@ export function CharacterFigure({
   const ref = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
   const inView = useInView(ref, { once: true, margin: "-8% 0px" });
+  const usePaperCut = Boolean(config.blendMultiply);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -41,54 +159,31 @@ export function CharacterFigure({
   return (
     <div
       ref={ref}
-      className={`absolute inset-0 isolate flex items-end justify-center [perspective:1000px] ${className}`}
+      className={`absolute inset-0 flex items-end justify-center ${
+        usePaperCut ? "" : "[perspective:1000px]"
+      } ${className}`}
       aria-hidden
     >
-      <motion.div
-        className="relative h-[94%] w-[94%]"
-        initial={reducedMotion ? false : { opacity: 0.85 }}
-        animate={inView ? { opacity: 1, transition: characterRevealTransition } : undefined}
-      >
-        <motion.div
-          className="h-full w-full [transform-style:preserve-3d]"
-          style={
-            reducedMotion
-              ? undefined
-              : {
-                  y,
-                  rotateY,
-                  rotateX,
-                  scale,
-                }
-          }
-        >
-          <motion.div
-            className="h-full w-full"
-            animate={
-              inView && !reducedMotion
-                ? {
-                    y: [0, -14, 0],
-                  }
-                : undefined
-            }
-            transition={{
-              y: { duration: 5.2, repeat: Infinity, ease: "easeInOut" },
-            }}
-          >
-            <Image
-              src={config.src}
-              alt=""
-              width={config.width}
-              height={config.height}
-              className={`h-full w-full object-contain object-bottom ${
-                config.blendMultiply ? "mix-blend-multiply" : ""
-              } ${config.objectPosition ? "scale-[1.35]" : ""} ${imageClassName}`}
-              style={{ objectPosition: config.objectPosition ?? "center bottom" }}
-              sizes="(max-width: 768px) 60vw, 320px"
-            />
-          </motion.div>
-        </motion.div>
-      </motion.div>
+      {usePaperCut ? (
+        <PaperCutCharacter
+          config={config}
+          reducedMotion={reducedMotion}
+          inView={inView}
+          y={y}
+          imageClassName={imageClassName}
+        />
+      ) : (
+        <ParallaxCharacter
+          config={config}
+          reducedMotion={reducedMotion}
+          inView={inView}
+          y={y}
+          rotateY={rotateY}
+          rotateX={rotateX}
+          scale={scale}
+          imageClassName={imageClassName}
+        />
+      )}
     </div>
   );
 }
