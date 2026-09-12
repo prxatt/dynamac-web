@@ -78,7 +78,8 @@ export function ShowcaseFrame({ children, className = "" }: ShowcaseFrameProps) 
           ref={contentRef}
           style={{
             width: NOTCH_SHOWCASE.widthPx,
-            transform: `scale(min(1, 100cqi / ${NOTCH_SHOWCASE.widthPx}))`,
+            // Length ÷ length yields a unitless factor (required by scale()).
+            transform: `scale(min(1, 100cqi / ${NOTCH_SHOWCASE.widthPx}px))`,
             transformOrigin: "top left",
           }}
         >
