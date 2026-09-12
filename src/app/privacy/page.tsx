@@ -68,9 +68,9 @@ export default function PrivacyPage() {
 
           <h2>Downloads</h2>
           <p>
-            The macOS installer is served from GitHub Releases. Visiting{" "}
-            <code className="text-[var(--color-ink)]">/api/download</code> redirects to the latest signed
-            release asset. GitHub may log standard request metadata under their policies.
+            The macOS installer is downloaded from {brand.website}. Visiting{" "}
+            <code className="text-[var(--color-ink)]">/api/download</code> delivers the latest signed
+            installer. Standard web-server request logs may apply for that download.
           </p>
 
           <h2>Theme preference</h2>

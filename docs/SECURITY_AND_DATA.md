@@ -9,7 +9,7 @@
 | `X-Content-Type-Options: nosniff` | MIME sniffing block |
 | `Referrer-Policy` | Limit referrer leakage |
 | `Permissions-Policy` | Disable camera/mic/geo on site |
-| `Content-Security-Policy` | Restrict scripts to self + Plausible; connect to GitHub API + Plausible |
+| `Content-Security-Policy` | Restrict scripts to self + Plausible; connect to release API + Plausible |
 | `poweredByHeader: false` | Hide `X-Powered-By` |
 
 ## Analytics
@@ -26,9 +26,9 @@
 
 ## Downloads
 
-- `/api/download` → 302 to latest GitHub Release `.dmg`
-- Optional `GITHUB_TOKEN` for higher API rate limits
-- `GITHUB_REPO` defaults to `prxatt/DynaMac`
+- Public story: users download from **dynamac.com** via `/api/download`
+- Implementation: endpoint resolves the latest signed `.dmg` from the private release host (`GITHUB_REPO` / optional `GITHUB_TOKEN`) and redirects the browser to the asset
+- Never link to or name the release host on marketing surfaces (nav, buy, changelog, privacy, press, schema)
 
 ## Client storage
 
@@ -48,7 +48,7 @@ DialKit is gated behind `NEXT_PUBLIC_DIALKIT=1` so it does not crash the marketi
 
 ## Production checklist
 
-1. Set env vars on Vercel (Plausible domain, checkout URL, optional GitHub token)
+1. Set env vars on Vercel (Plausible domain, checkout URL, optional release-host token)
 2. Confirm HTTPS + custom domain
 3. Spot-check response headers on `/` and `/api/download`
 4. Verify Plausible sees pageviews after deploy

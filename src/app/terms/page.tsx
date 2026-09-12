@@ -33,21 +33,8 @@ export default function TermsPage() {
             {` `}
             {brand.platform.replace("macOS ", "")} machines you own or control. The listed price is{" "}
             {`$${brand.price.toFixed(2)}`} unless otherwise stated at checkout. All 1.x updates are
-            included with a valid license.
-          </p>
-
-          <h2>Open source</h2>
-          <p>
-            Source code may be available at{" "}
-            <a
-              href={brand.repositoryUrl}
-              className="text-link"
-              rel="noopener noreferrer"
-            >
-              {brand.repositoryUrl}
-            </a>
-            . Open-source licenses in the repository apply to their respective files. A purchased
-            license covers use of the distributed binary / release builds as described at purchase.
+            included with a valid license. A purchased license covers use of the distributed app
+            builds you download from {brand.website}.
           </p>
 
           <h2>Acceptable use</h2>

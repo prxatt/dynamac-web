@@ -42,7 +42,6 @@ export function buildOrganizationJsonLd() {
     name: brand.company,
     url: brand.website,
     logo: `${brand.website}${appIconSrc}`,
-    sameAs: [brand.repositoryUrl],
   };
 }
 

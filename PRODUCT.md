@@ -26,5 +26,6 @@ $2.99 one-time. No free tier. No subscription.
 ## Platform
 macOS 14 or later. Apple Silicon & Intel.
 
-## Repo
-https://github.com/prxatt/DynaMac
+## Download
+
+Users get the app from **https://dynamac.com** (`/api/download`). Do not market or link a public source-code host.

@@ -30,16 +30,7 @@ export default async function ChangelogPage() {
         </div>
         <h1 className="page-title page-title-lg">Changelog</h1>
         <p className="mt-4 text-[length:var(--text-body-lg)] text-[var(--color-muted)]">
-          Every {brand.name} release, pulled from{" "}
-          <Link
-            href={brand.repositoryUrl}
-            className="text-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            GitHub Releases
-          </Link>
-          .
+          Every {brand.name} release. Download the latest build from this site.
         </p>
 
         <div className="mt-12 space-y-0">
@@ -66,14 +57,11 @@ export default async function ChangelogPage() {
                 <pre className="mt-4 whitespace-pre-wrap font-sans text-sm leading-relaxed text-[var(--color-muted)]">
                   {release.body || "No release notes provided."}
                 </pre>
-                <Link
-                  href={release.htmlUrl}
-                  className="mt-4 inline-block text-sm text-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  View on GitHub
-                </Link>
+                {index === 0 ? (
+                  <Link href="/api/download" className="mt-4 inline-block text-sm text-link">
+                    Download for macOS
+                  </Link>
+                ) : null}
               </article>
             ))
           ) : (
@@ -82,20 +70,11 @@ export default async function ChangelogPage() {
                 Plate 00 · empty
               </p>
               <p className="mt-3 text-[length:var(--text-body-sm)] text-[var(--color-muted)]">
-                No public GitHub releases yet. The app builds from the repo; notes will land here when
-                the first tagged release ships.
+                No release notes published yet. When the first build ships, notes will land here.
               </p>
-              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <Link
-                  href={brand.repositoryUrl}
-                  className="text-link text-sm"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Open GitHub
-                </Link>
+              <div className="mt-5">
                 <Link href="/api/download" className="text-link text-sm">
-                  Download current build
+                  Download for macOS
                 </Link>
               </div>
             </div>

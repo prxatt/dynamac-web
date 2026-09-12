@@ -9,9 +9,10 @@ DynaMac (also found as Dynamac) is a $2.99 one-time macOS utility that turns the
 - Website: https://dynamac.com
 - Download: https://dynamac.com/api/download
 - Buy: https://dynamac.com/buy
-- GitHub: https://github.com/prxatt/DynaMac
 - Changelog: https://dynamac.com/changelog
 - Privacy: https://dynamac.com/privacy
+- Terms: https://dynamac.com/terms
+- Support: https://dynamac.com/support
 
 ## Product
 

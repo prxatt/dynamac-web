@@ -6,8 +6,6 @@ export const brand = {
     "Music, your day, and your agents without leaving the notch.",
   credits: "Now Playing · Intent · Shelf",
   version: "0.43.0",
-  repo: "prxatt/DynaMac",
-  repositoryUrl: "https://github.com/prxatt/DynaMac",
   website: "https://dynamac.com",
   price: 2.99,
   supportEmail: "support@dynamac.com",

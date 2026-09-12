@@ -20,8 +20,8 @@ Marketing site for [dynamac.com](https://dynamac.com) — **DynaMac**, the macOS
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `GITHUB_REPO` | No | GitHub repo for release DMG (default: `prxatt/DynaMac`) |
-| `GITHUB_TOKEN` | No | Higher GitHub API rate limits |
+| `GITHUB_REPO` | No | Private release host for installer assets (default: `prxatt/DynaMac`) |
+| `GITHUB_TOKEN` | No | Higher API rate limits for the private release host |
 | `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` | No | Stripe Payment Link — enables live checkout |
 | `NEXT_PUBLIC_LEMON_SQUEEZY_CHECKOUT_URL` | No | Alternative to Stripe |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | No | Plausible analytics domain |
@@ -45,14 +45,13 @@ npm run typecheck  # TypeScript check
 
 ## Deploy
 
-1. Push to GitHub
+1. Push this marketing repo
 2. Import in Vercel
 3. Set env vars
 4. Point `dynamac.com` at Vercel
 
-`/api/download` redirects to the latest GitHub Release DMG.
+Users download the app from **dynamac.com** (`/api/download`). Release hosting is an implementation detail and must not appear in marketing copy.
 
 ## Related
 
-- macOS app repo: [prxatt/DynaMac](https://github.com/prxatt/DynaMac)
 - Launch checklist: [docs/MEDIA_AND_LAUNCH.md](docs/MEDIA_AND_LAUNCH.md)
