@@ -48,14 +48,14 @@ export function Nav() {
 
           <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
             <ThemeToggle />
-            <Link
+            <a
               href="/api/download"
               className="inline-flex h-9 items-center justify-center gap-2 rounded-[var(--radius-buttons)] border border-[var(--color-hairline)] bg-[var(--color-canvas)] px-3 text-[length:var(--text-body-sm)] font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)] sm:px-4"
             >
               <DownloadIcon className="h-4 w-4 shrink-0" />
               <span className="hidden sm:inline">Get app</span>
               <span className="sm:hidden">Get</span>
-            </Link>
+            </a>
             <Link
               href="/buy"
               className="hidden h-9 items-center justify-center rounded-[var(--radius-buttons)] bg-[var(--color-accent)] px-4 text-[length:var(--text-body-sm)] font-medium text-white transition-opacity hover:opacity-95 md:inline-flex"

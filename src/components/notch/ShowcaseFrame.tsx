@@ -13,11 +13,13 @@ type ShowcaseFrameProps = {
  * Native open-notch width (760px). Scales down on narrow viewports and
  * reserves layout height from measured content so transform scale never
  * collapses the document flow.
+ *
+ * Scale uses container query units (`cqi`) so the first paint (and no-JS)
+ * already fits the viewport — JS only reserves scaled layout height.
  */
 export function ShowcaseFrame({ children, className = "" }: ShowcaseFrameProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
   const [layoutHeight, setLayoutHeight] = useState<number | null>(null);
 
   useLayoutEffect(() => {
@@ -35,7 +37,6 @@ export function ShowcaseFrame({ children, className = "" }: ShowcaseFrameProps) 
     const update = () => {
       const available = Math.max(container.clientWidth, 1);
       const nextScale = Math.min(1, available / NOTCH_SHOWCASE.widthPx);
-      setScale(nextScale);
       setLayoutHeight(measureRawHeight() * nextScale);
     };
 
@@ -59,14 +60,16 @@ export function ShowcaseFrame({ children, className = "" }: ShowcaseFrameProps) 
     };
   }, []);
 
-  const layoutWidth = NOTCH_SHOWCASE.widthPx * scale;
-
   return (
-    <div ref={containerRef} className={`w-full min-w-0 ${className}`}>
+    <div
+      ref={containerRef}
+      className={`w-full min-w-0 ${className}`}
+      style={{ containerType: "inline-size" }}
+    >
       <div
         className="mx-auto overflow-visible"
         style={{
-          width: layoutWidth,
+          width: `min(100%, ${NOTCH_SHOWCASE.widthPx}px)`,
           height: layoutHeight ?? undefined,
           minHeight: layoutHeight == null ? 200 : undefined,
         }}
@@ -75,7 +78,7 @@ export function ShowcaseFrame({ children, className = "" }: ShowcaseFrameProps) 
           ref={contentRef}
           style={{
             width: NOTCH_SHOWCASE.widthPx,
-            transform: `scale(${scale})`,
+            transform: `scale(min(1, 100cqi / ${NOTCH_SHOWCASE.widthPx}))`,
             transformOrigin: "top left",
           }}
         >

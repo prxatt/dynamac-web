@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { CollageMark } from "@/components/collage/CollageMark";
 import { brand } from "@/lib/brand";
 import { fetchReleases } from "@/lib/github";
@@ -58,9 +57,9 @@ export default async function ChangelogPage() {
                   {release.body || "No release notes provided."}
                 </pre>
                 {index === 0 ? (
-                  <Link href="/api/download" className="mt-4 inline-block text-sm text-link">
+                  <a href="/api/download" className="mt-4 inline-block text-sm text-link">
                     Download for macOS
-                  </Link>
+                  </a>
                 ) : null}
               </article>
             ))
@@ -73,9 +72,9 @@ export default async function ChangelogPage() {
                 No release notes published yet. When the first build ships, notes will land here.
               </p>
               <div className="mt-5">
-                <Link href="/api/download" className="text-link text-sm">
+                <a href="/api/download" className="text-link text-sm">
                   Download for macOS
-                </Link>
+                </a>
               </div>
             </div>
           )}
