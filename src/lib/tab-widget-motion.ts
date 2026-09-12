@@ -20,8 +20,3 @@ export const sectionRevealTransition = {
   duration: 0.55,
   ease: [0.22, 1, 0.36, 1] as const,
 };
-
-export const characterRevealTransition = {
-  duration: 0.65,
-  ease: [0.22, 1, 0.36, 1] as const,
-};

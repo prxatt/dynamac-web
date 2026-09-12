@@ -2,23 +2,27 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { CollageMark } from "@/components/collage/CollageMark";
 import { brand } from "@/lib/brand";
 
 export default function SupportPage() {
   const [submitted, setSubmitted] = useState(false);
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:py-24">
+    <div className="mx-auto max-w-2xl px-5 py-12 sm:py-16">
       <div className="page-card">
+      <div className="mb-6">
+        <CollageMark size={40} animate={false} />
+      </div>
       <h1 className="page-title">Support</h1>
-      <p className="mt-4 text-[var(--fg-muted)]">
+      <p className="mt-4 text-[length:var(--text-body-lg)] text-[var(--color-muted)]">
         Questions about {brand.name}, licensing, or permissions? Send a message or
-        email us directly.
+        email us directly. Messages open your mail client — nothing is stored on our servers.
       </p>
 
       {submitted ? (
-        <div className="mt-10 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-6">
-          <p className="text-sm text-[var(--fg-muted)]">
+        <div className="mt-10 rounded-[var(--radius-cards)] border border-[var(--color-hairline)] bg-[var(--color-canvas)] p-6">
+          <p className="text-sm text-[var(--color-muted)]">
             Thanks — your message is ready to send via your email client. If it
             did not open, email{" "}
             <a
@@ -49,18 +53,19 @@ export default function SupportPage() {
           }}
         >
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-[var(--fg)]">
+            <label htmlFor="name" className="block text-[length:var(--text-body-sm)] font-medium text-[var(--color-ink)]">
               Name
             </label>
             <input
               id="name"
               name="name"
               required
-              className="mt-2 w-full rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-sm text-[var(--fg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+              autoComplete="name"
+              className="field-input"
             />
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-[var(--fg)]">
+            <label htmlFor="email" className="block text-[length:var(--text-body-sm)] font-medium text-[var(--color-ink)]">
               Email
             </label>
             <input
@@ -68,11 +73,12 @@ export default function SupportPage() {
               name="email"
               type="email"
               required
-              className="mt-2 w-full rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-sm text-[var(--fg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+              autoComplete="email"
+              className="field-input"
             />
           </div>
           <div>
-            <label htmlFor="message" className="block text-sm font-medium text-[var(--fg)]">
+            <label htmlFor="message" className="block text-[length:var(--text-body-sm)] font-medium text-[var(--color-ink)]">
               Message
             </label>
             <textarea
@@ -80,14 +86,16 @@ export default function SupportPage() {
               name="message"
               required
               rows={6}
-              className="mt-2 w-full rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-sm text-[var(--fg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+              className="field-input"
             />
           </div>
-          <Button type="submit">Send message</Button>
+          <Button type="submit" className="w-full sm:w-auto" dot="none">
+            Send message
+          </Button>
         </form>
       )}
 
-      <p className="mt-8 text-sm text-[var(--fg-subtle)]">
+      <p className="mt-8 text-sm text-[var(--color-muted)]">
         Direct email:{" "}
         <a href={`mailto:${brand.supportEmail}`} className="text-link">
           {brand.supportEmail}

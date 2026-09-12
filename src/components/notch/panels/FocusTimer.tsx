@@ -36,9 +36,9 @@ function SpanFace({
       >
         {label}
       </p>
-      <div className="relative h-1.5 overflow-hidden rounded-full" style={{ backgroundColor: "var(--widget-border)" }}>
+      <div className="relative h-1.5 overflow-hidden rounded-sm" style={{ backgroundColor: "var(--widget-border)" }}>
         <motion.div
-          className="absolute inset-y-0 left-0 rounded-full"
+          className="absolute inset-y-0 left-0 rounded-sm"
           style={{ backgroundColor: accent }}
           animate={{ width: `${progress * 100}%` }}
           transition={{ duration: 0.35, ease: "easeOut" }}
@@ -50,7 +50,7 @@ function SpanFace({
       >
         <span>{startLabel}</span>
         <span
-          className="rounded-full px-1 py-px font-bold"
+          className="rounded-sm px-1 py-px font-bold"
           style={{ backgroundColor: "var(--widget-inset)", color: "var(--widget-text)" }}
         >
           {durationLabel}
@@ -69,15 +69,15 @@ function StyleToggle({
   onChange: (s: FocusTimerStyle) => void;
 }) {
   return (
-    <div className="flex w-full gap-0.5 rounded-full p-0.5" style={{ backgroundColor: "var(--widget-inset)" }}>
+    <div className="flex w-full gap-0.5 rounded-sm p-0.5" style={{ backgroundColor: "var(--widget-inset)" }}>
       {(["blocks", "span"] as const).map((id) => (
         <button
           key={id}
           type="button"
           onClick={() => onChange(id)}
-          className="flex-1 rounded-full py-0.5 text-[6px] font-bold uppercase tracking-wide transition-colors"
+          className="flex-1 rounded-sm py-0.5 text-[6px] font-bold uppercase tracking-wide transition-colors"
           style={{
-            backgroundColor: style === id ? "var(--color-sky-pop)" : "transparent",
+            backgroundColor: style === id ? "var(--color-primary-blue)" : "transparent",
             color: style === id ? "#fff" : "var(--widget-muted)",
           }}
           aria-label={id === "blocks" ? "Blocks timer style" : "Span timer style"}
@@ -157,7 +157,7 @@ export function FocusTimer() {
       <button
         type="button"
         onClick={toggleFocusExpanded}
-        className="flex w-full flex-col items-stretch rounded-lg p-0.5"
+        className="flex w-full flex-col items-stretch rounded-[var(--radius-small)] p-0.5"
         aria-label="Toggle focus timer size"
       >
         {focusStyle === "blocks" ? (
@@ -168,14 +168,14 @@ export function FocusTimer() {
               fillColor={gridColor}
               size={gridSize}
             />
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" initial={false}>
               {isBreak ? (
                 <motion.div
                   key="break"
                   initial={{ opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="rounded-lg px-2 py-1 text-center"
+                  className="rounded-[var(--radius-small)] px-2 py-1 text-center"
                   style={{ backgroundColor: "var(--color-fresh-grass)", color: "#1a1a18" }}
                 >
                   <p className="text-[6px] font-bold uppercase tracking-wide">Break time</p>
@@ -194,15 +194,13 @@ export function FocusTimer() {
                   {workLabel}
                 </motion.p>
               ) : (
-                <motion.p
+                <p
                   key="idle"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
                   className="text-center text-[7px] font-medium"
                   style={{ color: "var(--widget-muted)" }}
                 >
                   {focusExpanded ? "Preview" : "Tap to expand"}
-                </motion.p>
+                </p>
               )}
             </AnimatePresence>
           </div>
@@ -222,7 +220,7 @@ export function FocusTimer() {
         <button
           type="button"
           onClick={skipBreak}
-          className="w-full rounded-full px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider"
+          className="w-full rounded-sm px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider"
           style={{
             backgroundColor: "var(--color-fresh-grass)",
             color: "#1a1a18",
@@ -234,9 +232,9 @@ export function FocusTimer() {
         <button
           type="button"
           onClick={() => (isWork ? endFocus(false) : startFocus())}
-          className="w-full rounded-full px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider"
+          className="w-full rounded-sm px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider"
           style={{
-            backgroundColor: isWork ? "var(--color-coral-pop)" : "var(--widget-inset)",
+            backgroundColor: isWork ? "var(--color-accent)" : "var(--widget-inset)",
             color: isWork ? "#fff" : "var(--widget-text)",
             border: "1px solid var(--widget-border)",
           }}

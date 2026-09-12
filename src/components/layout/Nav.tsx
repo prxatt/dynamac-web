@@ -1,43 +1,56 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { AppIcon } from "@/components/ui/AppIcon";
+import { CollageMark } from "@/components/collage/CollageMark";
 import { DownloadIcon } from "@/components/ui/DownloadIcon";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { brand, navLinks } from "@/lib/brand";
 
 export function Nav() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 px-3 pt-4 sm:px-5 sm:pt-5">
+    <header className="sticky top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-5">
       <div className="relative mx-auto max-w-[var(--max-width)]">
-        <div className="flex min-h-[3.25rem] items-center gap-2 overflow-hidden rounded-[var(--radius-nav)] border border-[var(--color-hairline-mist)] bg-[var(--color-pure-white)] px-2.5 py-2.5 sm:min-h-[var(--nav-height)] sm:gap-3 sm:px-4">
-          <Link href="/" className="flex shrink-0 items-center gap-2">
-            <span className="shrink-0 overflow-hidden rounded-[var(--radius-small)]">
-              <AppIcon size={32} priority />
-            </span>
-            <span className="text-[16px] font-medium whitespace-nowrap text-[var(--color-ink-black)] sm:text-[17px]">
+        <div
+          className="flex min-h-[3.25rem] items-center gap-2 overflow-hidden rounded-[var(--radius-nav)] border border-[var(--color-hairline)] bg-[var(--color-canvas-elevated)]/90 px-2.5 py-2.5 backdrop-blur-md sm:min-h-[var(--nav-height)] sm:gap-3 sm:px-4"
+          style={{ boxShadow: "var(--shadow-nav)" }}
+        >
+          <Link href="/" className="flex min-w-0 shrink-0 items-center gap-2">
+            <CollageMark size={32} className="shrink-0" animate={false} />
+            <span className="font-display truncate text-[16px] font-medium text-[var(--color-ink)] sm:text-[17px]">
               {brand.name}
             </span>
           </Link>
 
           <nav className="hidden min-w-0 flex-1 justify-center md:flex" aria-label="Main">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="rounded-full px-4 py-2 text-[length:var(--text-body-sm)] font-medium text-[var(--color-ink-black)] hover:bg-[var(--color-cream-paper)] lg:px-5"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const active = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`rounded-[var(--radius-small)] px-2.5 py-2 text-[length:var(--text-body-sm)] font-medium whitespace-nowrap transition-colors lg:px-3 xl:px-5 ${
+                    active
+                      ? "bg-[var(--color-canvas)] text-[var(--color-ink)]"
+                      : "text-[var(--color-muted)] hover:bg-[var(--color-canvas)] hover:text-[var(--color-ink)]"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
+            <ThemeToggle />
             <Link
-              href="/buy"
-              className="inline-flex h-9 items-center justify-center gap-2 rounded-[var(--radius-buttons)] border border-[var(--color-hairline-mist)] bg-[var(--color-pure-white)] px-3 text-[length:var(--text-body-sm)] font-medium text-[var(--color-ink-black)] transition-colors hover:border-[var(--color-ink-black)] sm:px-4"
+              href="/api/download"
+              className="inline-flex h-9 items-center justify-center gap-2 rounded-[var(--radius-buttons)] border border-[var(--color-hairline)] bg-[var(--color-canvas)] px-3 text-[length:var(--text-body-sm)] font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)] sm:px-4"
             >
               <DownloadIcon className="h-4 w-4 shrink-0" />
               <span className="hidden sm:inline">Get app</span>
@@ -45,47 +58,66 @@ export function Nav() {
             </Link>
             <Link
               href="/buy"
-              className="hidden h-9 items-center justify-center rounded-[var(--radius-buttons)] bg-[var(--color-coral-pop)] px-4 text-[length:var(--text-body-sm)] font-medium text-white transition-opacity hover:opacity-95 lg:inline-flex"
+              className="hidden h-9 items-center justify-center rounded-[var(--radius-buttons)] bg-[var(--color-accent)] px-4 text-[length:var(--text-body-sm)] font-medium text-white transition-opacity hover:opacity-95 md:inline-flex"
             >
-              Buy · ${brand.price.toFixed(2)}
+              License · <span className="tabular-nums">${brand.price.toFixed(2)}</span>
             </Link>
             <button
               type="button"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-fresh-grass)] text-lg leading-none text-[var(--color-ink-black)] transition-opacity hover:opacity-90 sm:h-10 sm:w-10 md:hidden"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-buttons)] bg-[var(--color-accent)] text-white transition-opacity hover:opacity-90 md:hidden"
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "Close menu" : "Open menu"}
             >
-              {open ? "×" : "≡"}
+              {open ? <MenuCloseIcon /> : <MenuOpenIcon />}
             </button>
           </div>
         </div>
 
         {open ? (
-          <nav
-            className="mt-3 rounded-[var(--radius-cards)] border border-[var(--color-hairline-mist)] bg-[var(--color-pure-white)] px-5 py-4 shadow-[0_12px_40px_rgba(44,46,42,0.08)] md:hidden"
-            aria-label="Menu"
-          >
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="block py-2.5 text-[length:var(--text-body-sm)] font-medium text-[var(--color-ink-black)]"
-                onClick={() => setOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
+          <nav className="page-card mt-3 !py-4 md:hidden" aria-label="Menu">
+            {navLinks.map((link) => {
+              const active = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`block py-2.5 text-[length:var(--text-body-sm)] font-medium ${
+                    active ? "text-[var(--color-accent)]" : "text-[var(--color-ink)]"
+                  }`}
+                  onClick={() => setOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             <Link
               href="/buy"
-              className="mt-3 flex items-center justify-center gap-2 rounded-[var(--radius-buttons)] bg-[var(--color-coral-pop)] py-2.5 text-[length:var(--text-body-sm)] font-medium text-white"
+              className="mt-3 flex items-center justify-center gap-2 rounded-[var(--radius-buttons)] bg-[var(--color-accent)] py-2.5 text-[length:var(--text-body-sm)] font-medium text-white"
               onClick={() => setOpen(false)}
             >
-              Get DynaMac · ${brand.price.toFixed(2)}
+              Get DynaMac · <span className="tabular-nums">${brand.price.toFixed(2)}</span>
             </Link>
           </nav>
         ) : null}
       </div>
     </header>
+  );
+}
+
+function MenuOpenIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path d="M3 4.5h10M3 8h10M3 11.5h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="square" />
+    </svg>
+  );
+}
+
+function MenuCloseIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="square" />
+    </svg>
   );
 }

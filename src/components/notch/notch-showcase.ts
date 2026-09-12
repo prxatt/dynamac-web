@@ -5,6 +5,8 @@
 export const NOTCH_SHOWCASE = {
   /** Matches `openNotchSize.width` */
   width: "47.5rem",
+  /** Pixel width for ResizeObserver scaling */
+  widthPx: 760,
   /** Menubar band — tabs left, notch center, toggle right */
   bandHeight: "1.75rem",
   notchWidth: "5.5rem",
@@ -28,7 +30,7 @@ export const TAB_ACCENTS = {
   },
   shelf: {
     color: "var(--color-sunshine-pop)",
-    activeText: "var(--color-ink-black)",
+    activeText: "var(--glass-light-text)",
     mark: "triangle" as const,
   },
 } as const;

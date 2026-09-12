@@ -36,7 +36,7 @@ function FocusPlayButton({ onClick, label }: { onClick: () => void; label: strin
         e.stopPropagation();
         onClick();
       }}
-      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black/30 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25)] transition-transform hover:scale-105 active:scale-95"
+      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm bg-black/30 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25)] transition-transform hover:scale-105 active:scale-95"
       aria-label={label}
     >
       <span className="ml-px text-[8px] font-bold leading-none text-white">▶</span>
@@ -71,7 +71,7 @@ export function EventBand({
   if (compact) {
     return (
       <div
-        className={`flex w-full items-center gap-2 rounded-xl px-2 py-1 ${className}`}
+        className={`flex w-full items-center gap-2 rounded-[var(--radius-small)] px-2 py-1 ${className}`}
         style={{ backgroundColor: accent, opacity: isPast && !completedView ? 0.72 : 1, ...style }}
       >
         <p className="min-w-0 flex-1 truncate text-[9px] font-bold text-white">{event.title}</p>
@@ -85,7 +85,7 @@ export function EventBand({
       <button
         type="button"
         onClick={onSelect}
-        className={`rounded-xl px-2 py-1.5 text-left transition-[filter] hover:brightness-[1.05] ${className}`}
+        className={`rounded-[var(--radius-small)] px-2 py-1.5 text-left transition-[filter] hover:brightness-[1.05] ${className}`}
         style={{
           backgroundColor: accent,
           opacity: isPast && !completedView ? 0.78 : 1,
@@ -97,11 +97,11 @@ export function EventBand({
         title={`${event.title} · ${minutesToLabel(event.startMinutes)} – ${minutesToLabel(event.endMinutes)}`}
       >
         <div className="flex min-w-0 items-center gap-1">
-          <span className="shrink-0 rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
+          <span className="shrink-0 rounded-sm bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
             {label}
           </span>
           {isLive ? (
-            <span className="shrink-0 rounded-full bg-black/25 px-1.5 py-px text-[6px] font-bold uppercase text-white">
+            <span className="shrink-0 rounded-sm bg-black/25 px-1.5 py-px text-[6px] font-bold uppercase text-white">
               Live
             </span>
           ) : null}
@@ -111,7 +111,7 @@ export function EventBand({
         </div>
         <p className="mt-1 flex items-center gap-1 text-[7px] font-semibold text-white/95">
           <span className="shrink-0">{minutesToLabel(event.startMinutes)}</span>
-          <span className="shrink-0 rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold">
+          <span className="shrink-0 rounded-sm bg-black/20 px-1.5 py-px text-[6px] font-bold">
             {duration}m
           </span>
           <span className="shrink-0 truncate">{minutesToLabel(event.endMinutes)}</span>
@@ -135,7 +135,7 @@ export function EventBand({
             }
           : undefined
       }
-      className={`flex cursor-pointer items-center gap-2.5 rounded-xl px-2.5 py-2 ${onSelect ? "hover:brightness-[1.04]" : ""}`}
+      className={`flex cursor-pointer items-center gap-2.5 rounded-[var(--radius-small)] px-2.5 py-2 ${onSelect ? "hover:brightness-[1.04]" : ""}`}
       style={{
         backgroundColor: accent,
         opacity: isPast && !completedView ? 0.72 : 1,
@@ -144,15 +144,15 @@ export function EventBand({
     >
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-1">
-          <span className="rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
+          <span className="rounded-sm bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
             {label}
           </span>
           {active ? (
-            <span className="rounded-full bg-black/25 px-1.5 py-px text-[6px] font-bold uppercase text-white">
+            <span className="rounded-sm bg-black/25 px-1.5 py-px text-[6px] font-bold uppercase text-white">
               Focus
             </span>
           ) : isLive ? (
-            <span className="rounded-full bg-black/25 px-1.5 py-px text-[6px] font-bold uppercase text-white">
+            <span className="rounded-sm bg-black/25 px-1.5 py-px text-[6px] font-bold uppercase text-white">
               Live
             </span>
           ) : null}
@@ -162,7 +162,7 @@ export function EventBand({
         </p>
         <div className="mt-1.5 flex items-center justify-between gap-2 pr-1 text-[7px] font-semibold text-white">
           <span className="shrink-0">{minutesToLabel(event.startMinutes)}</span>
-          <span className="rounded-full bg-black/25 px-2 py-0.5 text-[6px] font-bold">
+          <span className="rounded-sm bg-black/25 px-2 py-0.5 text-[6px] font-bold">
             {duration} Min
           </span>
           <span className="shrink-0">{minutesToLabel(event.endMinutes)}</span>

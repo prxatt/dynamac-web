@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { useNotchDemo } from "@/components/notch/NotchDemoContext";
-import { planModes, type PlanMode } from "@/components/notch/intent-plan-data";
+import { planModes, TODAY_PANEL_COLOR, type PlanMode } from "@/components/notch/intent-plan-data";
 import { CalendarBands } from "@/components/notch/panels/intent/CalendarBands";
 import {
   CompletedCalendarList,
@@ -42,12 +42,12 @@ export function IntentPanelCompact({ layoutIdPrefix = "intent" }: IntentPanelCom
                   key={item.id}
                   type="button"
                   onClick={() => handleModeChange(item.id)}
-                  className="relative rounded-full px-2.5 py-1 text-[9px] font-medium"
+                  className="relative rounded-[var(--radius-small)] px-2.5 py-1 text-[9px] font-medium"
                 >
                   {mode === item.id && !showCompleted ? (
                     <motion.span
                       layoutId={planModeLayoutId}
-                      className="absolute inset-0 rounded-full bg-[var(--widget-inset)] ring-1 ring-[var(--widget-border)]"
+                      className="absolute inset-0 rounded-[var(--radius-small)] bg-[var(--widget-inset)] ring-1 ring-[var(--widget-border)]"
                       transition={{ type: "spring", visualDuration: 0.32, bounce: 0.16 }}
                     />
                   ) : null}
@@ -72,9 +72,9 @@ export function IntentPanelCompact({ layoutIdPrefix = "intent" }: IntentPanelCom
                   setShowCompleted((v) => !v);
                   if (itemSheet) closeItemSheet();
                 }}
-                className="grid h-5 w-5 place-items-center rounded-full text-[10px] font-bold leading-none transition-colors"
+                className="grid h-5 w-5 place-items-center rounded-[var(--radius-small)] text-[10px] font-bold leading-none transition-colors"
                 style={{
-                  backgroundColor: showCompleted ? "#1a1a18" : "#f0a030",
+                  backgroundColor: showCompleted ? "#1a1a18" : TODAY_PANEL_COLOR,
                   color: showCompleted ? "#fff" : "#1a1a18",
                   boxShadow: showCompleted ? undefined : "inset 0 0 0 1.5px rgba(26,26,24,0.28)",
                 }}
@@ -92,9 +92,9 @@ export function IntentPanelCompact({ layoutIdPrefix = "intent" }: IntentPanelCom
                     dayKey: selectedDayKey,
                   });
                 }}
-                className="flex h-5 w-5 items-center justify-center rounded-full text-[12px] font-bold leading-none"
+                className="flex h-5 w-5 items-center justify-center rounded-[var(--radius-small)] text-[12px] font-bold leading-none"
                 style={{
-                  backgroundColor: "var(--color-coral-pop)",
+                  backgroundColor: "var(--color-accent)",
                   color: "#fff",
                 }}
                 aria-label="Add task or event"
@@ -111,7 +111,7 @@ export function IntentPanelCompact({ layoutIdPrefix = "intent" }: IntentPanelCom
                   key="item-sheet"
                   sheet={itemSheet}
                   onClose={closeItemSheet}
-                  panelTint="#f0a030"
+                  panelTint={TODAY_PANEL_COLOR}
                 />
               ) : (
                 <motion.div

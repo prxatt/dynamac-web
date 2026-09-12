@@ -24,8 +24,8 @@ export function NotchTabPills({
     <div
       role="tablist"
       aria-label="DynaMac tabs"
-      className={`grid shrink-0 grid-cols-3 gap-0.5 rounded-full p-0.5 ${
-        isLight ? "bg-[var(--color-sandstone)]" : "bg-white/[0.08]"
+      className={`grid shrink-0 grid-cols-3 gap-0.5 rounded-[var(--radius-small)] p-0.5 ${
+        isLight ? "bg-[var(--glass-light-card)]" : "bg-white/[0.08]"
       }`}
       style={{
         width: `calc(${NOTCH_SHOWCASE.tabWidth} * 3 + 4px)`,
@@ -42,7 +42,7 @@ export function NotchTabPills({
             role="tab"
             aria-selected={selected}
             onClick={() => onChange(tab.id)}
-            className={`relative flex items-center justify-center rounded-full py-1.5 text-center text-[9px] font-medium leading-tight transition-colors sm:text-[10px] ${
+            className={`relative flex items-center justify-center rounded-[var(--radius-small)] py-1.5 text-center text-[9px] font-medium leading-tight transition-colors sm:text-[10px] ${
               isLight && !selected ? "text-[var(--color-stone-gray)]" : ""
             } ${!isLight && !selected ? "text-white/55" : ""}`}
             style={{ width: NOTCH_SHOWCASE.tabWidth }}
@@ -50,7 +50,7 @@ export function NotchTabPills({
             {selected ? (
               <motion.span
                 layoutId={layoutId}
-                className="absolute inset-0 rounded-full"
+                className="absolute inset-0 rounded-[var(--radius-small)]"
                 style={{ backgroundColor: accent.color }}
                 transition={{ type: "spring", visualDuration: 0.35, bounce: 0.18 }}
               />

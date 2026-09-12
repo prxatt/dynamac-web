@@ -41,7 +41,7 @@ export function LiveStrip() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 4 }}
       transition={{ type: "spring", visualDuration: 0.35, bounce: 0.12 }}
-      className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-left"
+      className="flex w-full items-center gap-2 rounded-[var(--radius-small)] px-2.5 py-2 text-left"
       style={{ backgroundColor: accent }}
       aria-label={`Open Intent — ${title}`}
     >
@@ -49,7 +49,7 @@ export function LiveStrip() {
         {isWorking ? (
           <MiniFocusGrid progress={progress} active fillColor="#ffffff" mutedColor="rgba(0,0,0,0.25)" size="strip" />
         ) : (
-          <span className="rounded-full bg-black/20 px-1.5 py-0.5 text-[7px] font-bold uppercase text-white">
+          <span className="rounded-[var(--radius-small)] bg-black/20 px-1.5 py-0.5 text-[7px] font-bold uppercase text-white">
             Now
           </span>
         )}
@@ -57,7 +57,7 @@ export function LiveStrip() {
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1">
-          <span className="rounded-full bg-black/20 px-1 py-px text-[6px] font-bold uppercase text-white">
+          <span className="rounded-[var(--radius-small)] bg-black/20 px-1 py-px text-[6px] font-bold uppercase text-white">
             {label}
           </span>
           <p className="truncate text-[10px] font-bold text-white">{title}</p>
@@ -67,7 +67,7 @@ export function LiveStrip() {
         </p>
       </div>
 
-      <span className="shrink-0 rounded-full bg-black/20 px-2 py-0.5 font-mono text-[9px] font-bold tabular-nums text-white">
+      <span className="shrink-0 rounded-[var(--radius-small)] bg-black/20 px-2 py-0.5 font-mono text-[9px] font-bold tabular-nums text-white">
         {meta}
       </span>
     </motion.button>

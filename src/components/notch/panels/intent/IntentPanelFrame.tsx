@@ -17,7 +17,7 @@ export function IntentPanelFrame({
 }) {
   return (
     <div
-      className={`overflow-hidden rounded-xl p-2 ${className}`}
+      className={`overflow-hidden rounded-[var(--radius-small)] p-2 ${className}`}
       style={{
         backgroundColor:
           variant === "today" ? INTENT_PANEL_FRAME.todayFill : INTENT_PANEL_FRAME.calendarFill,

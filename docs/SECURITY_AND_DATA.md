@@ -1,0 +1,56 @@
+# Security, data, and analytics — DynaMac marketing site
+
+## Security headers (shipped in `next.config.ts`)
+
+| Header | Purpose |
+| --- | --- |
+| `Strict-Transport-Security` | Force HTTPS |
+| `X-Frame-Options: SAMEORIGIN` | Clickjacking resistance |
+| `X-Content-Type-Options: nosniff` | MIME sniffing block |
+| `Referrer-Policy` | Limit referrer leakage |
+| `Permissions-Policy` | Disable camera/mic/geo on site |
+| `Content-Security-Policy` | Restrict scripts to self + Plausible; connect to GitHub API + Plausible |
+| `poweredByHeader: false` | Hide `X-Powered-By` |
+
+## Analytics
+
+- **Provider:** Plausible (cookieless)
+- **Env:** `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` (e.g. `dynamac.com`)
+- **Behavior:** Script loads only when env is set. No cookies. Documented in `/privacy`.
+
+## Payments
+
+- Stripe Payment Link: `NEXT_PUBLIC_STRIPE_PAYMENT_LINK`
+- Lemon Squeezy: `NEXT_PUBLIC_LEMON_SQUEEZY_CHECKOUT_URL`
+- Card data never hits our Node runtime — redirect/checkout only.
+
+## Downloads
+
+- `/api/download` → 302 to latest GitHub Release `.dmg`
+- Optional `GITHUB_TOKEN` for higher API rate limits
+- `GITHUB_REPO` defaults to `prxatt/DynaMac`
+
+## Client storage
+
+- `localStorage.dynamac-theme` — light / dark / system preference only
+
+## Legal surfaces
+
+| Route | Content |
+| --- | --- |
+| `/privacy` | App permissions, site analytics, payments, downloads |
+| `/terms` | License, refunds, disclaimer |
+| `/support` | Contact form → mailto |
+
+## DialKit (optional, development)
+
+DialKit is gated behind `NEXT_PUBLIC_DIALKIT=1` so it does not crash the marketing site when its CSS chunk fails under Turbopack. Enable only when tuning springs locally.
+
+## Production checklist
+
+1. Set env vars on Vercel (Plausible domain, checkout URL, optional GitHub token)
+2. Confirm HTTPS + custom domain
+3. Spot-check response headers on `/` and `/api/download`
+4. Verify Plausible sees pageviews after deploy
+5. Confirm license email flow with payment provider
+6. CSP in production omits `unsafe-eval`; development allows it for React tooling

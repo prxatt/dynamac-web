@@ -6,41 +6,15 @@ Marketing site for [dynamac.com](https://dynamac.com) — **DynaMac**, the macOS
 
 - Next.js 16 (App Router)
 - Tailwind CSS v4
-- Motion (`motion/react`) — scroll reveals, parallax characters, `prefers-reduced-motion` safe
-- DialKit (dev only) — tune tab widget hover springs in `npm run dev`
+- Motion (`motion/react`) — product-led reveals, tab springs, `prefers-reduced-motion` safe
+- DialKit (opt-in) — set `NEXT_PUBLIC_DIALKIT=1` to tune springs in dev
 
 ## Homepage
 
-- **Hero** — live `NotchProductStage` (product mock, tab cycle, 3D tilt). Character band in footer.
-- **Three tabs** — unified cream sections with dark notch demos + character art (Intent has no cutout backdrop)
+- **Hero** — live `NotchProductStage` (product mock, tab cycle). Quiet Bauhaus geometric mark.
+- **Three tabs** — Bauhaus Zine die-cut collages + notch shelf demos (Now Playing · Intent · Shelf)
 - **Purchase** — $2.99 one-time CTA
-
-## Development
-
-```bash
-npm install
-cp .env.example .env.local
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
-
-### Dev server won't start?
-
-Another Next.js process may be holding port 3000:
-
-```bash
-npm run dev:clean
-```
-
-Or manually:
-
-```bash
-lsof -ti:3000 | xargs kill -9
-npm run dev
-```
-
-If the page is blank, confirm you're in `dynamac-web` (not the macOS app repo) and on branch `feat/dialkit-agent-card` or `main`.
+- **Theme** — light / dark / system toggle in nav
 
 ## Environment
 
@@ -51,7 +25,12 @@ If the page is blank, confirm you're in `dynamac-web` (not the macOS app repo) a
 | `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` | No | Stripe Payment Link — enables live checkout |
 | `NEXT_PUBLIC_LEMON_SQUEEZY_CHECKOUT_URL` | No | Alternative to Stripe |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | No | Plausible analytics domain |
+| `NEXT_PUBLIC_DIALKIT` | No | Set to `1` to enable DialKit in dev |
 | `SUPPORT_EMAIL` | No | Support contact on buy/support pages |
+
+Security headers + CSP: see [docs/SECURITY_AND_DATA.md](docs/SECURITY_AND_DATA.md).
+Legal: `/privacy`, `/terms`.
+
 
 ## Scripts
 

@@ -32,7 +32,7 @@ export function MetaField({
 }) {
   return (
     <div
-      className="flex min-h-[2.35rem] flex-col justify-between rounded-lg px-2 py-1.5"
+      className="flex min-h-[2.35rem] flex-col justify-between rounded-[var(--radius-small)] px-2 py-1.5"
       style={{ backgroundColor: isAdd ? "rgba(0,0,0,0.09)" : "rgba(0,0,0,0.15)", color: ink }}
     >
       <p className="text-[6px] font-bold uppercase leading-none tracking-[0.06em] opacity-55">
@@ -143,7 +143,7 @@ export function CategoryPicker({
       />
       {open ? (
         <div
-          className="absolute bottom-[calc(100%+6px)] left-0 right-0 z-50 flex max-h-[7rem] flex-col gap-0.5 overflow-y-auto rounded-lg p-1.5"
+          className="absolute bottom-[calc(100%+6px)] left-0 right-0 z-50 flex max-h-[7rem] flex-col gap-0.5 overflow-y-auto rounded-[var(--radius-small)] p-1.5"
           style={PICKER_PANEL_STYLE}
         >
           {BUILTIN_CATEGORIES.map((id) => (
@@ -324,7 +324,7 @@ export function DurationPicker({ valueMinutes, onChange, ink }: DurationPickerPr
             key={preset.minutes}
             type="button"
             onClick={() => onChange(preset.minutes)}
-            className="rounded-full px-1.5 py-px text-[6px] font-bold"
+            className="rounded-sm px-1.5 py-px text-[6px] font-bold"
             style={{
               backgroundColor:
                 valueMinutes === preset.minutes ? "rgba(26,26,24,0.88)" : "rgba(0,0,0,0.1)",
@@ -390,7 +390,7 @@ export function StatusPicker({ value, onChange, ink, disabled }: StatusPickerPro
       />
       {open ? (
         <div
-          className="absolute bottom-[calc(100%+6px)] left-0 right-0 z-50 flex flex-col gap-0.5 rounded-lg p-1.5"
+          className="absolute bottom-[calc(100%+6px)] left-0 right-0 z-50 flex flex-col gap-0.5 rounded-[var(--radius-small)] p-1.5"
           style={PICKER_PANEL_STYLE}
         >
           {STATUS_OPTIONS.map((status) => (

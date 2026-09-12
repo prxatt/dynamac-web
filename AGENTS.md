@@ -19,11 +19,12 @@ Marketing site for dynamac.com. Product name: **DynaMac** (display); domain stay
 
 ## Homepage UI
 
-- **Tab demos:** `NowPlayingLiveCard`, `IntentLiveCard`, `ShelfLiveCard` — dark `NotchShell` mocks matching the app UI
-- **Illustrations:** `public/illustrations/*.png` — GPT-generated characters; prompts in `docs/ILLUSTRATION_PROMPTS.md`
-- **Hero:** `NotchProductStage` — animated liquid-glass notch mock (product-first). STS video upgrade path in `docs/DYNAMAC_HERO_PIPELINE.md`. Character `hero-band` in footer.
-- **Springs:** shared defaults in `src/lib/tab-widget-motion.ts`; DialKit panel only in `npm run dev`
-- **No screenshot posters** on the homepage — live React cards only
+- **Hero:** `NotchProductStage` — live liquid-glass notch mock (product-first). STS video path in `docs/DYNAMAC_HERO_PIPELINE.md`.
+- **Tab demos:** `TabShowcaseDemo` → `NotchShowcase` on shelves; Bauhaus Zine collage (`TabCollage`) on desktop only.
+- **Mark:** `CollageMark` geometric DNA — not character mascots. Archived PNGs stay in `public/illustrations/_archive/` (`4 leave`).
+- **Theme:** `ThemeProvider` + nav toggle (system → light → dark). Tokens in `src/styles/tokens.css`.
+- **Springs:** `src/lib/tab-widget-motion.ts`. DialKit only with `NEXT_PUBLIC_DIALKIT=1`.
+- **No screenshot posters** on the homepage — live React notch only.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

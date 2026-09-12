@@ -1,67 +1,141 @@
-:root {
-  /* MindMarket-inspired palette — warm editorial canvas */
-  --color-fresh-grass: #8ed462;
-  --color-cream-paper: #f5f1e4;
-  --color-ink-black: #2c2e2a;
-  --color-pure-white: #ffffff;
-  --color-sandstone: #e0dbce;
-  --color-stone-gray: #80827f;
-  --color-hairline-mist: #d5d5d4;
-  --color-pure-ink: #000000;
-  --color-sky-pop: #2ba0ff;
-  --color-coral-pop: #ff705d;
-  --color-sunshine-pop: #f5e211;
+/* Shared structure — values swapped by theme */
 
-  /* Typography — --font-inter is set by next/font on <html> */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Cool studio paper — not warm cream/terracotta AI default */
+  --color-canvas: #ecece8;
+  --color-canvas-elevated: #f7f7f4;
+  --color-ink: #121314;
+  --color-muted: #5f6368;
+  --color-accent: #d01020;
+  --color-primary-blue: #104088;
+  --color-primary-yellow: #d4a006;
+  --color-hairline: #d5d5d0;
+  --color-pure-ink: #000000;
+  --color-glow: color-mix(in srgb, var(--color-accent) 7%, transparent);
+  --color-glow-blue: color-mix(in srgb, var(--color-primary-blue) 5%, transparent);
+
+  --glass-light-card: #dcd8d0;
+  --glass-light-inset: #ffffff;
+  --glass-light-text: #1a1a18;
+  --glass-light-muted: #6b6d6a;
+  --glass-light-border: #c8c5bc;
+
+  --color-sandstone: #e2e2dd;
+  --shadow-nav: 0 8px 24px rgba(18, 19, 20, 0.06);
+  --shadow-shelf: 0 18px 44px rgba(18, 19, 20, 0.08), 0 1px 0 rgba(255, 255, 255, 0.85) inset;
+  --shelf-gradient: linear-gradient(165deg, #f7f7f4 0%, #e6e6e1 48%, #ecece8 100%);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-canvas: #0e0f10;
+  --color-canvas-elevated: #16181a;
+  --color-ink: #f4f2ee;
+  --color-muted: #8b8e92;
+  --color-accent: #d01020;
+  --color-primary-blue: #3a6fbf;
+  --color-primary-yellow: #f0b008;
+  --color-hairline: #2a2d31;
+  --color-pure-ink: #000000;
+  --color-glow: color-mix(in srgb, var(--color-accent) 11%, transparent);
+  --color-glow-blue: color-mix(in srgb, var(--color-primary-blue) 8%, transparent);
+
+  --glass-light-card: #dcd8d0;
+  --glass-light-inset: #ffffff;
+  --glass-light-text: #1a1a18;
+  --glass-light-muted: #6b6d6a;
+  --glass-light-border: #c8c5bc;
+
+  --color-sandstone: #1c1e21;
+  --shadow-nav: 0 8px 24px rgba(0, 0, 0, 0.28);
+  --shadow-shelf: 0 20px 48px rgba(0, 0, 0, 0.38), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+  --shelf-gradient: linear-gradient(165deg, var(--color-canvas-elevated) 0%, #1a1c1f 48%, var(--color-canvas) 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --color-canvas: #0e0f10;
+    --color-canvas-elevated: #16181a;
+    --color-ink: #f4f2ee;
+    --color-muted: #8b8e92;
+    --color-accent: #d01020;
+    --color-primary-blue: #3a6fbf;
+    --color-primary-yellow: #f0b008;
+    --color-hairline: #2a2d31;
+    --color-pure-ink: #000000;
+    --color-glow: color-mix(in srgb, var(--color-accent) 11%, transparent);
+    --color-glow-blue: color-mix(in srgb, var(--color-primary-blue) 8%, transparent);
+    --color-sandstone: #1c1e21;
+    --shadow-nav: 0 8px 24px rgba(0, 0, 0, 0.28);
+    --shadow-shelf: 0 20px 48px rgba(0, 0, 0, 0.38), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+    --shelf-gradient: linear-gradient(165deg, var(--color-canvas-elevated) 0%, #1a1c1f 48%, var(--color-canvas) 100%);
+  }
+}
+
+:root {
+  /* Legacy aliases */
+  --color-cream-paper: var(--color-canvas);
+  --color-ink-black: var(--color-ink);
+  --color-pure-white: var(--color-canvas-elevated);
+  --color-stone-gray: var(--color-muted);
+  --color-hairline-mist: var(--color-hairline);
+  --color-coral-pop: var(--color-accent);
+  --color-sky-pop: var(--color-primary-blue);
+  --color-sunshine-pop: var(--color-primary-yellow);
+  --color-fresh-grass: #5cb85c;
+
   --text-body-sm: 15px;
   --text-body-lg: 18px;
   --text-subheading: 20px;
-  --text-heading-sm: 30px;
-  --text-heading: 53px;
-  --text-heading-lg: 81px;
-  --text-display: clamp(3.25rem, 11vw, 8.75rem);
+  --text-heading-sm: clamp(1.5rem, 4vw, 1.875rem);
+  --text-heading: clamp(2rem, 6vw, 3.3125rem);
+  --text-heading-lg: clamp(2.5rem, 8vw, 5.0625rem);
+  --text-display: clamp(2.5rem, 9vw, 8.75rem);
 
-  /* Spacing */
   --spacing-20: 20px;
   --spacing-60: 60px;
   --spacing-136: 136px;
 
-  /* Layout */
   --page-max-width: 1200px;
-  --section-gap: 100px;
-  --card-padding: 21px;
+  --section-gap: clamp(4rem, 10vw, 6.25rem);
+  --card-padding: clamp(1.25rem, 3vw, 1.5rem);
   --nav-height: 64px;
 
-  /* Radii */
   --radius-small: 10px;
-  --radius-nav: 50px;
-  --radius-cards: 50px;
-  --radius-buttons: 50px;
+  --radius-nav: 10px;
+  --radius-cards: 14px;
+  --radius-buttons: 10px;
+  /* Soft Mac liquid-glass shell — site chrome stays Bauhaus-square */
+  --radius-glass: 22px;
 
-  /* Surfaces */
-  --surface-cream: var(--color-cream-paper);
-  --surface-elevated: var(--color-pure-white);
+  --surface-cream: var(--color-canvas);
+  --surface-elevated: var(--color-canvas-elevated);
   --surface-inset: var(--color-sandstone);
 
-  /* Semantic aliases (existing components) */
-  --bg: var(--color-cream-paper);
-  --fg: var(--color-ink-black);
-  --fg-muted: var(--color-stone-gray);
-  --fg-dim: var(--color-stone-gray);
-  --fg-subtle: var(--color-stone-gray);
-  --bg-panel: var(--color-pure-white);
+  --bg: var(--color-canvas);
+  --fg: var(--color-ink);
+  --fg-muted: var(--color-muted);
+  --fg-dim: var(--color-muted);
+  --fg-subtle: var(--color-muted);
+  --bg-panel: var(--color-canvas-elevated);
   --bg-elevated: var(--color-sandstone);
-  --bg-glass: var(--color-pure-white);
-  --border: var(--color-hairline-mist);
-  --border-light: var(--color-hairline-mist);
-  --border-subtle: var(--color-hairline-mist);
+  --bg-glass: var(--color-canvas-elevated);
+  --border: var(--color-hairline);
+  --border-light: var(--color-hairline);
+  --border-subtle: var(--color-hairline);
   --teal: var(--color-fresh-grass);
-  --red: var(--color-coral-pop);
-  --blue: var(--color-sky-pop);
-  --yellow: var(--color-sunshine-pop);
-  --accent: var(--color-fresh-grass);
-  --focus: var(--color-fresh-grass);
-  --focus-ring: var(--color-fresh-grass);
+  --red: var(--color-accent);
+  --blue: var(--color-primary-blue);
+  --yellow: var(--color-primary-yellow);
+  --accent: var(--color-accent);
+  --focus: var(--color-accent);
+  --focus-ring: var(--color-accent);
   --radius: var(--radius-buttons);
   --radius-md: var(--radius-small);
   --radius-lg: var(--radius-cards);

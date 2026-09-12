@@ -13,6 +13,7 @@ import { IntentPanelCompact } from "@/components/notch/panels/IntentPanelCompact
 import { MusicColumn } from "@/components/notch/panels/MusicColumn";
 import { ShelfPanelCompact } from "@/components/notch/panels/ShelfPanelCompact";
 import { glassStyles, type GlassStyleId } from "@/lib/glass-themes";
+import { tabWidgetSpring } from "@/lib/tab-widget-motion";
 
 type NotchShowcaseProps = {
   active: NotchTabId;
@@ -54,12 +55,16 @@ export function NotchShowcase({
     <ShowcaseFrame className={className}>
       <NotchDemoProvider onTabChange={onTabChange}>
         <article
-          className="rounded-[var(--radius-cards)] border p-4"
+          className="rounded-[var(--radius-glass)] border p-4"
           style={{
             width: NOTCH_SHOWCASE.width,
             backgroundColor: theme.card,
             borderColor: theme.border,
             color: theme.text,
+            boxShadow: theme.shellShadow,
+            backdropFilter: theme.shellBackdrop === "none" ? undefined : theme.shellBackdrop,
+            WebkitBackdropFilter:
+              theme.shellBackdrop === "none" ? undefined : theme.shellBackdrop,
             ["--widget-inset" as string]: theme.inset,
             ["--widget-text" as string]: theme.text,
             ["--widget-muted" as string]: theme.textMuted,
@@ -99,10 +104,10 @@ export function NotchShowcase({
             <motion.div
               key={active}
               className="w-full"
-              initial={{ opacity: 0, y: 6 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.28 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={tabWidgetSpring}
             >
               {active === "now-playing" ? (
                 <NowPlayingRow glassStyle={glassStyle} />

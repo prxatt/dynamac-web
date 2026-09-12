@@ -2,112 +2,116 @@
 
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
-import { TabCharacterScene } from "@/components/illustrations/TabCharacterScene";
-import { CharacterVfx } from "@/components/illustrations/CharacterVfx";
+import {
+  CalendarDieCut,
+  FilesDieCut,
+  HeadphonesDieCut,
+} from "@/components/collage/DieCuts";
+import { TabCollage } from "@/components/collage/TabCollage";
 import { NotchShelfStage } from "@/components/sections/NotchShelfStage";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
 import { sectionRevealTransition } from "@/lib/tab-widget-motion";
-import type { TabIllustrationConfig } from "@/lib/illustrations";
+import type { CollageVariant } from "@/lib/collage";
 
 type TabFeaturePanelProps = {
   index: number;
+  plate: string;
   label: string;
   copy: string;
   detail: string;
   accent: string;
   mark: ReactNode;
-  illustration: TabIllustrationConfig;
+  collage: CollageVariant;
   widget: ReactNode;
-  hideCharacterBackdrop?: boolean;
 };
 
-/** Staggered zig-zag: character offset per row, notch on shelf, no vertical stack alignment */
-const characterOffsets = [
-  "lg:translate-y-0 lg:-translate-x-4",
-  "lg:translate-y-16 lg:translate-x-6",
-  "lg:translate-y-32 lg:-translate-x-2",
-] as const;
+const collageSides = ["left", "right", "left"] as const;
 
-const shelfOffsets = [
-  "lg:ml-auto lg:max-w-[92%]",
-  "lg:mr-auto lg:max-w-[94%] lg:pl-4",
-  "lg:mx-auto lg:max-w-[96%]",
-] as const;
-
-const characterSides = ["left", "right", "left"] as const;
+function PlateGlyph({ variant }: { variant: CollageVariant }) {
+  if (variant === "intent") {
+    return <CalendarDieCut className="h-9 w-8" />;
+  }
+  if (variant === "shelf") {
+    return <FilesDieCut className="h-9 w-8" />;
+  }
+  return <HeadphonesDieCut className="h-9 w-9 text-[var(--color-ink)]" />;
+}
 
 export function TabFeaturePanel({
   index,
+  plate,
   label,
   copy,
   detail,
   accent,
   mark,
-  illustration,
+  collage,
   widget,
-  hideCharacterBackdrop = false,
 }: TabFeaturePanelProps) {
   const reducedMotion = useReducedMotion();
-  const characterSide = characterSides[index % characterSides.length]!;
-  const isCharRight = characterSide === "right";
+  const side = collageSides[index % collageSides.length]!;
+  const isCollageRight = side === "right";
 
   return (
     <motion.article
-      className="relative overflow-visible py-10 md:py-16"
-      initial={reducedMotion ? false : { y: 24 }}
-      whileInView={{ y: 0 }}
+      className="relative overflow-visible border-t border-[var(--color-hairline)] py-12 md:py-16"
+      initial={false}
+      whileInView={reducedMotion ? undefined : { y: [18, 0] }}
       viewport={{ once: true, margin: "-5% 0px" }}
       transition={sectionRevealTransition}
     >
       <div
-        className={`relative grid min-h-[min(420px,85vw)] grid-cols-1 items-start gap-8 overflow-visible lg:grid-cols-12 lg:gap-6 ${
-          isCharRight ? "lg:[&>*:first-child]:order-2" : ""
+        className={`relative grid grid-cols-1 items-start gap-8 overflow-visible lg:min-h-[min(400px,80vw)] lg:grid-cols-12 lg:gap-8 ${
+          isCollageRight ? "lg:[&>*:first-child]:order-2" : ""
         }`}
       >
-        {/* Character — behind shelf, staggered vertically */}
         <div
-          className={`relative z-0 mx-auto w-full max-w-[220px] lg:col-span-4 lg:max-w-none ${
-            isCharRight ? "lg:justify-self-end" : "lg:justify-self-start"
-          } ${characterOffsets[index % characterOffsets.length]}`}
+          className={`relative z-0 mx-auto hidden w-full max-w-[240px] lg:col-span-4 lg:block lg:max-w-none ${
+            isCollageRight ? "lg:justify-self-end" : "lg:justify-self-start"
+          }`}
         >
-          <TabCharacterScene
-            config={illustration}
-            accent={accent}
-            index={index}
-            side={characterSide}
-            hideBackdrop={hideCharacterBackdrop}
-            className="mx-auto w-full max-w-[240px] lg:max-w-[280px]"
-          />
-          <CharacterVfx variant={index} accent={accent} />
+          <TabCollage variant={collage} className="mx-auto" />
         </div>
 
-        {/* Copy + shelf */}
-        <div
-          className={`relative z-10 flex min-w-0 flex-col gap-6 lg:col-span-8 ${
-            shelfOffsets[index % shelfOffsets.length]
-          } ${isCharRight ? "lg:-mt-6" : "lg:mt-4"}`}
-        >
-          <div className="max-w-md shrink-0">
-            <div className="flex items-center gap-3">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--color-hairline-mist)] bg-[var(--color-pure-white)] shadow-sm">
+        <div className="relative z-10 flex min-w-0 flex-col gap-6 lg:col-span-8">
+          <div className="max-w-lg shrink-0">
+            <div className="flex items-start justify-between gap-4">
+              <p className="font-mono text-[10px] tracking-[0.18em] text-[var(--color-muted)]">
+                PLATE {plate} / 03
+              </p>
+              <div
+                data-theme="light"
+                className="shrink-0 drop-shadow-[2px_2px_0_var(--color-pure-ink)] lg:hidden"
+                aria-hidden
+                style={{ color: accent }}
+              >
+                <PlateGlyph variant={collage} />
+              </div>
+            </div>
+            <div className="mt-3 flex items-center gap-3">
+              <span
+                data-theme="light"
+                className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-small)] border-2 border-[var(--color-ink)] bg-[var(--color-canvas-elevated)]"
+                style={{
+                  boxShadow: `2px 2px 0 var(--color-pure-ink), inset 0 0 0 1px ${accent}33`,
+                }}
+              >
                 {mark}
               </span>
               <h3
-                className="font-medium tracking-tight text-[var(--color-ink-black)]"
+                className="font-display font-medium tracking-tight text-[var(--color-ink)]"
                 style={{ fontSize: "var(--text-heading-sm)" }}
               >
                 {label}
               </h3>
             </div>
-            <p className="mt-3 text-[length:var(--text-body-lg)] text-[var(--color-ink-black)]">
-              {copy}
-            </p>
-            <p className="mt-2 text-[length:var(--text-body-sm)] leading-relaxed text-[var(--color-stone-gray)]">
+            <p className="mt-3 text-[length:var(--text-body-lg)] text-[var(--color-ink)]">{copy}</p>
+            <p className="mt-2 text-[length:var(--text-body-sm)] leading-relaxed text-[var(--color-muted)]">
               {detail}
             </p>
           </div>
 
-          <NotchShelfStage accent={accent} mark={mark} index={index}>
+          <NotchShelfStage accent={accent}>
             {widget}
           </NotchShelfStage>
         </div>

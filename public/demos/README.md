@@ -1,7 +1,8 @@
-# Tab demo media
+# Demo media
 
-The homepage uses live React card widgets (`AgentLiveCard`, `IntentLiveCard`, `ShelfLiveCard`) instead of screenshot posters.
+The homepage uses live React notch demos (`NotchProductStage`, `TabShowcaseDemo`) — not screenshot posters.
 
-Optional Screen Studio recordings can still live here for press or social (`now-playing.webp`, etc.) but are not used on the marketing homepage.
+Optional future assets (user-provided only):
 
-Specs if recording: 1200×675 WebP, loop, under 2MB.
+- `hero-loop.mp4` + `hero-poster.webp` for STS hero upgrade (see `docs/DYNAMAC_HERO_PIPELINE.md`)
+- Product UI captures recorded on a clean desktop

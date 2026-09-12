@@ -1,41 +1,11 @@
-export const illustrations = {
-  heroBand: "/illustrations/hero-band.png",
-  heroCharacter: "/illustrations/hero-character.png",
-  nowPlaying: "/illustrations/character-now-playing.png",
-  intent: "/illustrations/character-intent.jpg",
-  shelf: "/illustrations/character-shelf.png",
-  stickerProps: "/illustrations/sticker-props.png",
+/** Archived mascot paths — do not reintroduce on marketing surfaces (`4 leave`).
+ * Live brand uses CollageMark + Bauhaus Zine die-cuts in `src/components/collage/`.
+ */
+export const archivedIllustrations = {
+  heroBand: "/illustrations/_archive/hero-band.png",
+  heroCharacter: "/illustrations/_archive/hero-character.png",
+  nowPlaying: "/illustrations/_archive/character-now-playing.png",
+  intent: "/illustrations/_archive/character-intent.jpg",
+  shelf: "/illustrations/_archive/character-shelf.png",
+  stickerProps: "/illustrations/_archive/sticker-props.png",
 } as const;
-
-export const textures = {
-  creamPaper: "/textures/cream-paper.jpg",
-} as const;
-
-export type TabIllustrationConfig = {
-  src: string;
-  width: number;
-  height: number;
-  objectPosition?: string;
-  blendMultiply?: boolean;
-};
-
-export const tabIllustrations: Record<string, TabIllustrationConfig> = {
-  "now-playing": {
-    src: illustrations.nowPlaying,
-    width: 900,
-    height: 1100,
-    blendMultiply: true,
-  },
-  intent: {
-    src: illustrations.intent,
-    width: 837,
-    height: 1024,
-    blendMultiply: false,
-  },
-  shelf: {
-    src: illustrations.shelf,
-    width: 900,
-    height: 1100,
-    blendMultiply: true,
-  },
-};

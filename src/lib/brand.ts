@@ -16,13 +16,14 @@ export const brand = {
   seo: {
     title: "DynaMac | Mac notch HUD for music, Intent, and Shelf",
     description:
-      "DynaMac is a native macOS notch HUD: Now Playing with live Cursor and Claude agents, Intent for calendar and focus, Shelf for files. $2.99 one-time.",
+      "DynaMac is a native macOS notch HUD: Now Playing with live Cursor, Claude, and Codex agents, Intent for calendar and focus, Shelf for files. $2.99 one-time.",
     keywords: [
       "mac notch app",
       "macbook notch hud",
       "menu bar music control",
       "cursor agent mac",
       "claude mac notch",
+      "codex mac notch",
       "mac productivity notch",
       "DynaMac",
       "dynamac",
@@ -37,13 +38,13 @@ export const brand = {
       label: "Now Playing",
       copy: "Album art, transport, and volume in the notch.",
       detail:
-        "See what Cursor, Claude, and Codex are on. Tap Open to jump there.",
+        "Live Cursor, Claude, and Codex in the same band — tap Open to jump.",
     },
     intent: {
       id: "intent",
       label: "Intent",
       copy: "Calendar, to-dos, and a focus timer.",
-      detail: "Today list and a horizontal day-band calendar — Bauhaus planning in the notch.",
+      detail: "Today list and a horizontal day-band calendar — plan without leaving the notch.",
     },
     shelf: {
       id: "shelf",
@@ -64,6 +65,7 @@ export const navLinks = [
 export const footerLinks = [
   { href: "/buy", label: "Buy" },
   { href: "/privacy", label: "Privacy" },
+  { href: "/terms", label: "Terms" },
   { href: "/support", label: "Support" },
   { href: "/press", label: "Press" },
   { href: "/changelog", label: "Changelog" },
