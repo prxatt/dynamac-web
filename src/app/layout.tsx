@@ -1,20 +1,29 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Inter } from "next/font/google";
-import Script from "next/script";
+import { Space_Grotesk, IBM_Plex_Sans } from "next/font/google";
 import { DialKitDevRoot } from "@/components/dev/DialKitDevRoot";
 import { Footer } from "@/components/layout/Footer";
 import { Nav } from "@/components/layout/Nav";
 import { SkipLink } from "@/components/layout/SkipLink";
+import { ThemeInitScript } from "@/components/theme/ThemeInitScript";
+import { ThemeProvider, themeInitScript } from "@/components/theme/ThemeProvider";
+import { Analytics } from "@/components/analytics/Analytics";
 import { brand } from "@/lib/brand";
 import { appIconSrc } from "@/components/ui/AppIcon";
 import { buildAllJsonLd } from "@/lib/schema";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-display",
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["500", "600", "700"],
+  display: "swap",
+});
+
+const ibmPlex = IBM_Plex_Sans({
+  variable: "--font-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
@@ -57,33 +66,37 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const jsonLdBlocks = buildAllJsonLd();
-  const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
   return (
-    <html lang="en" className={`${inter.variable} h-full`}>
-      <body className="min-h-full flex flex-col antialiased">
-        <SkipLink />
-        <Nav />
-        <main id="main-content" className="flex-1">
-          {children}
-        </main>
-        <Footer />
+    <html
+      lang="en"
+      className={`${spaceGrotesk.variable} ${ibmPlex.variable} h-full`}
+      suppressHydrationWarning
+    >
+      <head>
+        <ThemeInitScript html={themeInitScript} />
+      </head>
+      <body className="flex min-h-full flex-col antialiased">
+        <ThemeProvider>
+          <SkipLink />
+          <Nav />
+          <main id="main-content" className="flex-1">
+            {children}
+          </main>
+          <Footer />
+          <Analytics />
+        </ThemeProvider>
         {jsonLdBlocks.map((block, i) => (
           <script
             key={i}
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(block) }}
+            suppressHydrationWarning
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(block).replace(/</g, "\\u003c"),
+            }}
           />
         ))}
-        {plausibleDomain ? (
-          <Script
-            defer
-            data-domain={plausibleDomain}
-            src="https://plausible.io/js/script.js"
-            strategy="afterInteractive"
-          />
-        ) : null}
-        {process.env.NODE_ENV === "development" ? <DialKitDevRoot /> : null}
+        <DialKitDevRoot />
       </body>
     </html>
   );

@@ -38,7 +38,7 @@ export function DateRail({
               {day.dayLabel}
             </p>
             {showTodayBadge ? (
-              <span className="rounded-full bg-black/12 px-1 py-px text-[4px] font-bold uppercase">
+              <span className="rounded-sm bg-black/12 px-1 py-px text-[4px] font-bold uppercase">
                 Today
               </span>
             ) : null}
@@ -66,7 +66,7 @@ export function DateRail({
             type="button"
             onClick={onPrev}
             disabled={!canPrev}
-            className="grid h-4 w-4 place-items-center rounded-full text-[8px] font-bold disabled:opacity-30"
+            className="grid h-4 w-4 place-items-center rounded-sm text-[8px] font-bold disabled:opacity-30"
             style={{ backgroundColor: "rgba(0,0,0,0.12)" }}
             aria-label="Previous day"
           >
@@ -76,7 +76,7 @@ export function DateRail({
             type="button"
             onClick={onNext}
             disabled={!canNext}
-            className="grid h-4 w-4 place-items-center rounded-full text-[8px] font-bold disabled:opacity-30"
+            className="grid h-4 w-4 place-items-center rounded-sm text-[8px] font-bold disabled:opacity-30"
             style={{ backgroundColor: "rgba(0,0,0,0.12)" }}
             aria-label="Next day"
           >

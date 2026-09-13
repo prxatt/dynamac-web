@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { CollageMark } from "@/components/collage/CollageMark";
 import { brand } from "@/lib/brand";
 import { fetchReleases } from "@/lib/github";
 
@@ -14,6 +14,7 @@ function formatDate(iso: string): string {
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: "UTC",
   }).format(new Date(iso));
 }
 
@@ -21,57 +22,63 @@ export default async function ChangelogPage() {
   const releases = await fetchReleases(20);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:py-24">
-      <h1 className="page-title page-title-lg">Changelog</h1>
-      <p className="mt-4 text-[var(--fg-muted)]">
-        Every {brand.name} release, pulled from{" "}
-        <Link
-          href={brand.repositoryUrl}
-          className="text-link"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          GitHub Releases
-        </Link>
-        .
-      </p>
+    <div className="mx-auto max-w-3xl px-5 py-12 sm:py-16">
+      <div className="page-card">
+        <div className="mb-6">
+          <CollageMark size={40} animate={false} />
+        </div>
+        <h1 className="page-title page-title-lg">Changelog</h1>
+        <p className="mt-4 text-[length:var(--text-body-lg)] text-[var(--color-muted)]">
+          Every {brand.name} release. Download the latest build from this site.
+        </p>
 
-      <div className="mt-12 space-y-10">
-        {releases.length > 0 ? (
-          releases.map((release) => (
-            <article
-              key={release.tagName}
-              className="border-b border-[var(--border-subtle)] pb-10 last:border-b-0"
-            >
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-                <h2 className="font-display text-2xl font-semibold text-[var(--fg)]">
-                  {release.name}
-                </h2>
-                <time
-                  dateTime={release.publishedAt}
-                  className="text-sm text-[var(--fg-subtle)]"
-                >
-                  {formatDate(release.publishedAt)}
-                </time>
-              </div>
-              <pre className="mt-4 whitespace-pre-wrap font-body text-sm leading-relaxed text-[var(--fg-muted)]">
-                {release.body || "No release notes provided."}
-              </pre>
-              <Link
-                href={release.htmlUrl}
-                className="mt-4 inline-block text-sm text-link"
-                target="_blank"
-                rel="noopener noreferrer"
+        <div className="mt-12 space-y-0">
+          {releases.length > 0 ? (
+            releases.map((release, index) => (
+              <article
+                key={release.tagName}
+                className="border-t border-[var(--color-hairline)] py-8 first:border-t-0 first:pt-0 last:pb-0"
               >
-                View on GitHub
-              </Link>
-            </article>
-          ))
-        ) : (
-          <p className="text-sm text-[var(--fg-muted)]">
-            No releases found. Check back after the next GitHub release.
-          </p>
-        )}
+                <p className="font-mono text-[10px] tracking-[0.18em] text-[var(--color-muted)]">
+                  PLATE {String(index + 1).padStart(2, "0")} · {release.tagName}
+                </p>
+                <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+                  <h2 className="font-display text-2xl font-medium tracking-tight text-[var(--color-ink)]">
+                    {release.name}
+                  </h2>
+                  <time
+                    dateTime={release.publishedAt}
+                    className="shrink-0 text-sm text-[var(--color-muted)]"
+                  >
+                    {formatDate(release.publishedAt)}
+                  </time>
+                </div>
+                <pre className="mt-4 whitespace-pre-wrap font-sans text-sm leading-relaxed text-[var(--color-muted)]">
+                  {release.body || "No release notes provided."}
+                </pre>
+                {index === 0 ? (
+                  <a href="/api/download" className="mt-4 inline-block text-sm text-link">
+                    Download for macOS
+                  </a>
+                ) : null}
+              </article>
+            ))
+          ) : (
+            <div className="mt-8 rounded-[var(--radius-cards)] border border-dashed border-[var(--color-hairline)] bg-[var(--color-canvas)] px-5 py-8">
+              <p className="font-mono text-[10px] tracking-[0.18em] text-[var(--color-muted)] uppercase">
+                Plate 00 · empty
+              </p>
+              <p className="mt-3 text-[length:var(--text-body-sm)] text-[var(--color-muted)]">
+                No release notes published yet. When the first build ships, notes will land here.
+              </p>
+              <div className="mt-5">
+                <a href="/api/download" className="text-link text-sm">
+                  Download for macOS
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

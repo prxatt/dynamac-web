@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
 import { SunAlbumArt } from "@/components/notch/panels/SunAlbumArt";
 import { LiveStrip } from "@/components/notch/panels/LiveStrip";
+import { TransportRow } from "@/components/notch/panels/TransportRow";
 import { useNotchDemo } from "@/components/notch/NotchDemoContext";
 
 /** Music + optional live strip stacked — sun always visible */
@@ -24,30 +25,21 @@ export function MusicColumn() {
             The Beatles
           </p>
           <div
-            className="mt-1.5 h-0.5 overflow-hidden rounded-full"
+            className="mt-1.5 h-0.5 overflow-hidden rounded-[2px]"
             style={{ backgroundColor: "var(--widget-border)" }}
           >
             {reducedMotion ? (
-              <div className="h-full w-[38%] rounded-full bg-[var(--color-coral-pop)]" />
+              <div className="h-full w-[38%] rounded-[2px] bg-[var(--color-accent)]" />
             ) : (
               <motion.div
-                className="h-full rounded-full bg-[var(--color-coral-pop)]"
+                className="h-full rounded-[2px] bg-[var(--color-accent)]"
                 initial={{ width: "28%" }}
                 animate={{ width: ["28%", "48%", "28%"] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
               />
             )}
           </div>
-          <div
-            className="mt-1.5 flex items-center gap-2 text-[9px]"
-            style={{ color: "var(--widget-muted)" }}
-          >
-            <span className="text-[var(--color-coral-pop)]">⇄</span>
-            <span>⏮</span>
-            <span style={{ color: "var(--widget-text)" }}>▶</span>
-            <span>⏭</span>
-            <span>♡</span>
-          </div>
+          <TransportRow />
         </div>
       </div>
 

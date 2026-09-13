@@ -2,16 +2,18 @@ import Link from "next/link";
 import { type ComponentPropsWithoutRef, type ReactNode } from "react";
 import { DownloadIcon } from "@/components/ui/DownloadIcon";
 
-type ButtonVariant = "primary" | "secondary" | "accent" | "ghost";
+type ButtonVariant = "primary" | "secondary" | "outline" | "accent" | "ghost";
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-[var(--color-pure-white)] text-[var(--color-ink-black)] border border-[var(--color-hairline-mist)] hover:border-[var(--color-ink-black)]",
+    "bg-[var(--color-ink)] text-[var(--color-canvas)] border border-[var(--color-ink)] hover:bg-[var(--color-canvas-elevated)] hover:text-[var(--color-ink)]",
   secondary:
-    "bg-transparent text-[var(--color-ink-black)] border-b border-[var(--color-stone-gray)] rounded-none px-0 hover:border-[var(--color-ink-black)]",
+    "bg-transparent text-[var(--color-ink)] border-b border-[var(--color-muted)] rounded-none px-0 hover:border-[var(--color-accent)]",
+  outline:
+    "bg-[var(--color-canvas-elevated)] text-[var(--color-ink)] border border-[var(--color-ink)] hover:bg-[var(--color-ink)] hover:text-[var(--color-canvas)]",
   accent:
-    "bg-[var(--color-coral-pop)] text-[var(--color-pure-white)] border border-transparent hover:opacity-95",
-  ghost: "bg-transparent text-[var(--color-stone-gray)] hover:text-[var(--color-ink-black)]",
+    "bg-[var(--color-accent)] text-white border border-transparent hover:opacity-95",
+  ghost: "bg-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)]",
 };
 
 type ButtonProps = ComponentPropsWithoutRef<"button"> & {
@@ -25,11 +27,16 @@ type ButtonProps = ComponentPropsWithoutRef<"button"> & {
 
 function shouldUseNativeAnchor(href: string, external?: boolean): boolean {
   if (external) return true;
-  return href.startsWith("/api/") || href.startsWith("http");
+  return (
+    href.startsWith("/api/") ||
+    href.startsWith("http") ||
+    href.startsWith("mailto:") ||
+    href.startsWith("tel:")
+  );
 }
 
 function ActionDot({ dot }: { dot: "sky" | "grass" }) {
-  const color = dot === "sky" ? "var(--color-sky-pop)" : "var(--color-fresh-grass)";
+  const color = dot === "sky" ? "var(--color-primary-blue)" : "var(--color-fresh-grass)";
   return (
     <span
       className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
@@ -43,7 +50,7 @@ export function Button({
   variant = "primary",
   href,
   external,
-  dot = variant === "primary" ? "sky" : "none",
+  dot = "none",
   downloadIcon = false,
   className = "",
   children,
@@ -54,7 +61,7 @@ export function Button({
     isLinkStyle
       ? "py-2 text-[length:var(--text-body-sm)]"
       : "rounded-[var(--radius-buttons)] px-5 py-[11px] text-[length:var(--text-body-sm)]"
-  } ${variantClasses[variant]} ${className}`;
+  } ${variantClasses[variant]} ${className}`.trim();
 
   const content = (
     <>

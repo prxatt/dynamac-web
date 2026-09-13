@@ -29,7 +29,7 @@ export function CalendarDateLabel({ day }: CalendarDateLabelProps) {
       </p>
       {day.isToday ? (
         <span
-          className="mt-1 rounded-full px-1 py-px text-[4px] font-bold uppercase tracking-[0.1em]"
+          className="mt-1 rounded-sm px-1 py-px text-[4px] font-bold uppercase tracking-[0.1em]"
           style={{ backgroundColor: "rgba(26,26,24,0.12)", color: INK }}
         >
           Today

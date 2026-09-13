@@ -1,3 +1,7 @@
+/**
+ * Private release-host client for installer + changelog data.
+ * Marketing surfaces must never name or link this host — users download from dynamac.com.
+ */
 export type GitHubRelease = {
   tagName: string;
   name: string;

@@ -10,7 +10,7 @@ export const notch = {
   liveRed: "#ff3b3b",
   liveBadge: "rgba(220,40,50,0.45)",
   accentBlue: "#2ba0ff",
-  accentCoral: "#ff705d",
+  accentCoral: "#d01020",
   accentGrass: "#8ed462",
 } as const;
 

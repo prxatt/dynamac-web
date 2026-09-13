@@ -6,8 +6,6 @@ export const brand = {
     "Music, your day, and your agents without leaving the notch.",
   credits: "Now Playing · Intent · Shelf",
   version: "0.43.0",
-  repo: "prxatt/DynaMac",
-  repositoryUrl: "https://github.com/prxatt/DynaMac",
   website: "https://dynamac.com",
   price: 2.99,
   supportEmail: "support@dynamac.com",
@@ -16,13 +14,14 @@ export const brand = {
   seo: {
     title: "DynaMac | Mac notch HUD for music, Intent, and Shelf",
     description:
-      "DynaMac is a native macOS notch HUD: Now Playing with live Cursor and Claude agents, Intent for calendar and focus, Shelf for files. $2.99 one-time.",
+      "DynaMac is a native macOS notch HUD: Now Playing with live Cursor, Claude, and Codex agents, Intent for calendar and focus, Shelf for files. $2.99 one-time.",
     keywords: [
       "mac notch app",
       "macbook notch hud",
       "menu bar music control",
       "cursor agent mac",
       "claude mac notch",
+      "codex mac notch",
       "mac productivity notch",
       "DynaMac",
       "dynamac",
@@ -35,15 +34,15 @@ export const brand = {
     nowPlaying: {
       id: "now-playing",
       label: "Now Playing",
-      copy: "Album art, transport, and volume in the notch.",
+      copy: "Music, live agents, and your focus or calendar event.",
       detail:
-        "See what Cursor, Claude, and Codex are on. Tap Open to jump there.",
+        "Cursor, Claude, and Codex under the track — tap Open to jump. Focus or a live event shows underneath.",
     },
     intent: {
       id: "intent",
       label: "Intent",
       copy: "Calendar, to-dos, and a focus timer.",
-      detail: "Today list and a horizontal day-band calendar — Bauhaus planning in the notch.",
+      detail: "Today list and a horizontal day-band calendar — plan without leaving the notch.",
     },
     shelf: {
       id: "shelf",
@@ -64,6 +63,7 @@ export const navLinks = [
 export const footerLinks = [
   { href: "/buy", label: "Buy" },
   { href: "/privacy", label: "Privacy" },
+  { href: "/terms", label: "Terms" },
   { href: "/support", label: "Support" },
   { href: "/press", label: "Press" },
   { href: "/changelog", label: "Changelog" },

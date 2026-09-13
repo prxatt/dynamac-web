@@ -3,9 +3,9 @@
 ## What ships today
 
 - Marketing site with home, buy, privacy, changelog, support, press
-- Download redirect via `/api/download` → GitHub Releases
+- Download from the website via `/api/download` (release hosting is private)
 - Buy page ready for Stripe or Lemon Squeezy (env var when you connect)
-- Live tab card widgets on the homepage (`AgentLiveCard`, `IntentLiveCard`, `ShelfLiveCard`)
+- Live notch demos on the homepage
 - SEO: JSON-LD, sitemap, robots, `llms.txt`
 - App icon in nav, hero, favicon, OG
 
@@ -33,7 +33,7 @@ Or **Lemon Squeezy**: `NEXT_PUBLIC_LEMON_SQUEEZY_CHECKOUT_URL`
 
 ## Deploy to dynamac.com
 
-1. Push `dynamac-web` to GitHub
+1. Push `dynamac-web`
 2. Import project in [Vercel](https://vercel.com)
 3. Set env vars from `.env.example`
 4. Point `dynamac.com` DNS to Vercel
