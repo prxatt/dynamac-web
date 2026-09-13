@@ -189,10 +189,12 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
   const adjustFocusMinutes = useCallback(
     (delta: number) => {
       if (focusPhase !== "idle") return;
+      const direction = delta < 0 ? -1 : 1;
       setConfiguredFocusMinutes((mins) => {
-        const step = Math.abs(delta) || (mins >= 60 ? 15 : 5);
-        const signed = delta < 0 ? -step : step;
-        const next = snapFocusMinutes(mins + signed);
+        // Step by destination band so 60→55 uses 5m (not 15m, which would skip to 45).
+        const step =
+          direction < 0 ? (mins <= 60 ? 5 : 15) : mins >= 60 ? 15 : 5;
+        const next = snapFocusMinutes(mins + direction * step);
         const secs = next * 60;
         setTotalSeconds(secs);
         setSecondsLeft(secs);

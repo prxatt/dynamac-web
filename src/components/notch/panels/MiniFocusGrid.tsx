@@ -122,12 +122,23 @@ export function MiniFocusGrid({
     if (!matrix) return;
     const el = containerRef.current;
     if (!el) return;
-    const update = () => {
-      const r = el.getBoundingClientRect();
-      setBox({ w: Math.max(r.width, 1), h: Math.max(r.height, 1) });
+    // Use layout sizes (offset*/contentRect), not getBoundingClientRect —
+    // ancestor ShowcaseFrame CSS scale would otherwise shrink the measured box.
+    const updateFromElement = () => {
+      setBox({
+        w: Math.max(el.offsetWidth, 1),
+        h: Math.max(el.offsetHeight || fitHeight, 1),
+      });
     };
-    update();
-    const ro = new ResizeObserver(update);
+    updateFromElement();
+    const ro = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      setBox({
+        w: Math.max(entry.contentRect.width, 1),
+        h: Math.max(entry.contentRect.height || fitHeight, 1),
+      });
+    });
     ro.observe(el);
     return () => ro.disconnect();
   }, [matrix, fitHeight, cellCount]);
