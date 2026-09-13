@@ -3,7 +3,12 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { useNotchDemo } from "@/components/notch/NotchDemoContext";
-import { planModes, TODAY_PANEL_COLOR, type PlanMode } from "@/components/notch/intent-plan-data";
+import {
+  focusableLabel,
+  planModes,
+  TODAY_PANEL_COLOR,
+  type PlanMode,
+} from "@/components/notch/intent-plan-data";
 import { CalendarBands } from "@/components/notch/panels/intent/CalendarBands";
 import {
   CompletedCalendarList,
@@ -20,11 +25,17 @@ type IntentPanelCompactProps = {
 export function IntentPanelCompact({ layoutIdPrefix = "intent" }: IntentPanelCompactProps) {
   const [mode, setMode] = useState<PlanMode>("today");
   const [showCompleted, setShowCompleted] = useState(false);
-  const { focusPhase, focusExpanded, itemSheet, openItemSheet, closeItemSheet, selectedDayKey } =
-    useNotchDemo();
+  const {
+    focusActive,
+    linkedItem,
+    itemSheet,
+    openItemSheet,
+    closeItemSheet,
+    selectedDayKey,
+  } = useNotchDemo();
 
-  const listMinimal = focusPhase === "work" && focusExpanded;
   const planModeLayoutId = `${layoutIdPrefix}-plan-mode`;
+  const showLinkedChip = focusActive && linkedItem != null;
 
   function handleModeChange(next: PlanMode) {
     setMode(next);
@@ -33,10 +44,10 @@ export function IntentPanelCompact({ layoutIdPrefix = "intent" }: IntentPanelCom
 
   return (
     <div className="relative overflow-hidden">
-      <div className="grid grid-cols-[minmax(0,1fr)_7.5rem] items-start gap-2">
+      <div className="grid grid-cols-[minmax(0,1fr)_12.25rem] items-start gap-2">
         <div className="min-w-0">
-          <div className="flex items-center gap-1">
-            <div className="flex flex-wrap gap-1">
+          <div className="flex items-center gap-1.5">
+            <div className="flex min-w-0 flex-wrap gap-1">
               {planModes.map((item) => (
                 <button
                   key={item.id}
@@ -66,6 +77,15 @@ export function IntentPanelCompact({ layoutIdPrefix = "intent" }: IntentPanelCom
               ))}
             </div>
             <div className="ml-auto flex shrink-0 items-center gap-1.5">
+              {showLinkedChip ? (
+                <span
+                  className="max-w-[7.5rem] truncate rounded-full bg-[var(--widget-inset)] px-2.5 py-1 text-[9px] font-semibold"
+                  style={{ color: "var(--widget-text)" }}
+                  title={focusableLabel(linkedItem)}
+                >
+                  {focusableLabel(linkedItem)}
+                </span>
+              ) : null}
               <button
                 type="button"
                 onClick={() => {
@@ -115,15 +135,13 @@ export function IntentPanelCompact({ layoutIdPrefix = "intent" }: IntentPanelCom
                 />
               ) : (
                 <motion.div
-                  key={`${mode}-${showCompleted ? "done" : "active"}-${listMinimal ? "min" : "full"}`}
+                  key={`${mode}-${showCompleted ? "done" : "active"}`}
                   initial={{ opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.18 }}
                 >
-                  {listMinimal ? (
-                    <TodayList minimal />
-                  ) : showCompleted ? (
+                  {showCompleted ? (
                     mode === "today" ? (
                       <CompletedTodayList />
                     ) : (

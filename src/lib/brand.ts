@@ -34,9 +34,9 @@ export const brand = {
     nowPlaying: {
       id: "now-playing",
       label: "Now Playing",
-      copy: "Album art, transport, and volume in the notch.",
+      copy: "Music, live agents, and your focus or calendar event.",
       detail:
-        "Live Cursor, Claude, and Codex in the same band — tap Open to jump.",
+        "Cursor, Claude, and Codex under the track — tap Open to jump. Focus or a live event shows underneath.",
     },
     intent: {
       id: "intent",

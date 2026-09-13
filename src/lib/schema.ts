@@ -21,7 +21,7 @@ export function buildSoftwareApplicationJsonLd() {
     },
     description: brand.seo.description,
     featureList: [
-      "Now Playing music HUD in the Mac notch",
+      "Now Playing music HUD with live agents and Intent status",
       "Live Cursor, Claude, and Codex agent panel",
       "Intent tab with calendar, to-dos, and focus timer",
       "Shelf for files and AirDrop sharing",
