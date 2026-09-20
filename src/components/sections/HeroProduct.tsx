@@ -69,8 +69,7 @@ export function HeroProduct() {
             {brand.shortDescription}
           </p>
           <p className="mt-2 text-[length:var(--text-body-sm)] text-[var(--color-muted)]">
-            {brand.credits} · <span className="tabular-nums">${brand.price.toFixed(2)}</span> once ·{" "}
-            {brand.platform}
+            {brand.credits} · {brand.pricingNote} · {brand.platform}
           </p>
         </motion.div>
 
@@ -79,7 +78,7 @@ export function HeroProduct() {
             Download for macOS
           </Button>
           <Button href="/buy" variant="outline" className="w-full justify-center sm:w-auto">
-            License · {`$${brand.price.toFixed(2)}`} once
+            Tip (optional)
           </Button>
         </div>
       </div>

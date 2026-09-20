@@ -18,11 +18,12 @@
 - **Env:** `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` (e.g. `dynamac.com`)
 - **Behavior:** Script loads only when env is set. No cookies. Documented in `/privacy`.
 
-## Payments
+## Tips (optional)
 
-- Stripe Payment Link: `NEXT_PUBLIC_STRIPE_PAYMENT_LINK`
-- Lemon Squeezy: `NEXT_PUBLIC_LEMON_SQUEEZY_CHECKOUT_URL`
-- Card data never hits our Node runtime — redirect/checkout only.
+- PayPal tip link: `NEXT_PUBLIC_PAYPAL_TIP_URL` (PayPal.me works)
+- Optional source link: `NEXT_PUBLIC_SOURCE_URL` (never the primary install CTA)
+- Tip payments stay on PayPal — nothing card-related hits our Node runtime.
+- Stripe / Lemon Squeezy license checkout is retired (app is free).
 
 ## Downloads
 
@@ -48,9 +49,9 @@ DialKit is gated behind `NEXT_PUBLIC_DIALKIT=1` so it does not crash the marketi
 
 ## Production checklist
 
-1. Set env vars on Vercel (Plausible domain, checkout URL, optional release-host token)
+1. Set env vars on Vercel (Plausible domain, optional PayPal tip URL, optional release-host token)
 2. Confirm HTTPS + custom domain
 3. Spot-check response headers on `/` and `/api/download`
 4. Verify Plausible sees pageviews after deploy
-5. Confirm license email flow with payment provider
+5. Confirm tip link opens PayPal when `NEXT_PUBLIC_PAYPAL_TIP_URL` is set
 6. CSP in production omits `unsafe-eval`; development allows it for React tooling

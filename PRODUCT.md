@@ -4,7 +4,7 @@
 Native macOS menu bar / notch HUD by Surface Tension.
 
 ## Price
-$2.99 one-time. No free tier. No subscription.
+**Free and open source.** No paid license. Optional tips via PayPal (website). Users should download the signed app from **https://dynamac.com** (`/api/download`), not clone the repo for day-to-day use.
 
 ## Tabs (marketing names)
 1. **Now Playing** — music/media HUD + live agents panel
@@ -20,7 +20,7 @@ $2.99 one-time. No free tier. No subscription.
 
 ## Do NOT market
 - Soen, Glance, Look, Listen, local-first AI, screen read, voice, Ollama
-- Free tier or Pro vs Free comparison
+- Paid tiers, Pro vs Free comparison, or $2.99 pricing
 - Fake metrics or testimonials
 
 ## Platform
@@ -28,4 +28,4 @@ macOS 14 or later. Apple Silicon & Intel.
 
 ## Download
 
-Users get the app from **https://dynamac.com** (`/api/download`). Do not market or link a public source-code host.
+Users get the app from **https://dynamac.com** (`/api/download`). Source may be public; still prefer the signed website download for normal installs.

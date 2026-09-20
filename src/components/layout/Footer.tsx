@@ -2,10 +2,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { CollageMark } from "@/components/collage/CollageMark";
 import { FooterCollageStrip } from "@/components/collage/FooterCollageStrip";
-import { brand, footerLinks, getCheckoutUrl } from "@/lib/brand";
+import { brand, footerLinks, getTipUrl } from "@/lib/brand";
 
 export function Footer() {
-  const checkoutUrl = getCheckoutUrl();
+  const tipUrl = getTipUrl();
 
   return (
     <footer id="buy">
@@ -41,30 +41,30 @@ export function Footer() {
         <div className="mt-12 grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-8">
           <div className="lg:col-span-7">
             <p className="font-mono text-[10px] tracking-[0.16em] text-[var(--color-muted)]">
-              License
+              Free
             </p>
             <h2
               className="font-display mt-3 font-medium leading-[1.05] tracking-[-0.03em] text-[var(--color-ink)]"
               style={{ fontSize: "clamp(2.25rem, 6vw, 3.5rem)" }}
             >
-              <span className="tabular-nums">${brand.price.toFixed(2)}</span>, once.
+              Open source. Download the app.
             </h2>
             <p className="mt-4 max-w-xl text-[length:var(--text-body-lg)] text-[var(--color-muted)]">
-              macOS only. All 1.x updates included. Download the app, then activate with your
-              license after purchase.
+              macOS only. No license key. Get the signed build from dynamac.com — tip on PayPal if
+              you want to support {brand.company}.
             </p>
           </div>
           <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap lg:col-span-5 lg:justify-end">
             <Button href="/api/download" variant="primary" downloadIcon className="w-full sm:w-auto">
               Download for macOS
             </Button>
-            {checkoutUrl ? (
-              <Button href={checkoutUrl} external variant="accent" className="w-full sm:w-auto">
-                Buy license
+            {tipUrl ? (
+              <Button href={tipUrl} external variant="accent" className="w-full sm:w-auto">
+                Tip on PayPal
               </Button>
             ) : (
               <Button href="/buy" variant="accent" className="w-full sm:w-auto">
-                Get license · <span className="tabular-nums">${brand.price.toFixed(2)}</span>
+                Tip (optional)
               </Button>
             )}
           </div>

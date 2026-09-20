@@ -34,7 +34,7 @@ export default function NotFound() {
         <p className="mt-8 text-sm text-[var(--color-muted)]">
           Or{" "}
           <Link href="/buy" className="text-link">
-            buy a license
+            leave an optional tip
           </Link>
           .
         </p>

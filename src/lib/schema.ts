@@ -14,10 +14,10 @@ export function buildSoftwareApplicationJsonLd() {
     installUrl: `${brand.website}/api/download`,
     offers: {
       "@type": "Offer",
-      price: brand.price.toFixed(2),
+      price: "0",
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",
-      url: `${brand.website}/buy`,
+      url: `${brand.website}/api/download`,
     },
     description: brand.seo.description,
     featureList: [
@@ -77,7 +77,7 @@ export function buildFaqJsonLd() {
         name: `How much does ${brand.name} cost?`,
         acceptedAnswer: {
           "@type": "Answer",
-          text: `${brand.name} is a one-time $${brand.price.toFixed(2)} purchase for macOS. All 1.x updates included.`,
+          text: `${brand.name} is free and open source. Download the signed macOS app from ${brand.website}. Tips via PayPal are optional.`,
         },
       },
       {

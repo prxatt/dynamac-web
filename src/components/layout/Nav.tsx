@@ -60,7 +60,7 @@ export function Nav() {
               href="/buy"
               className="hidden h-9 items-center justify-center rounded-[var(--radius-buttons)] bg-[var(--color-accent)] px-4 text-[length:var(--text-body-sm)] font-medium text-white transition-opacity hover:opacity-95 md:inline-flex"
             >
-              License · <span className="tabular-nums">${brand.price.toFixed(2)}</span>
+              Tip (optional)
             </Link>
             <button
               type="button"
@@ -97,7 +97,7 @@ export function Nav() {
               className="mt-3 flex items-center justify-center gap-2 rounded-[var(--radius-buttons)] bg-[var(--color-accent)] py-2.5 text-[length:var(--text-body-sm)] font-medium text-white"
               onClick={() => setOpen(false)}
             >
-              Get DynaMac · <span className="tabular-nums">${brand.price.toFixed(2)}</span>
+              Tip (optional)
             </Link>
           </nav>
         ) : null}

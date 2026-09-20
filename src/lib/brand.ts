@@ -7,14 +7,17 @@ export const brand = {
   credits: "Now Playing · Intent · Shelf",
   version: "0.43.0",
   website: "https://dynamac.com",
-  price: 2.99,
+  /** Always free — tips are optional. */
+  price: 0,
+  pricingLabel: "Free",
+  pricingNote: "Free and open source",
   supportEmail: "support@dynamac.com",
   platform: "macOS 14+",
   platformNote: "Requires macOS 14 or later · Apple Silicon & Intel",
   seo: {
-    title: "DynaMac | Mac notch HUD for music, Intent, and Shelf",
+    title: "DynaMac | Free open-source Mac notch HUD",
     description:
-      "DynaMac is a native macOS notch HUD: Now Playing with live Cursor, Claude, and Codex agents, Intent for calendar and focus, Shelf for files. $2.99 one-time.",
+      "DynaMac is a free, open-source macOS notch HUD: Now Playing with live Cursor, Claude, and Codex agents, Intent for calendar and focus, Shelf for files. Download from dynamac.com — tips optional.",
     keywords: [
       "mac notch app",
       "macbook notch hud",
@@ -28,6 +31,8 @@ export const brand = {
       "surface tension mac app",
       "macos 14 utility",
       "notch shelf files",
+      "open source mac notch",
+      "free mac notch app",
     ],
   },
   tabs: {
@@ -54,14 +59,14 @@ export const brand = {
 } as const;
 
 export const navLinks = [
-  { href: "/buy", label: "Buy" },
+  { href: "/buy", label: "Tip" },
   { href: "/privacy", label: "Privacy" },
   { href: "/changelog", label: "Changelog" },
   { href: "/support", label: "Support" },
 ] as const;
 
 export const footerLinks = [
-  { href: "/buy", label: "Buy" },
+  { href: "/buy", label: "Tip" },
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
   { href: "/support", label: "Support" },
@@ -69,10 +74,14 @@ export const footerLinks = [
   { href: "/changelog", label: "Changelog" },
 ] as const;
 
-export function getCheckoutUrl(): string | null {
-  return (
-    process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK ??
-    process.env.NEXT_PUBLIC_LEMON_SQUEEZY_CHECKOUT_URL ??
-    null
-  );
+/** Optional PayPal.me (or similar) tip link — Stripe not used for tips. */
+export function getTipUrl(): string | null {
+  const url = process.env.NEXT_PUBLIC_PAYPAL_TIP_URL?.trim();
+  return url || null;
+}
+
+/** Optional public source repo — never the primary download CTA. */
+export function getSourceUrl(): string | null {
+  const url = process.env.NEXT_PUBLIC_SOURCE_URL?.trim();
+  return url || null;
 }

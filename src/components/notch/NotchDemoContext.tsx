@@ -120,7 +120,7 @@ const INITIAL_TODOS: TodoItem[] = [
   { id: "todo-1", title: "Record tab demos", done: false, category: "hobby", dayKey: TODAY_KEY },
   {
     id: "todo-2",
-    title: "Wire Stripe checkout",
+    title: "Polish focus timer UI",
     done: true,
     category: "activity",
     timeLabel: "04:30 PM",

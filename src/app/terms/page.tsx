@@ -17,40 +17,35 @@ export default function TermsPage() {
         </div>
         <h1 className="page-title">Terms</h1>
         <p className="mt-3 font-mono text-[10px] tracking-[0.14em] text-[var(--color-muted)] uppercase">
-          Last updated · September 11, 2026
+          Last updated · September 20, 2026
         </p>
 
         <div className="prose-policy mt-10 space-y-6">
           <p>
             These terms cover the {brand.name} macOS application and this marketing site, operated
-            by {brand.company}. By downloading, installing, or purchasing a license, you agree to
-            these terms.
+            by {brand.company}. By downloading or installing the app, you agree to these terms.
           </p>
 
           <h2>License</h2>
           <p>
-            {brand.name} is sold as a one-time license for personal or commercial use on macOS
-            {` `}
-            {brand.platform.replace("macOS ", "")} machines you own or control. The listed price is{" "}
-            {`$${brand.price.toFixed(2)}`} unless otherwise stated at checkout. All 1.x updates are
-            included with a valid license. A purchased license covers use of the distributed app
-            builds you download from {brand.website}.
+            {brand.name} is free and open source. You may use the distributed macOS builds from{" "}
+            {brand.website} for personal or commercial use on machines you own or control (
+            {brand.platform}). Source licensing follows the project&apos;s repository license when
+            published. No paid license key is required.
+          </p>
+
+          <h2>Tips</h2>
+          <p>
+            Optional tips (for example via PayPal) are voluntary donations to {brand.company}. They
+            do not unlock features, create a paid license, or entitle you to refunds beyond what the
+            tip provider allows.
           </p>
 
           <h2>Acceptable use</h2>
           <p>
-            Do not redistribute paid license keys, reverse-engineer licensing for circumvention, or
-            use the app to violate others&apos; privacy or applicable law.
-          </p>
-
-          <h2>Refunds</h2>
-          <p>
-            If the app does not launch on a supported Mac or a license key fails after purchase,
-            contact{" "}
-            <a href={`mailto:${brand.supportEmail}`} className="text-link">
-              {brand.supportEmail}
-            </a>{" "}
-            within 14 days. Refunds are handled case-by-case through the original payment provider.
+            Do not use the app to violate others&apos; privacy or applicable law. Do not misrepresent
+            redistribution of builds as official {brand.company} releases unless you are distributing
+            unmodified signed builds from {brand.website}.
           </p>
 
           <h2>Disclaimer</h2>

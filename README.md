@@ -13,7 +13,7 @@ Marketing site for [dynamac.com](https://dynamac.com) — **DynaMac**, the macOS
 
 - **Hero** — live `NotchProductStage` (product mock, tab cycle). Quiet Bauhaus geometric mark.
 - **Three tabs** — Bauhaus Zine die-cut collages + notch shelf demos (Now Playing · Intent · Shelf)
-- **Purchase** — $2.99 one-time CTA
+- **Free / tip** — download CTA + optional PayPal tip (`/buy`)
 - **Theme** — light / dark / system toggle in nav
 
 ## Environment
@@ -22,11 +22,11 @@ Marketing site for [dynamac.com](https://dynamac.com) — **DynaMac**, the macOS
 |----------|----------|-------------|
 | `GITHUB_REPO` | No | Private release host for installer assets (default: `prxatt/DynaMac`) |
 | `GITHUB_TOKEN` | No | Higher API rate limits for the private release host |
-| `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` | No | Stripe Payment Link — enables live checkout |
-| `NEXT_PUBLIC_LEMON_SQUEEZY_CHECKOUT_URL` | No | Alternative to Stripe |
+| `NEXT_PUBLIC_PAYPAL_TIP_URL` | No | PayPal.me (or similar) tip link — enables Tip CTA |
+| `NEXT_PUBLIC_SOURCE_URL` | No | Optional public source repo URL (secondary; download stays primary) |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | No | Plausible analytics domain |
 | `NEXT_PUBLIC_DIALKIT` | No | Set to `1` to enable DialKit in dev |
-| `SUPPORT_EMAIL` | No | Support contact on buy/support pages |
+| `SUPPORT_EMAIL` | No | Support contact on tip/support pages |
 
 Security headers + CSP: see [docs/SECURITY_AND_DATA.md](docs/SECURITY_AND_DATA.md).
 Legal: `/privacy`, `/terms`.

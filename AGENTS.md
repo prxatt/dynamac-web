@@ -12,10 +12,10 @@ Marketing site for dynamac.com. Product name: **DynaMac** (display); domain stay
 
 ## Product facts (do not invent)
 
-- **Paid app** — $2.99 one-time. No free tier.
+- **Free and open source** — no paid license; optional PayPal tip on the site
 - **Tabs:** Now Playing · Intent · Shelf
 - **Real features only:** music HUD, live agents panel, Intent tab, Shelf
-- **Download:** from dynamac.com (`/api/download`) — never market or link a public source host
+- **Download:** from dynamac.com (`/api/download`) — prefer the signed app over cloning the repo
 - **Do not market:** Soen, Glance, Look, Listen, local-first AI, screen read, voice
 
 ## Homepage UI

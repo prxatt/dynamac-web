@@ -58,12 +58,12 @@ export default function PrivacyPage() {
             <code className="text-[var(--color-ink)]">NEXT_PUBLIC_PLAUSIBLE_DOMAIN</code> is configured.
           </p>
 
-          <h2>Payments</h2>
+          <h2>Tips</h2>
           <p>
-            License checkout is handled by Stripe or Lemon Squeezy when those payment links are
-            connected. Card data never touches our servers — it is processed by the payment
-            provider under their privacy policy. We receive purchase confirmation (email / license
-            fulfillment) only as needed to deliver your license.
+            Optional tips use PayPal (or a similar tip link) when{" "}
+            <code className="text-[var(--color-ink)]">NEXT_PUBLIC_PAYPAL_TIP_URL</code> is configured.
+            Payment details are handled by PayPal under their privacy policy. We do not process card
+            data on our servers. Tips are voluntary and do not purchase a license — the app is free.
           </p>
 
           <h2>Downloads</h2>
