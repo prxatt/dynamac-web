@@ -32,7 +32,7 @@ export default function TipPage() {
             "Use it — no license, no paywall.",
             tipUrl
               ? "Optional: tip via PayPal if DynaMac earned it."
-              : "Optional: tip later when the PayPal link is live.",
+              : "Optional: tip if you want to support the project.",
           ].map((step, index) => (
             <li key={step} className="flex gap-3 text-[length:var(--text-body-sm)] text-[var(--color-muted)]">
               <span
@@ -57,7 +57,7 @@ export default function TipPage() {
           ) : (
             <Button
               href={`mailto:${brand.supportEmail}?subject=${encodeURIComponent(`${brand.name} tip`)}`}
-              variant="accent"
+              variant="outline"
               className="w-full sm:w-auto"
             >
               Ask about tipping
@@ -65,20 +65,14 @@ export default function TipPage() {
           )}
         </div>
 
-        {!tipUrl ? (
-          <div className="mt-6 rounded-[var(--radius-cards)] border border-dashed border-[var(--color-hairline)] bg-[var(--color-canvas)] px-5 py-5">
-            <p className="font-mono text-[10px] tracking-[0.18em] text-[var(--color-muted)] uppercase">
-              Plate · tip link pending
-            </p>
-            <p className="mt-3 text-[length:var(--text-body-sm)] text-[var(--color-muted)]">
-              The app is free to download now. Set{" "}
-              <code className="text-[var(--color-ink)]">NEXT_PUBLIC_PAYPAL_TIP_URL</code> on Vercel
-              (PayPal.me works) to enable one-click tips.
-            </p>
-          </div>
-        ) : (
+        {tipUrl ? (
           <p className="mt-4 text-[length:var(--text-body-sm)] text-[var(--color-muted)]">
             Tips go to PayPal. The app stays free either way — download first.
+          </p>
+        ) : (
+          <p className="mt-4 text-[length:var(--text-body-sm)] text-[var(--color-muted)]">
+            One-click tipping isn&apos;t set up yet. Email if you&apos;d like to support the project —
+            the download above works either way.
           </p>
         )}
 

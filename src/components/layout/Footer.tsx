@@ -59,14 +59,10 @@ export function Footer() {
               Download for macOS
             </Button>
             {tipUrl ? (
-              <Button href={tipUrl} external variant="accent" className="w-full sm:w-auto">
+              <Button href={tipUrl} external variant="outline" className="w-full sm:w-auto">
                 Tip on PayPal
               </Button>
-            ) : (
-              <Button href="/buy" variant="accent" className="w-full sm:w-auto">
-                Tip (optional)
-              </Button>
-            )}
+            ) : null}
           </div>
         </div>
 

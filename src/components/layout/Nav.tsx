@@ -50,21 +50,15 @@ export function Nav() {
             <ThemeToggle />
             <a
               href="/api/download"
-              className="inline-flex h-9 items-center justify-center gap-2 rounded-[var(--radius-buttons)] border border-[var(--color-hairline)] bg-[var(--color-canvas)] px-3 text-[length:var(--text-body-sm)] font-medium text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)] sm:px-4"
+              aria-label="Download for macOS"
+              title="Download for macOS"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-buttons)] border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)]"
             >
               <DownloadIcon className="h-4 w-4 shrink-0" />
-              <span className="hidden sm:inline">Get app</span>
-              <span className="sm:hidden">Get</span>
             </a>
-            <Link
-              href="/buy"
-              className="hidden h-9 items-center justify-center rounded-[var(--radius-buttons)] bg-[var(--color-accent)] px-4 text-[length:var(--text-body-sm)] font-medium text-white transition-opacity hover:opacity-95 md:inline-flex"
-            >
-              Tip (optional)
-            </Link>
             <button
               type="button"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-buttons)] bg-[var(--color-accent)] text-white transition-opacity hover:opacity-90 md:hidden"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-buttons)] border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] transition-colors hover:border-[var(--color-ink)] md:hidden"
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "Close menu" : "Open menu"}
@@ -92,13 +86,14 @@ export function Nav() {
                 </Link>
               );
             })}
-            <Link
-              href="/buy"
-              className="mt-3 flex items-center justify-center gap-2 rounded-[var(--radius-buttons)] bg-[var(--color-accent)] py-2.5 text-[length:var(--text-body-sm)] font-medium text-white"
+            <a
+              href="/api/download"
+              className="mt-3 flex items-center justify-center gap-2 rounded-[var(--radius-buttons)] border border-[var(--color-hairline)] bg-[var(--color-canvas)] py-2.5 text-[length:var(--text-body-sm)] font-medium text-[var(--color-ink)]"
               onClick={() => setOpen(false)}
             >
-              Tip (optional)
-            </Link>
+              <DownloadIcon className="h-4 w-4 shrink-0" />
+              Download for macOS
+            </a>
           </nav>
         ) : null}
       </div>

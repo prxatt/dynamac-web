@@ -59,17 +59,16 @@ export const brand = {
 } as const;
 
 export const navLinks = [
-  { href: "/buy", label: "Tip" },
   { href: "/privacy", label: "Privacy" },
   { href: "/changelog", label: "Changelog" },
   { href: "/support", label: "Support" },
 ] as const;
 
 export const footerLinks = [
-  { href: "/buy", label: "Tip" },
+  { href: "/buy", label: "Support" },
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
-  { href: "/support", label: "Support" },
+  { href: "/support", label: "Contact" },
   { href: "/press", label: "Press" },
   { href: "/changelog", label: "Changelog" },
 ] as const;

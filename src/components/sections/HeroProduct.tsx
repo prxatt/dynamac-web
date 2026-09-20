@@ -77,9 +77,6 @@ export function HeroProduct() {
           <Button href="/api/download" downloadIcon className="w-full sm:w-auto">
             Download for macOS
           </Button>
-          <Button href="/buy" variant="outline" className="w-full justify-center sm:w-auto">
-            Tip (optional)
-          </Button>
         </div>
       </div>
     </section>
