@@ -65,10 +65,10 @@ export const navLinks = [
 ] as const;
 
 export const footerLinks = [
-  { href: "/buy", label: "Support" },
+  { href: "/buy", label: "Tip" },
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
-  { href: "/support", label: "Contact" },
+  { href: "/support", label: "Support" },
   { href: "/press", label: "Press" },
   { href: "/changelog", label: "Changelog" },
 ] as const;
