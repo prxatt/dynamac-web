@@ -1,270 +1,261 @@
 "use client";
 
-import { motion, AnimatePresence } from "motion/react";
-import { useNotchDemo, type FocusTimerStyle } from "@/components/notch/NotchDemoContext";
+import { useReducedMotion } from "@/components/motion/useReducedMotion";
+import { useNotchDemo } from "@/components/notch/NotchDemoContext";
 import {
-  eventDurationMinutes,
   focusableCategory,
-  minutesToLabel,
-  colorForCategory,
   focusableLabel,
 } from "@/components/notch/intent-plan-data";
 import { formatFocusTime, MiniFocusGrid } from "@/components/notch/panels/MiniFocusGrid";
 
-const PREVIEW_PROGRESS = 0.28;
+/** Mac Intent focus card fills — distinct from site Bauhaus event chips. */
+const FOCUS_IDLE_FILL = "#243A5C";
+const FOCUS_IDLE_ALT = "#3A2E5C";
+const BREAK_CARD_FILL = "#388048";
+const FOCUS_END = "#E04F3D";
+const BREAK_GREEN = "#4A9E32";
+const INK = "#1A1A18";
+const FOCUS_BLOCK_LIT = "#48A8FA";
+const BREAK_BLOCK_LIT = "#D2F5AF";
+const BREAK_BLOCK_MUTED = "rgba(28,72,36,0.45)";
+const FOCUS_TRACK = "rgba(255,255,255,0.22)";
+const TODAY_ORANGE = "#F0A030";
 
-function SpanFace({
-  progress,
+const WORK_CATEGORY_FILL: Record<string, string> = {
+  work: "#2B5EA8",
+  personal: "#D4556A",
+  hobby: "#7B4FD4",
+  activity: "#3DAA3D",
+};
+
+function colorDistanceSq(a: string, b: string): number {
+  const pa = parseHex(a);
+  const pb = parseHex(b);
+  if (!pa || !pb) return 1;
+  const dr = pa.r - pb.r;
+  const dg = pa.g - pb.g;
+  const db = pa.b - pb.b;
+  return dr * dr + dg * dg + db * db;
+}
+
+function parseHex(hex: string): { r: number; g: number; b: number } | null {
+  const h = hex.replace("#", "").trim();
+  if (h.length !== 6) return null;
+  return {
+    r: parseInt(h.slice(0, 2), 16) / 255,
+    g: parseInt(h.slice(2, 4), 16) / 255,
+    b: parseInt(h.slice(4, 6), 16) / 255,
+  };
+}
+
+function focusCardFill(
+  phase: "idle" | "work" | "break",
+  category: string,
+  customColor?: string,
+): string {
+  if (phase === "break") return BREAK_CARD_FILL;
+  if (phase === "idle") return FOCUS_IDLE_FILL;
+  const preferred = WORK_CATEGORY_FILL[category] ?? customColor ?? FOCUS_IDLE_ALT;
+  if (colorDistanceSq(preferred, TODAY_ORANGE) < 0.12) return FOCUS_IDLE_ALT;
+  return preferred;
+}
+
+function StatusPill({ children }: { children: string }) {
+  return (
+    <span className="rounded-full bg-black/28 px-[7px] py-0.5 text-[7px] font-bold tracking-wide text-white uppercase">
+      {children}
+    </span>
+  );
+}
+
+function DurationButton({
   label,
-  startLabel,
-  endLabel,
-  durationLabel,
-  accent,
+  onClick,
+  a11y,
 }: {
-  progress: number;
   label: string;
-  startLabel: string;
-  endLabel: string;
-  durationLabel: string;
-  accent: string;
+  onClick: () => void;
+  a11y: string;
 }) {
   return (
-    <div className="w-full">
-      <p
-        className="mb-0.5 text-center font-mono text-[9px] font-semibold tabular-nums"
-        style={{ color: "var(--widget-text)" }}
-      >
-        {label}
-      </p>
-      <div className="relative h-1.5 overflow-hidden rounded-full" style={{ backgroundColor: "var(--widget-border)" }}>
-        <motion.div
-          className="absolute inset-y-0 left-0 rounded-full"
-          style={{ backgroundColor: accent }}
-          animate={{ width: `${progress * 100}%` }}
-          transition={{ duration: 0.35, ease: "easeOut" }}
-        />
-      </div>
-      <div
-        className="mt-1 flex items-center justify-between gap-0.5 text-[6px] font-medium"
-        style={{ color: "var(--widget-muted)" }}
-      >
-        <span>{startLabel}</span>
-        <span
-          className="rounded-full px-1 py-px font-bold"
-          style={{ backgroundColor: "var(--widget-inset)", color: "var(--widget-text)" }}
-        >
-          {durationLabel}
-        </span>
-        <span>{endLabel}</span>
-      </div>
-    </div>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={a11y}
+      className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-black/28 text-[14px] font-bold text-white"
+    >
+      {label}
+    </button>
   );
 }
 
-function StyleToggle({
-  style,
-  onChange,
+function ActionButton({
+  label,
+  fill,
+  color,
+  onClick,
 }: {
-  style: FocusTimerStyle;
-  onChange: (s: FocusTimerStyle) => void;
+  label: string;
+  fill: string;
+  color: string;
+  onClick: () => void;
 }) {
   return (
-    <div className="flex w-full gap-0.5 rounded-full p-0.5" style={{ backgroundColor: "var(--widget-inset)" }}>
-      {(["blocks", "span"] as const).map((id) => (
-        <button
-          key={id}
-          type="button"
-          onClick={() => onChange(id)}
-          className="flex-1 rounded-full py-0.5 text-[6px] font-bold uppercase tracking-wide transition-colors"
-          style={{
-            backgroundColor: style === id ? "var(--color-sky-pop)" : "transparent",
-            color: style === id ? "#fff" : "var(--widget-muted)",
-          }}
-          aria-label={id === "blocks" ? "Blocks timer style" : "Span timer style"}
-        >
-          {id === "blocks" ? "◧" : "▬"}
-        </button>
-      ))}
-    </div>
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full rounded-[10px] py-2 text-[11px] font-bold transition-transform hover:brightness-105 active:scale-[0.97]"
+      style={{ backgroundColor: fill, color }}
+    >
+      {label}
+    </button>
   );
 }
 
+/** Intent focus column — parity with IntentFocusTimer.swift */
 export function FocusTimer() {
+  const reducedMotion = useReducedMotion();
   const {
     focusPhase,
-    focusExpanded,
-    focusStyle,
     secondsLeft,
     breakSecondsLeft,
     progress,
     breakProgress,
     linkedItem,
-    setFocusStyle,
-    toggleFocusExpanded,
+    configuredFocusMinutes,
+    focusGridCellCount,
+    adjustFocusMinutes,
+    focusDurationStepMinutes,
+    customCategories,
     startFocus,
     endFocus,
     skipBreak,
   } = useNotchDemo();
 
-  const accent = colorForCategory(focusableCategory(linkedItem));
+  const category = focusableCategory(linkedItem);
+  const customColor =
+    typeof category === "string" && !(category in WORK_CATEGORY_FILL)
+      ? customCategories[category]?.color
+      : undefined;
+  const cardFill = focusCardFill(focusPhase, category, customColor);
   const taskLabel = focusableLabel(linkedItem);
   const isWork = focusPhase === "work";
   const isBreak = focusPhase === "break";
   const isIdle = focusPhase === "idle";
+  const isRunning = isWork || isBreak;
 
-  const previewActive = isIdle && focusExpanded;
-  const gridActive = isWork || isBreak || previewActive;
-  const gridProgress = isBreak
-    ? breakProgress
+  const primaryTime = isBreak
+    ? formatFocusTime(breakSecondsLeft)
     : isWork
-      ? progress
-      : previewActive
-        ? PREVIEW_PROGRESS
-        : 0;
+      ? formatFocusTime(secondsLeft)
+      : formatFocusTime(configuredFocusMinutes * 60);
 
-  const gridSize = isIdle
-    ? focusExpanded
-      ? "expanded"
-      : "idle"
-    : focusExpanded && isWork
-      ? "expanded"
-      : isWork
-        ? "running"
-        : "idle";
-
-  const gridColor = isBreak ? "var(--color-fresh-grass)" : accent;
-
-  const workLabel = formatFocusTime(secondsLeft);
-  const breakLabel = formatFocusTime(breakSecondsLeft);
-
-  const spanMeta =
-    linkedItem?.kind === "event"
-      ? {
-          startLabel: minutesToLabel(linkedItem.event.startMinutes),
-          endLabel: minutesToLabel(linkedItem.event.endMinutes),
-          durationLabel: `${eventDurationMinutes(linkedItem.event)}m`,
-        }
-      : { startLabel: "Start", endLabel: "End", durationLabel: "25m" };
-
-  const spanProgress = isWork ? progress : isBreak ? breakProgress : previewActive ? PREVIEW_PROGRESS : 0;
-  const spanLabel = isBreak ? breakLabel : isWork ? workLabel : "25:00";
+  const gridProgress = isBreak ? breakProgress : isWork ? progress : 0;
+  const blockFill = isBreak ? BREAK_BLOCK_LIT : isWork ? "#ffffff" : FOCUS_BLOCK_LIT;
+  const blockMuted = isBreak ? BREAK_BLOCK_MUTED : FOCUS_TRACK;
 
   return (
-    <motion.div
-      layout
-      className="flex w-[7.5rem] shrink-0 flex-col items-stretch gap-1 self-stretch"
-    >
-      <button
-        type="button"
-        onClick={toggleFocusExpanded}
-        className="flex w-full flex-col items-stretch rounded-lg p-0.5"
-        aria-label="Toggle focus timer size"
+    <div className="flex w-[12.25rem] shrink-0 flex-col items-stretch gap-1.5 self-stretch">
+      <div
+        className="relative overflow-hidden rounded-xl p-2"
+        style={{ backgroundColor: cardFill }}
+        aria-label={`Focus timer · ${isBreak ? "Break" : isWork ? "Focus" : "Ready"}`}
       >
-        {focusStyle === "blocks" ? (
-          <div className="flex w-full flex-col items-stretch gap-1">
-            <MiniFocusGrid
-              progress={gridProgress}
-              active={gridActive}
-              fillColor={gridColor}
-              size={gridSize}
-            />
-            <AnimatePresence mode="wait">
-              {isBreak ? (
-                <motion.div
-                  key="break"
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="rounded-lg px-2 py-1 text-center"
-                  style={{ backgroundColor: "var(--color-fresh-grass)", color: "#1a1a18" }}
-                >
-                  <p className="text-[6px] font-bold uppercase tracking-wide">Break time</p>
-                  <p className="font-mono text-[11px] font-bold tabular-nums">{breakLabel}</p>
-                  <p className="mt-0.5 text-[6px] font-medium opacity-80">Task still open</p>
-                </motion.div>
-              ) : isWork ? (
-                <motion.p
-                  key="work"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="text-center font-mono text-[10px] font-semibold tabular-nums"
-                  style={{ color: "var(--widget-text)" }}
-                >
-                  {workLabel}
-                </motion.p>
-              ) : (
-                <motion.p
-                  key="idle"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-center text-[7px] font-medium"
-                  style={{ color: "var(--widget-muted)" }}
-                >
-                  {focusExpanded ? "Preview" : "Tap to expand"}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </div>
-        ) : (
-          <SpanFace
-            progress={spanProgress}
-            label={spanLabel}
-            accent={gridColor}
-            {...spanMeta}
+        {isBreak && !reducedMotion ? (
+          <div
+            className="pointer-events-none absolute inset-0 animate-pulse rounded-xl"
+            style={{
+              background:
+                "linear-gradient(to bottom right, rgba(255,255,255,0.12), rgba(210,245,175,0.08))",
+            }}
+            aria-hidden
           />
-        )}
-      </button>
+        ) : null}
 
-      <StyleToggle style={focusStyle} onChange={setFocusStyle} />
+        <div className="relative flex flex-col gap-2">
+          <div className="flex items-center gap-1">
+            <StatusPill>{isBreak ? "Break" : isWork ? "Focus" : "Ready"}</StatusPill>
+            {isWork ? <StatusPill>Live</StatusPill> : null}
+            <span className="min-w-0 flex-1" />
+            {isIdle && configuredFocusMinutes === 25 ? (
+              <span className="shrink-0 text-[7px] font-semibold whitespace-nowrap text-white/65">
+                then 5m break
+              </span>
+            ) : null}
+          </div>
+
+          {isIdle ? (
+            <div className="flex items-center gap-1">
+              <DurationButton
+                label="−"
+                a11y="Decrease focus duration"
+                onClick={() => adjustFocusMinutes(-focusDurationStepMinutes)}
+              />
+              <p className="min-w-0 flex-1 text-center font-mono text-[22px] font-bold leading-none text-white tabular-nums">
+                {primaryTime}
+              </p>
+              <DurationButton
+                label="+"
+                a11y="Increase focus duration"
+                onClick={() => adjustFocusMinutes(focusDurationStepMinutes)}
+              />
+            </div>
+          ) : (
+            <div className="flex w-full flex-col items-stretch gap-1">
+              <p className="text-center font-mono text-[22px] font-bold leading-none text-white tabular-nums">
+                {primaryTime}
+              </p>
+              {isWork && linkedItem ? (
+                <p className="truncate text-[10px] font-semibold text-white">{taskLabel}</p>
+              ) : null}
+              {isBreak ? (
+                <p className="text-[10px] font-semibold text-white/92">Take a breath</p>
+              ) : null}
+            </div>
+          )}
+
+          <MiniFocusGrid
+            progress={gridProgress}
+            active={isRunning}
+            fillColor={blockFill}
+            mutedColor={blockMuted}
+            size={isRunning ? "running" : "idle"}
+            matrix
+            cellCount={focusGridCellCount}
+            fitHeight={72}
+          />
+        </div>
+      </div>
 
       {isBreak ? (
-        <button
-          type="button"
-          onClick={skipBreak}
-          className="w-full rounded-full px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider"
-          style={{
-            backgroundColor: "var(--color-fresh-grass)",
-            color: "#1a1a18",
-          }}
-        >
-          Skip break
-        </button>
-      ) : (
-        <button
-          type="button"
-          onClick={() => (isWork ? endFocus(false) : startFocus())}
-          className="w-full rounded-full px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider"
-          style={{
-            backgroundColor: isWork ? "var(--color-coral-pop)" : "var(--widget-inset)",
-            color: isWork ? "#fff" : "var(--widget-text)",
-            border: "1px solid var(--widget-border)",
-          }}
-        >
-          {isWork ? "End" : "Focus"}
-        </button>
-      )}
-
-      {isWork && linkedItem ? (
-        <div className="flex flex-col items-stretch gap-0.5">
-          <p
-            className="truncate text-center text-[7px] font-medium"
-            style={{ color: "var(--widget-muted)" }}
-          >
-            {taskLabel}
-          </p>
-          {linkedItem.kind === "todo" ? (
+        <ActionButton label="Skip break" fill="rgba(255,255,255,0.92)" color={INK} onClick={skipBreak} />
+      ) : isWork ? (
+        <div className="flex flex-col gap-1">
+          <ActionButton
+            label="End session"
+            fill={FOCUS_END}
+            color="#fff"
+            onClick={() => endFocus(false)}
+          />
+          {linkedItem?.kind === "todo" ? (
             <button
               type="button"
               onClick={() => endFocus(true)}
-              className="text-center text-[6px] font-bold uppercase tracking-wide underline"
-              style={{ color: "var(--color-fresh-grass)" }}
+              className="text-center text-[9px] font-bold"
+              style={{ color: BREAK_GREEN }}
             >
               Complete task
             </button>
           ) : null}
         </div>
-      ) : null}
-    </motion.div>
+      ) : (
+        <ActionButton
+          label="Start focus"
+          fill={INK}
+          color="#fff"
+          onClick={() => startFocus(null)}
+        />
+      )}
+    </div>
   );
 }

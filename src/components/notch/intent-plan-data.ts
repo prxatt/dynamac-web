@@ -16,9 +16,9 @@ export const BUILTIN_CATEGORIES: BuiltinTaskCategory[] = [
 
 /** Category fills — semantically tied to each kind of task */
 export const CATEGORY_COLORS: Record<BuiltinTaskCategory, string> = {
-  work: "#2b5ea8",
-  personal: "#d4556a",
-  hobby: "#7b4fd4",
+  work: "#104088",
+  personal: "#d01020",
+  hobby: "#d4a006",
   activity: "#3daa3d",
 };
 
@@ -31,27 +31,27 @@ export const CATEGORY_LABELS: Record<BuiltinTaskCategory, string> = {
 
 export const CUSTOM_CATEGORY_PALETTE = [
   "#5c5e5a",
-  "#d4a017",
+  "#d4a006",
   "#2e8b57",
-  "#c45bff",
-  "#e85d75",
+  "#104088",
+  "#d01020",
   "#00a8a8",
   "#ff8c42",
 ] as const;
 
 /** One distinct Bauhaus fill per month — never reused */
 export const MONTH_COLORS: Record<string, string> = {
-  JAN: "#5b7fd4",
-  FEB: "#e85d75",
+  JAN: "#104088",
+  FEB: "#d01020",
   MAR: "#4a9e32",
   APR: "#f5c842",
-  MAY: "#9b59b6",
+  MAY: "#ff8c42",
   JUN: "#00a8a8",
   JUL: "#e04f3d",
-  AUG: "#ff8c42",
+  AUG: "#d4a006",
   SEP: "#f0a030",
   OCT: "#8b5a2b",
-  NOV: "#6b4c9a",
+  NOV: "#5c5e5a",
   DEC: "#2e5aac",
 };
 

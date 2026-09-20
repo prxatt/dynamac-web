@@ -20,6 +20,7 @@ type AgentRow = {
 const DEMO_AGENTS: AgentRow[] = [
   { tool: "cursor", name: "Cursor", status: "Editing Hero.tsx", live: true },
   { tool: "claude", name: "Claude", status: "Reviewing agents panel" },
+  { tool: "codex", name: "Codex", status: "Shipping notch polish" },
 ];
 
 type AgentLiveInsetProps = {
@@ -36,7 +37,7 @@ export function AgentLiveInset({
 
   return (
     <motion.div
-      className="flex min-w-0 flex-col rounded-2xl border p-2.5"
+      className="flex min-w-0 flex-col rounded-[var(--radius-small)] border p-2.5"
       style={{
         backgroundColor: theme.inset,
         borderColor: theme.border,
@@ -46,9 +47,9 @@ export function AgentLiveInset({
       transition={{ type: "spring", visualDuration: 0.32, bounce: 0.18 }}
     >
       <header className="mb-1.5 flex items-center justify-between gap-2">
-        <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-coral-pop)] px-2 py-0.5 text-[8px] font-bold tracking-wider text-white">
+        <span className="inline-flex items-center gap-1 rounded-[var(--radius-small)] bg-[var(--color-accent)] px-1.5 py-0.5 text-[8px] font-bold tracking-wider text-white">
           <motion.span
-            className="h-1.5 w-1.5 rounded-full bg-white"
+            className="h-1.5 w-1.5 rounded-[2px] bg-white"
             animate={reducedMotion ? undefined : { opacity: [1, 0.4, 1] }}
             transition={reducedMotion ? undefined : { duration: 1.4, repeat: Infinity }}
             aria-hidden
@@ -60,14 +61,14 @@ export function AgentLiveInset({
         </span>
       </header>
 
-      <ul className="space-y-2">
+      <ul className="space-y-1.5">
         {agents.map((agent) => {
           const accent = accentForAgent(agent.tool);
           return (
             <li key={agent.tool} className="flex items-center gap-2">
               <AgentOrb
                 tool={agent.tool}
-                size={agent.live ? 30 : 26}
+                size={agent.live ? 28 : 24}
                 pulse={Boolean(agent.live) && !reducedMotion}
               />
 
@@ -79,7 +80,7 @@ export function AgentLiveInset({
               </div>
 
               <span
-                className="shrink-0 rounded-full px-2.5 py-1 text-[8px] font-bold text-white"
+                className="shrink-0 rounded-[var(--radius-small)] px-1.5 py-0.5 text-[8px] font-bold text-white"
                 style={{ backgroundColor: accent }}
               >
                 Open

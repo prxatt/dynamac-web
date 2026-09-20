@@ -14,14 +14,14 @@ export function buildSoftwareApplicationJsonLd() {
     installUrl: `${brand.website}/api/download`,
     offers: {
       "@type": "Offer",
-      price: brand.price.toFixed(2),
+      price: "0",
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",
-      url: `${brand.website}/buy`,
+      url: `${brand.website}/api/download`,
     },
     description: brand.seo.description,
     featureList: [
-      "Now Playing music HUD in the Mac notch",
+      "Now Playing music HUD with live agents and Intent status",
       "Live Cursor, Claude, and Codex agent panel",
       "Intent tab with calendar, to-dos, and focus timer",
       "Shelf for files and AirDrop sharing",
@@ -42,7 +42,6 @@ export function buildOrganizationJsonLd() {
     name: brand.company,
     url: brand.website,
     logo: `${brand.website}${appIconSrc}`,
-    sameAs: [brand.repositoryUrl],
   };
 }
 
@@ -78,7 +77,7 @@ export function buildFaqJsonLd() {
         name: `How much does ${brand.name} cost?`,
         acceptedAnswer: {
           "@type": "Answer",
-          text: `${brand.name} is a one-time $${brand.price.toFixed(2)} purchase for macOS. All 1.x updates included.`,
+          text: `${brand.name} is free and open source. Download the signed macOS app from ${brand.website}. Tips via PayPal are optional.`,
         },
       },
       {

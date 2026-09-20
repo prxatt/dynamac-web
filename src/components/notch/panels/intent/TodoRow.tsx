@@ -40,7 +40,7 @@ export function TodoRow({
       <button
         type="button"
         onClick={onSelect}
-        className={`max-w-[44%] rounded-xl px-2 py-1.5 text-left transition-[filter] hover:brightness-[1.05] ${className}`}
+        className={`max-w-[44%] rounded-[var(--radius-small)] px-2 py-1.5 text-left transition-[filter] hover:brightness-[1.05] ${className}`}
         style={{
           backgroundColor: accent,
           opacity: todo.done && !completedView ? 0.78 : 1,
@@ -49,10 +49,10 @@ export function TodoRow({
         title={todo.title}
       >
         <div className="flex min-w-0 items-center gap-1">
-          <span className="shrink-0 rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
+          <span className="shrink-0 rounded-sm bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
             {label}
           </span>
-          <span className="shrink-0 rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
+          <span className="shrink-0 rounded-sm bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
             {todo.timeLabel ? todo.timeLabel : "Todo"}
           </span>
           <span className="min-w-0 flex-1 truncate text-[9px] font-bold leading-snug text-white">
@@ -78,7 +78,7 @@ export function TodoRow({
             }
           : undefined
       }
-      className={`flex cursor-pointer items-center gap-2 rounded-xl px-2.5 py-2 ${onSelect ? "hover:brightness-[1.04]" : ""}`}
+      className={`flex cursor-pointer items-center gap-2 rounded-[var(--radius-small)] px-2.5 py-2 ${onSelect ? "hover:brightness-[1.04]" : ""}`}
       style={{
         backgroundColor: accent,
         opacity: todo.done && !completedView ? 0.72 : 1,
@@ -87,14 +87,14 @@ export function TodoRow({
     >
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-1">
-          <span className="rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
+          <span className="rounded-sm bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
             {label}
           </span>
-          <span className="rounded-full bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
+          <span className="rounded-sm bg-black/20 px-1.5 py-px text-[6px] font-bold uppercase text-white">
             {todo.timeLabel ? todo.timeLabel : "Todo"}
           </span>
           {todo.done ? (
-            <span className="rounded-full bg-black/25 px-1.5 py-px text-[6px] font-bold text-white">
+            <span className="rounded-sm bg-black/25 px-1.5 py-px text-[6px] font-bold text-white">
               Done
             </span>
           ) : null}
@@ -123,7 +123,7 @@ export function TodoRow({
           e.stopPropagation();
           onToggle?.();
         }}
-        className="grid h-5 w-5 shrink-0 place-items-center rounded-full transition-colors"
+        className="grid h-5 w-5 shrink-0 place-items-center rounded-sm transition-colors"
         style={{
           backgroundColor: todo.done ? "rgba(255,255,255,0.95)" : "rgba(0,0,0,0.2)",
           color: todo.done ? accent : "#fff",

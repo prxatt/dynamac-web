@@ -14,8 +14,6 @@ import {
   CUSTOM_CATEGORY_PALETTE,
   customCategoryId,
   DEMO_NOW_MINUTES,
-  focusableDurationSeconds,
-  focusableFromEvent,
   getLiveEvent,
   getTodayDayKey,
   resolveCategory,
@@ -28,7 +26,6 @@ import {
 } from "@/components/notch/intent-plan-data";
 import type { NotchTabId } from "@/components/notch/notch-styles";
 
-export type FocusTimerStyle = "blocks" | "span";
 export type FocusPhase = "idle" | "work" | "break";
 
 export type ItemSheetState =
@@ -37,20 +34,24 @@ export type ItemSheetState =
   | { kind: "event"; id: string; dayKey?: string };
 
 const BREAK_SECONDS = 5 * 60;
-const DEFAULT_FOCUS_SECONDS = 25 * 60;
+const DEFAULT_FOCUS_MINUTES = 25;
+const MIN_FOCUS_MINUTES = 5;
+const MAX_FOCUS_MINUTES = 4 * 60;
 const TODAY_KEY = getTodayDayKey();
 
 type NotchDemoContextValue = {
   focusPhase: FocusPhase;
   focusActive: boolean;
-  focusExpanded: boolean;
-  focusStyle: FocusTimerStyle;
   secondsLeft: number;
   breakSecondsLeft: number;
   totalSeconds: number;
   progress: number;
   breakProgress: number;
   linkedItem: FocusableItem | null;
+  configuredFocusMinutes: number;
+  focusDurationStepMinutes: number;
+  focusGridCellCount: number;
+  adjustFocusMinutes: (delta: number) => void;
   liveEvent: ScheduledEvent | null;
   todos: TodoItem[];
   events: ScheduledEvent[];
@@ -59,8 +60,6 @@ type NotchDemoContextValue = {
   addCustomCategory: (label: string, color?: string) => string;
   selectedDayKey: string;
   setSelectedDayKey: (key: string) => void;
-  setFocusStyle: (style: FocusTimerStyle) => void;
-  toggleFocusExpanded: () => void;
   startFocus: (item?: FocusableItem | null) => void;
   endFocus: (completeTodo?: boolean) => void;
   skipBreak: () => void;
@@ -121,7 +120,7 @@ const INITIAL_TODOS: TodoItem[] = [
   { id: "todo-1", title: "Record tab demos", done: false, category: "hobby", dayKey: TODAY_KEY },
   {
     id: "todo-2",
-    title: "Wire Stripe checkout",
+    title: "Polish focus timer UI",
     done: true,
     category: "activity",
     timeLabel: "04:30 PM",
@@ -129,14 +128,19 @@ const INITIAL_TODOS: TodoItem[] = [
   },
 ];
 
+function snapFocusMinutes(minutes: number): number {
+  const clamped = Math.min(MAX_FOCUS_MINUTES, Math.max(MIN_FOCUS_MINUTES, minutes));
+  if (clamped >= 60) return Math.min(MAX_FOCUS_MINUTES, Math.max(60, Math.floor(clamped / 15) * 15));
+  return Math.min(55, Math.max(MIN_FOCUS_MINUTES, Math.floor(clamped / 5) * 5));
+}
+
 export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderProps) {
   const [focusPhase, setFocusPhase] = useState<FocusPhase>("idle");
-  const [focusExpanded, setFocusExpanded] = useState(false);
-  const [focusStyle, setFocusStyle] = useState<FocusTimerStyle>("blocks");
+  const [configuredFocusMinutes, setConfiguredFocusMinutes] = useState(DEFAULT_FOCUS_MINUTES);
   const [linkedItem, setLinkedItem] = useState<FocusableItem | null>(null);
-  const [secondsLeft, setSecondsLeft] = useState(DEFAULT_FOCUS_SECONDS);
+  const [secondsLeft, setSecondsLeft] = useState(DEFAULT_FOCUS_MINUTES * 60);
   const [breakSecondsLeft, setBreakSecondsLeft] = useState(BREAK_SECONDS);
-  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_FOCUS_SECONDS);
+  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_FOCUS_MINUTES * 60);
   const [todos, setTodos] = useState<TodoItem[]>(INITIAL_TODOS);
   const [calendarDays, setCalendarDays] = useState<DayBand[]>(() => buildCalendarDayRange());
   const [customCategories, setCustomCategories] = useState<Record<string, CustomCategory>>({});
@@ -161,18 +165,57 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
   const focusActive = focusPhase !== "idle";
   const progress = totalSeconds > 0 ? 1 - secondsLeft / totalSeconds : 0;
   const breakProgress = BREAK_SECONDS > 0 ? 1 - breakSecondsLeft / BREAK_SECONDS : 0;
+  const focusDurationStepMinutes = configuredFocusMinutes >= 60 ? 15 : 5;
+
+  const focusGridCellCount = useMemo(() => {
+    if (focusPhase === "break") return Math.max(1, BREAK_SECONDS / 60);
+    const minutes = Math.max(1, configuredFocusMinutes);
+    if (minutes <= 2) return minutes * 60;
+    return minutes;
+  }, [focusPhase, configuredFocusMinutes]);
+
+  const resetFocusState = useCallback(() => {
+    setFocusPhase("idle");
+    setLinkedItem(null);
+    setBreakSecondsLeft(BREAK_SECONDS);
+    setConfiguredFocusMinutes((mins) => {
+      const secs = mins * 60;
+      setSecondsLeft(secs);
+      setTotalSeconds(secs);
+      return mins;
+    });
+  }, []);
+
+  const adjustFocusMinutes = useCallback(
+    (delta: number) => {
+      if (focusPhase !== "idle") return;
+      const direction = delta < 0 ? -1 : 1;
+      setConfiguredFocusMinutes((mins) => {
+        // Step by destination band so 60→55 uses 5m (not 15m, which would skip to 45).
+        const step =
+          direction < 0 ? (mins <= 60 ? 5 : 15) : mins >= 60 ? 15 : 5;
+        const next = snapFocusMinutes(mins + direction * step);
+        const secs = next * 60;
+        setTotalSeconds(secs);
+        setSecondsLeft(secs);
+        return next;
+      });
+    },
+    [focusPhase],
+  );
 
   const startFocus = useCallback(
     (item?: FocusableItem | null) => {
-      const target = item ?? (liveEvent ? focusableFromEvent(liveEvent) : null);
-      const duration = focusableDurationSeconds(target);
+      // Duration is always the configured focus block — never the live event length.
+      const target = item === undefined ? null : item;
+      const duration = configuredFocusMinutes * 60;
       setLinkedItem(target);
       setTotalSeconds(duration);
       setSecondsLeft(duration);
+      setBreakSecondsLeft(BREAK_SECONDS);
       setFocusPhase("work");
-      setFocusExpanded(false);
     },
-    [liveEvent],
+    [configuredFocusMinutes],
   );
 
   const endFocus = useCallback(
@@ -182,25 +225,14 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
           list.map((t) => (t.id === linkedItem.todo.id ? { ...t, done: true } : t)),
         );
       }
-      setFocusPhase("idle");
-      setFocusExpanded(false);
-      setLinkedItem(null);
-      setSecondsLeft(DEFAULT_FOCUS_SECONDS);
-      setTotalSeconds(DEFAULT_FOCUS_SECONDS);
-      setBreakSecondsLeft(BREAK_SECONDS);
+      resetFocusState();
     },
-    [linkedItem],
+    [linkedItem, resetFocusState],
   );
 
   const skipBreak = useCallback(() => {
-    setFocusPhase("idle");
-    setLinkedItem(null);
-    setBreakSecondsLeft(BREAK_SECONDS);
-  }, []);
-
-  const toggleFocusExpanded = useCallback(() => {
-    setFocusExpanded((v) => !v);
-  }, []);
+    resetFocusState();
+  }, [resetFocusState]);
 
   const toggleTodo = useCallback((id: string) => {
     setTodos((list) => list.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
@@ -281,9 +313,7 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
         collaborators?: string[];
       },
     ) => {
-      setTodos((list) =>
-        list.map((t) => (t.id === id ? { ...t, ...patch } : t)),
-      );
+      setTodos((list) => list.map((t) => (t.id === id ? { ...t, ...patch } : t)));
     },
     [],
   );
@@ -350,9 +380,15 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
       if (focusPhase === "work") {
         setSecondsLeft((value) => {
           if (value <= 1) {
+            const sessionTotal = totalSeconds;
             window.setTimeout(() => {
-              setFocusPhase("break");
-              setBreakSecondsLeft(BREAK_SECONDS);
+              // Classic pomodoro only: auto 5-min break after a 25-minute session.
+              if (sessionTotal === DEFAULT_FOCUS_MINUTES * 60) {
+                setFocusPhase("break");
+                setBreakSecondsLeft(BREAK_SECONDS);
+              } else {
+                resetFocusState();
+              }
             }, 0);
             return 0;
           }
@@ -365,9 +401,7 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
         setBreakSecondsLeft((value) => {
           if (value <= 1) {
             window.setTimeout(() => {
-              setFocusPhase("idle");
-              setLinkedItem(null);
-              setBreakSecondsLeft(BREAK_SECONDS);
+              resetFocusState();
             }, 0);
             return 0;
           }
@@ -377,20 +411,22 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
     }, 1000);
 
     return () => window.clearInterval(interval);
-  }, [focusPhase]);
+  }, [focusPhase, totalSeconds, resetFocusState]);
 
   const value = useMemo<NotchDemoContextValue>(
     () => ({
       focusPhase,
       focusActive,
-      focusExpanded,
-      focusStyle,
       secondsLeft,
       breakSecondsLeft,
       totalSeconds,
       progress,
       breakProgress,
       linkedItem,
+      configuredFocusMinutes,
+      focusDurationStepMinutes,
+      focusGridCellCount,
+      adjustFocusMinutes,
       liveEvent,
       todos,
       events,
@@ -399,8 +435,6 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
       addCustomCategory,
       selectedDayKey,
       setSelectedDayKey,
-      setFocusStyle,
-      toggleFocusExpanded,
       startFocus,
       endFocus,
       skipBreak,
@@ -421,14 +455,16 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
     [
       focusPhase,
       focusActive,
-      focusExpanded,
-      focusStyle,
       secondsLeft,
       breakSecondsLeft,
       totalSeconds,
       progress,
       breakProgress,
       linkedItem,
+      configuredFocusMinutes,
+      focusDurationStepMinutes,
+      focusGridCellCount,
+      adjustFocusMinutes,
       liveEvent,
       todos,
       events,
@@ -436,7 +472,6 @@ export function NotchDemoProvider({ children, onTabChange }: NotchDemoProviderPr
       customCategories,
       addCustomCategory,
       selectedDayKey,
-      toggleFocusExpanded,
       startFocus,
       endFocus,
       skipBreak,

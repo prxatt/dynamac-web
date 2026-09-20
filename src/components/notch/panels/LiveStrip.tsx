@@ -47,7 +47,13 @@ export function LiveStrip() {
     >
       <div className="w-[4.5rem] shrink-0">
         {isWorking ? (
-          <MiniFocusGrid progress={progress} active fillColor="#ffffff" mutedColor="rgba(0,0,0,0.25)" size="strip" />
+          <MiniFocusGrid
+            progress={progress}
+            active
+            fillColor="#ffffff"
+            mutedColor="rgba(0,0,0,0.25)"
+            size="strip"
+          />
         ) : (
           <span className="rounded-full bg-black/20 px-1.5 py-0.5 text-[7px] font-bold uppercase text-white">
             Now

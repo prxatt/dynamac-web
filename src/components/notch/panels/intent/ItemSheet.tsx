@@ -195,7 +195,7 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -4 }}
       transition={{ duration: 0.18 }}
-      className="overflow-visible rounded-xl p-2.5"
+      className="overflow-visible rounded-[var(--radius-small)] p-2.5"
       style={{ backgroundColor: surface, color: ink }}
     >
       <div className="mb-2.5 flex items-start justify-between gap-3">
@@ -218,7 +218,7 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
         <button
           type="button"
           onClick={onClose}
-          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold"
+          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-sm text-[11px] font-bold"
           style={{ backgroundColor: "rgba(0,0,0,0.1)", color: ink }}
           aria-label="Close"
         >
@@ -233,7 +233,7 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
               key={k}
               type="button"
               onClick={() => setAddKind(k)}
-              className="rounded-full px-3 py-0.5 text-[7px] font-bold capitalize"
+              className="rounded-sm px-3 py-0.5 text-[7px] font-bold capitalize"
               style={{
                 backgroundColor: addKind === k ? "rgba(0,0,0,0.88)" : "rgba(0,0,0,0.08)",
                 color: addKind === k ? "#fff" : ink,
@@ -256,7 +256,7 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
             }
           }}
           placeholder="Title…"
-          className="mb-2.5 w-full rounded-lg px-2.5 py-1.5 text-[9px] font-semibold outline-none"
+          className="mb-2.5 w-full rounded-[var(--radius-small)] px-2.5 py-1.5 text-[9px] font-semibold outline-none"
           style={{
             backgroundColor: "rgba(255,255,255,0.42)",
             color: ink,
@@ -343,7 +343,7 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
           <button
             type="button"
             onClick={handleDelete}
-            className="rounded-lg px-2.5 py-1 text-[7px] font-bold"
+            className="rounded-[var(--radius-small)] px-2.5 py-1 text-[7px] font-bold"
             style={{ backgroundColor: "rgba(0,0,0,0.12)", color: ink }}
           >
             Delete
@@ -352,7 +352,7 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-2.5 py-1 text-[7px] font-bold"
+            className="rounded-[var(--radius-small)] px-2.5 py-1 text-[7px] font-bold"
             style={{ backgroundColor: "rgba(0,0,0,0.1)", color: ink }}
           >
             Cancel
@@ -363,7 +363,7 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
           <button
             type="button"
             onClick={handleComplete}
-            className="rounded-lg px-2.5 py-1 text-[7px] font-bold text-white"
+            className="rounded-[var(--radius-small)] px-2.5 py-1 text-[7px] font-bold text-white"
             style={{ backgroundColor: "rgba(0,0,0,0.28)" }}
           >
             Focus
@@ -374,7 +374,7 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
           <button
             type="button"
             onClick={handleSave}
-            className="ml-auto rounded-lg px-3.5 py-1 text-[7px] font-bold"
+            className="ml-auto rounded-[var(--radius-small)] px-3.5 py-1 text-[7px] font-bold"
             style={{
               backgroundColor: "rgba(0,0,0,0.88)",
               color: "#fff",
@@ -386,7 +386,7 @@ function ItemSheetBody({ sheet, onClose, panelTint }: ItemSheetProps) {
           <button
             type="button"
             onClick={() => setMode("edit")}
-            className="ml-auto rounded-lg px-3.5 py-1 text-[7px] font-bold"
+            className="ml-auto rounded-[var(--radius-small)] px-3.5 py-1 text-[7px] font-bold"
             style={{ backgroundColor: "rgba(255,255,255,0.55)", color: ink }}
           >
             Edit

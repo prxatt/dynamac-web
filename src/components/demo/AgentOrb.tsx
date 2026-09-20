@@ -16,24 +16,28 @@ type AgentOrbProps = {
   pulse?: boolean;
 };
 
-/** Liquid-style orb marker — matches DynaMac app agent glyphs */
+/** Flat agent disc — Bauhaus restraint over glow-orb soup. */
 export function AgentOrb({ tool, size = 32, pulse = true }: AgentOrbProps) {
   const { accent, depth } = ORB_THEMES[tool];
 
   return (
     <motion.span
-      className="flex shrink-0 items-center justify-center rounded-full border"
+      className="relative flex shrink-0 items-center justify-center overflow-hidden rounded-full border"
       style={{
         width: size,
         height: size,
         borderColor: accent,
-        background: `radial-gradient(circle at 30% 30%, ${accent}, ${depth})`,
-        boxShadow: `0 0 ${Math.max(6, size * 0.2)}px ${accent}55`,
+        backgroundColor: depth,
       }}
-      animate={pulse ? { scale: [1, 1.05, 1] } : undefined}
+      animate={pulse ? { scale: [1, 1.04, 1] } : undefined}
       transition={pulse ? { duration: 2.8, repeat: Infinity, ease: "easeInOut" } : undefined}
       aria-hidden
-    />
+    >
+      <span
+        className="absolute inset-[22%] rounded-full"
+        style={{ backgroundColor: accent }}
+      />
+    </motion.span>
   );
 }
 

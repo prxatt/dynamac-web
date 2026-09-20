@@ -2,21 +2,22 @@
 
 > Mac notch HUD for Now Playing, Intent, and Shelf. Native macOS app by Surface Tension.
 
-DynaMac (also found as Dynamac) is a $2.99 one-time macOS utility that turns the MacBook notch into a HUD for music, calendar and focus (Intent), file holding (Shelf), and live Cursor/Claude/Codex agent status on Now Playing.
+DynaMac (also found as Dynamac) is a free, open-source macOS utility that turns the MacBook notch into a HUD for music, calendar and focus (Intent), file holding (Shelf), and live Cursor/Claude/Codex agent status on Now Playing. Download the signed app from dynamac.com — tips optional.
 
 ## Links
 
 - Website: https://dynamac.com
 - Download: https://dynamac.com/api/download
-- Buy: https://dynamac.com/buy
-- GitHub: https://github.com/prxatt/DynaMac
+- Tip (optional): https://dynamac.com/buy
 - Changelog: https://dynamac.com/changelog
 - Privacy: https://dynamac.com/privacy
+- Terms: https://dynamac.com/terms
+- Support: https://dynamac.com/support
 
 ## Product
 
 - Platform: macOS 14 or later (Apple Silicon & Intel)
-- Price: $2.99 USD one-time
+- Price: Free (open source); optional PayPal tip
 - Tabs: Now Playing, Intent, Shelf
 - Not included: cloud AI, screen recording, always-on microphone
 

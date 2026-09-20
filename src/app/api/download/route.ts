@@ -4,9 +4,9 @@ import { fetchLatestRelease } from "@/lib/github";
 export const dynamic = "force-dynamic";
 
 /**
- * Hands off to the release asset URL. The browser downloads the .dmg directly
- * (no GitHub UI). Full proxy streaming would exceed serverless time limits
- * for typical installer sizes.
+ * Website download endpoint. Resolves the latest installer and redirects the
+ * browser to the asset URL so the user starts from dynamac.com/api/download.
+ * Upstream hosting is an implementation detail — never surface it in marketing.
  */
 export async function GET() {
   const release = await fetchLatestRelease();

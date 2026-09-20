@@ -54,7 +54,7 @@ export function CalendarBands({ minimal = false }: CalendarBandsProps) {
 
   return (
     <div
-      className="overflow-hidden rounded-xl p-1"
+      className="overflow-hidden rounded-[var(--radius-small)] p-1"
       style={{
         outline: INTENT_PANEL_FRAME.outline,
         backgroundColor: "rgba(26, 26, 24, 0.05)",
@@ -64,7 +64,7 @@ export function CalendarBands({ minimal = false }: CalendarBandsProps) {
         {monthGroups.map((group) => (
           <div
             key={`${group.monthLabel}-${group.days[0]?.key}`}
-            className="mb-1 rounded-lg border-l-[3px] p-1 last:mb-0"
+            className="mb-1 rounded-[var(--radius-small)] border-l-[3px] p-1 last:mb-0"
             style={{ borderColor: colorForMonth(group.monthLabel) }}
           >
             {group.days.map((day, index) => (

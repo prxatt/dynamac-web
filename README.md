@@ -6,52 +6,31 @@ Marketing site for [dynamac.com](https://dynamac.com) — **DynaMac**, the macOS
 
 - Next.js 16 (App Router)
 - Tailwind CSS v4
-- Motion (`motion/react`) — scroll reveals, parallax characters, `prefers-reduced-motion` safe
-- DialKit (dev only) — tune tab widget hover springs in `npm run dev`
+- Motion (`motion/react`) — product-led reveals, tab springs, `prefers-reduced-motion` safe
+- DialKit (opt-in) — set `NEXT_PUBLIC_DIALKIT=1` to tune springs in dev
 
 ## Homepage
 
-- **Hero** — live `NotchProductStage` (product mock, tab cycle, 3D tilt). Character band in footer.
-- **Three tabs** — unified cream sections with dark notch demos + character art (Intent has no cutout backdrop)
-- **Purchase** — $2.99 one-time CTA
-
-## Development
-
-```bash
-npm install
-cp .env.example .env.local
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
-
-### Dev server won't start?
-
-Another Next.js process may be holding port 3000:
-
-```bash
-npm run dev:clean
-```
-
-Or manually:
-
-```bash
-lsof -ti:3000 | xargs kill -9
-npm run dev
-```
-
-If the page is blank, confirm you're in `dynamac-web` (not the macOS app repo) and on branch `feat/dialkit-agent-card` or `main`.
+- **Hero** — live `NotchProductStage` (product mock, tab cycle). Quiet Bauhaus geometric mark.
+- **Three tabs** — Bauhaus Zine die-cut collages + notch shelf demos (Now Playing · Intent · Shelf)
+- **Free / tip** — download CTA + optional PayPal tip (`/buy`)
+- **Theme** — light / dark / system toggle in nav
 
 ## Environment
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `GITHUB_REPO` | No | GitHub repo for release DMG (default: `prxatt/DynaMac`) |
-| `GITHUB_TOKEN` | No | Higher GitHub API rate limits |
-| `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` | No | Stripe Payment Link — enables live checkout |
-| `NEXT_PUBLIC_LEMON_SQUEEZY_CHECKOUT_URL` | No | Alternative to Stripe |
+| `GITHUB_REPO` | No | Private release host for installer assets (default: `prxatt/DynaMac`) |
+| `GITHUB_TOKEN` | No | Higher API rate limits for the private release host |
+| `NEXT_PUBLIC_PAYPAL_TIP_URL` | No | PayPal.me (or similar) tip link — enables Tip CTA |
+| `NEXT_PUBLIC_SOURCE_URL` | No | Optional public source repo URL (secondary; download stays primary) |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | No | Plausible analytics domain |
-| `SUPPORT_EMAIL` | No | Support contact on buy/support pages |
+| `NEXT_PUBLIC_DIALKIT` | No | Set to `1` to enable DialKit in dev |
+| `SUPPORT_EMAIL` | No | Support contact on tip/support pages |
+
+Security headers + CSP: see [docs/SECURITY_AND_DATA.md](docs/SECURITY_AND_DATA.md).
+Legal: `/privacy`, `/terms`.
+
 
 ## Scripts
 
@@ -66,14 +45,13 @@ npm run typecheck  # TypeScript check
 
 ## Deploy
 
-1. Push to GitHub
+1. Push this marketing repo
 2. Import in Vercel
 3. Set env vars
 4. Point `dynamac.com` at Vercel
 
-`/api/download` redirects to the latest GitHub Release DMG.
+Users download the app from **dynamac.com** (`/api/download`). Release hosting is an implementation detail and must not appear in marketing copy.
 
 ## Related
 
-- macOS app repo: [prxatt/DynaMac](https://github.com/prxatt/DynaMac)
 - Launch checklist: [docs/MEDIA_AND_LAUNCH.md](docs/MEDIA_AND_LAUNCH.md)
